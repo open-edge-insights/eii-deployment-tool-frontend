@@ -1328,7 +1328,7 @@ const ComponentsLayout = (props) => {
         source: a.id,
         target: b.id,
         animated: false,
-        type: "default",
+        type: "smoothstep",
       };
       edges.push(newEdge);
       setElements((els) => addEdge(newEdge, els));
@@ -1596,7 +1596,21 @@ const ComponentsLayout = (props) => {
           main_title={currentSelectedComp.data.name}
         />
       ) : (
-        ""
+        <div class="sideBare col-sm-4">
+          <div
+            style={{
+              justifyContent: "center",
+              alignContent: "space-around",
+              paddingLeft: 0,
+              paddingRight:5
+            }}
+          ></div>
+          <div className="configBarSideBarTitle">
+            <p className="componentListHelpText">
+              <h5>Settings</h5>
+            </p>
+          </div>
+        </div>
       )}
     </>
   );

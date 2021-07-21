@@ -102,6 +102,9 @@
   border-top: none;
 }
 .sideBare {
+  border-style: solid;
+  border-color: lightgray;
+  border-width: 1px;
   top: 0px;
   background: rgb(255, 255, 255);
   height: 100%;

@@ -169,7 +169,7 @@ const ImportButton = useSelector(
             onClick={importCode}
             disabled={isActive || !props.isImportBtnActive|| ImportButton}
           >
-            Import Code
+            Import UDF
           </button>
         </div>
         <ImportCodeDialog
