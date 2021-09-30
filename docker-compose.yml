@@ -24,8 +24,8 @@ services:
   ## Define deployment-tool-frontend service
   ia_deployment_tool_frontend:
     build:
-      context: $PWD/../deployment-tool-frontend
-      dockerfile: $PWD/../deployment-tool-frontend/Dockerfile
+      context: $PWD
+      dockerfile: $PWD/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
         EII_UID: ${EII_UID}
