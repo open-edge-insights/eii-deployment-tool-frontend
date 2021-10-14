@@ -1,0 +1,19 @@
+.textAlignCenter{
+    text-align: center;
+}
+.marginBot{
+    margin-bottom: 10px !important;
+}
+.fontSize13{
+    font-size: 13px !important;
+}
+.borderTop{
+    border-top:2px solid grey;
+}
+.fieldWidth{
+    width: 50px !important;
+    line-height: 1.7 !important;
+}
+.floatright{
+    float:right !important;
+}

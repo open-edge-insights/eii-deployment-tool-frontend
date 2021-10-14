@@ -1,0 +1,94 @@
+.forWidth input{
+    width: 250px;
+    font-size: 14px !important;
+    border: 1px solid #C9CACE;
+    background: #FFFFFF 0% 0% no-repeat padding-box !important;
+}
+.forWidth input:hover{
+background: #FFFFFF 0% 0% no-repeat padding-box !important;
+border: 1px solid #494B51 !important;
+}
+
+.forWidth input:focus {
+    background: #FFFFFF 0% 0% no-repeat padding-box !important;
+border: 2px solid #0068B5 !important;
+  }
+
+.forWidth select{
+    font-size: 14px !important;
+    border: 1px solid #C9CACE !important;
+    background: #FFFFFF 0% 0% no-repeat padding-box !important;
+}
+.forWidth select:hover{
+background: #FFFFFF 0% 0% no-repeat padding-box !important;
+border: 1px solid #494B51 !important;
+}
+
+.forWidth select:focus {
+    background: #FFFFFF 0% 0% no-repeat padding-box !important;
+border: 2px solid #0068B5 !important;
+  }
+  .createSelect{
+    width: 69px;
+    height: 26px;
+  }
+  .openSelect{
+    width: 260px;
+    height: 30px;
+  }
+  .openDiv{
+    padding-left: 127px;
+    margin-bottom: 50px;
+  }
+  .openRadio{
+    padding-top: 10px;
+    border-top: '1px solid #BBBBBB' !important;
+  }
+  .width220{
+      width:220px !important;
+  }
+  .input_error{
+    border: 2px solid red !important;
+  }
+  .boxSetting{
+    width: 500px !important;
+    height: 400px !important;
+    background-color: '#F5F5F5' !important;
+    margin: '0 auto' !important;
+    padding: 30px !important;
+    padding-bottom: 30px !important;
+    font-size:14px !important;
+    border:'1px solid #F5F5F5' !important;
+  }
+  .marTop50{
+      margin-top:50px;
+  }
+  .forWidth{
+    width: 100%;
+    font-size: 14px;
+  }
+  .formFirstWidth{
+    margin-top: 25px;
+    margin-left: 35px;
+  }
+  .formSecondWidth{
+    padding-left: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.padLeft15{
+    padding-left:15px;
+}
+.butOk{
+    width: 100px;
+    height: 40px;
+    background: "#0068B5 0% 0% no-repeat padding-box" !important;
+    border: "1px solid #0068B5" !important;
+    color:"#fff" !important;
+}
+button.butOk:hover{
+        background-color:"#004A86" !important;
+        border: "1px solid #0068B5" !important;
+}
+
+

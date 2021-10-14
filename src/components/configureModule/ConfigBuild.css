@@ -1,0 +1,10 @@
+.thumb{
+    width: 5rem;
+    height: 2rem;
+    display:inline-flex;
+    background-color: grey;
+}
+.positionSet{
+    margin-top:35px;
+    position: relative;
+}

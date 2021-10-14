@@ -1,0 +1,54 @@
+.description{
+    margin-bottom: 30px !important;
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    font-size: 16px !important;
+    font-family:Arial !important;
+    color: cornsilk !important;
+    background-color: #0041d0 !important;
+    text-align: left !important;
+}
+.dndnode{
+    cursor: grab !important;
+    background-color: #0041d0 !important;
+    text-align: center !important;
+}
+.fontSize14{
+    font-size: 14px;
+}
+.positionrel{
+    position: relative !important;
+    left:12px !important;
+    padding:10px !important;
+}
+.border1px{
+    border:1px solid grey;
+}
+.positionisActive{
+    position:absolute;
+    top:0px;
+    bottom:0;
+    left:0px;
+    right:0;
+    background:rgba(0,0,0,0.1) !important;
+    cursor:not-allowed !important;
+}
+.coldrag{
+    color: #4169e1 !important;
+}
+.fontweight400{
+    font-weight: 400;
+}
+.overflowclip{
+    height: 300px !important;
+     overflow-x: scroll !important;
+      overflow-y: clip !important;
+}
+
+.drapval{
+    width: 9rem;
+    height: 2rem;
+     display: inline-flex;
+     background-color: white !important;
+     color: black; 
+}
