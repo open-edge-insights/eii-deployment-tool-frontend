@@ -1,0 +1,35 @@
+.box{
+    border-right:1px solid grey !important;
+    border-left:1px solid grey !important;
+    border-bottom:1px solid grey !important;
+    border-top: 1px solid grey !important;
+}
+.height370{
+    height: 370px;
+}
+.height570{
+    height: 570px;
+}
+.positionrel{
+    position: relative;
+    left: 12px;
+}
+.padding0{
+    padding:0px !important;
+}
+.height100{
+    height: 100%;
+
+}
+.textAlignCenter{
+    text-align: center;
+}
+.borderLeft{
+    border-left:1px solid grey;
+}
+.borderTop{
+    border-top:1px solid grey;
+}
+.borderRadius{
+ border-radius: '11 0 0 0 0'
+}

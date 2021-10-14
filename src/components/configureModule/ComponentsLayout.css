@@ -1,0 +1,160 @@
+.dndflow {
+    flex-direction: column;
+    display: flex;
+    height: 100%;
+    /* width:50% !important; */
+    padding:0 !important;
+    /* cursor: grab; */
+  }
+  .height570{
+  height:570px !importatnt;
+  }
+   .border1{
+   border:1px solid grey !important}
+  .layout1{
+    z-index: 0;
+      border-right: 1px solid grey !important;
+      border-left: 1px solid grey !important;
+      border-bottom: 1px solid grey !important;
+      position: absolute !important;
+      left: 0 !important;
+      height: 100% !important;
+  }
+  .width100{
+    width:100% !important;
+  }
+  .opacity3{
+    opacity: 0.3 !important;
+  }
+  .dndflow aside {
+    border-right: 1px solid #eee;
+    padding: 15px 10px;
+    font-size: 12px;
+    background: #fcfcfc;
+  }
+  
+  .dndflow aside .description {
+    margin-bottom: 10px;
+  }
+  
+  .dndflow .dndnode {
+    height: 20px;
+    padding: 4px;
+    border: 1px solid #1a192b;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+   
+  }
+  .react-flow__edge-path{
+    stroke-width: 4px !important;
+    cursor: pointer !important;
+    /* stroke:red !important; */
+
+  }
+  .react-flow__handle{
+      width:8px !important;
+      height: 8px !important;
+  }
+  .controls{
+    text-align: left !important;
+    padding:5px;
+  }
+  .controls h4{
+    text-align: center !important;
+  }
+  .react-flow__node-default,.react-flow__node{
+    padding: 10px;
+    border-radius: 3px;
+    width: 150px;
+    font-size: 12px;
+    color: #222;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid;
+    background: #fff;
+    /* border-color: #1a192b; */
+    /* width: 80px !important;
+    height: 60px !important;
+     margin: 8px !important; 
+    color: rgba(0, 0, 0, 0.87) !important;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important;
+    background-color: #fff !important;
+    border-radius: 4px !important;
+    box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%) !important; */
+  }
+  .react-flow__node-default.selected, .react-flow__node-default.selected:hover {
+    box-shadow: 0 0 0 0.5px #1a192b;
+}
+  
+  .dndflow .dndnode.input {
+    border-color: #0041d0;
+  }
+  
+  .dndflow .dndnode.output {
+    border-color: #ff0072;
+  }
+  .dndflow .dndnode.input .connectable,.dndflow .dndnode.output .connectable,.react-flow__node-default .connectable {
+    pointer-events: all !important;
+}
+  
+  .dndflow .reactflow-wrapper {
+    /*flex-grow: 1;*/
+    height: 100%;
+  }
+  
+  @media screen and (min-width: 768px) {
+    .dndflow {
+      flex-direction: row;
+    }
+  
+    .dndflow aside {
+      width: 20%;
+      max-width: 250px;
+    }
+  }
+  /* .react-flow__pane, .react-flow__renderer, .react-flow__selectionpane{
+    position:absolute !important;
+    top:100px !important;
+    left:100px !important;
+  } */
+  .Configdetails 
+  .MuiDialog-paperWidthSm{
+    height:430px !important;
+  }
+  .react-flow__node-default:hover{
+    cursor: pointer !important;
+    border-color: #555 !important;
+    border-width: 2px !important;
+    /* padding: 8px 15px !important; */
+    /* visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 80% !important; */
+  }
+  .react-flow__node-input:hover{
+    cursor: pointer !important;
+    border-color:#0041d0 !important;
+    border-width: 2px !important;
+  }
+  .react-flow__node-output:hover{
+    cursor: pointer !important;
+    border-color:#ff0072 !important;
+    border-width: 2px !important;
+  }
+  .react-flow__controls{
+    display: none !important;
+  }
+  /* .react-flow__node-default .selected{
+    border-color: #555 !important;
+    border-width: 4px !important;
+
+  } */
+  /* .react-flow__edge .react-flow__edge-default:hover{
+  } */
+ 
+  /* .react-flow{
+      width:50% !important;
+  } */

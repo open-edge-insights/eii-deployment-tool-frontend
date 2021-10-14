@@ -1,0 +1,22 @@
+input::-webkit-file-upload-button{
+  float:right !important;
+  background-color: #fff !important;
+  /* content: "..." !important; */
+  /* display: inline-flex !important; */
+  /* position:relative !important; */
+  /* right:2000 !important; */
+  /* margin-left: 200px !important; */
+}
+.react-tabs__tab-list{
+  margin-bottom: 0px !important;
+}
+/* .MuiBox-root .MuiBox-root-13,.MuiBox-root .MuiBox-root-32,.MuiBox-root .MuiBox-root-47,.MuiBox-root .MuiBox-root-29,.MuiBox-root .MuiBox-root-41,.MuiBox-root-44,.MuiBox-root-38,
+.MuiBox-root-50,.MuiBox-root-35,.MuiBox-root-41,.MuiBox-root-62,.MuiBox-root-53,.MuiBox-root-43,.MuiBox-root-46,.MuiBox-root-55,.MuiBox-root-58{
+  padding:0px !important;
+}
+.MuiBox-root-26,.MuiBox-root-21,.MuiBox-root-37,.MuiBox-root-25,.MuiBox-root .MuiBox-root-48,.MuiBox-root-60,.MuiBox-root-65,.MuiBox-root-68,.MuiBox-root-71{
+  padding:0px !important;
+}
+.MuiBox-root-12{
+  z-index:1 !important;
+} */

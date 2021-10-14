@@ -53,12 +53,11 @@ services:
       DEPLOYMENT_TOOL_BACKEND_PORT: 5100
       DEPLOYMENT_TOOL_BACKEND_HOST: ia_deployment_tool_backend
       PORT: 3100
-    networks:
-      - eii
     ports:
-        - 3100:3100
+      - 3100:3100
     volumes:
-      - vol_dep_tool_fe_data:/app:rw
+      - vol_dep_tool_fe_data:/app
+      - /home/$EII_USER_NAME
       - /tmp:/tmp
 
 
@@ -69,9 +68,3 @@ volumes:
       type: local
       o: bind
       device: ${EII_INSTALL_PATH}/tools_output/deployment-tool-fe/
-
-networks:
-  eii:
-    external:
-      name: eii
-

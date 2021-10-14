@@ -25,11 +25,17 @@ source ../build/.env
 set +a
 sudo mkdir -p $EII_INSTALL_PATH/tools_output/deployment-tool-fe
 sudo chown -R $EII_USER_NAME:$EII_USER_NAME $EII_INSTALL_PATH/tools_output/deployment-tool-fe
-
 if [ "$1" ==  "--build" -o "$1" == "-b" ]; then
     docker-compose build $2
+    docker-compose up -d
+elif [ "$1" ==  "--restart" -o "$1" == "-r" ]; then
+    docker-compose down
+    docker-compose up -d
+elif [ "$1" ==  "--down" -o "$1" == "-d" ]; then
+    docker-compose down
 elif [ "$1" != "" ]; then
     echo "Error: unexpected param: $1"
-    exit
+    exit 
+else
+    docker-compose up -d
 fi
-docker-compose up -d

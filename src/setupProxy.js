@@ -21,9 +21,9 @@
 
 const { createProxyMiddleware } = require('http-proxy-middleware');
 module.exports = function(app) {
-    let prot = (process.env.DEV_MODE) ? "http":"https";
+    let prot = (process.env.DEV_MODE=="true") ? "http":"https";
     let ip = process.env.DEPLOYMENT_TOOL_BACKEND_HOST;
     let port = process.env.DEPLOYMENT_TOOL_BACKEND_PORT;
     let target_url = prot + '://' + ip + ':' + port;
-    app.use(createProxyMiddleware('/eii/ui/*', {target: target_url}));
+    app.use('/eii/ui/*', createProxyMiddleware({target: target_url, changeOrigin: true}));
 }
