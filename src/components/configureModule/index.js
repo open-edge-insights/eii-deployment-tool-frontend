@@ -1,3 +1,24 @@
+/* Copyright (c) 2021 Intel Corporation.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import React,{useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -28,15 +49,8 @@ const Configure = (props) => {
   const [name, setName] = useState();
 
 
-  // triggerAddTabState = () => {
-  //   setState('add tab');
-  // }
-  // const { classes } = props;
   const { isCreateProject } = props;
   const setTabValues = () => {
-    //validation. 1. isCreateProject true - noofstreams and project name
-    //2. isCreateProject false - existing project location
-
     props.setSelectedTab({ ...state });
   };
  
@@ -52,36 +66,15 @@ const Configure = (props) => {
         <div class='row'>
           <div class='col-sm-2' style={{ padding: 0 }}>
             <ComponentList setName={setName} />
-            {/* <SplashScreen /> */}
           </div>
           <div class='col-sm-7'>
-            {/* no if streams === 0 project setup isValid false */}
             <AddTab isCreateProject={isCreateProject} />
-            {/* no if streams >= 0 Project setup is valid */}
-            {/* <ComponentsLayout />  */}
             <DynamicTabs />
-            {/* </ComponentsLayout> */}
-            {/* <Pipeline /> */}
           </div>
           <div class='col-sm-3'>
             <ConfigBuild />
           </div>
         </div>
-        {/* <div class='row' style={{ marginTop: 20 }}>
-          <div class='col-sm-8'></div>
-          <div class='col-sm-4'>
-            <button
-            onClick={setTabValues}
-              type='submit'
-              style={{ width: 150, height: 30, borderRadius: 5, backgroundColor: '#fff', float: 'Right' }}
-            >
-              Next
-            </button>
-            <button type='submit' style={{ width: 150, height: 30, borderRadius: 5, backgroundColor: '#fff' }}>
-              Cancel
-            </button>
-          </div>
-        </div> */}
       </div>
     </div>
   );
@@ -100,7 +93,6 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    // onTabValue: () => dispatch({ type: 'ON_TABVALUE' }),
     setSelectedTab: (projectData) => {
       console.log("Project data:", projectData)
       dispatch({ type: "ON_SELECTED_TAB", projectData });
@@ -108,5 +100,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-//   export default withStyles(styles)(Configure);
 export default connect(mapStateToProps, mapDispatchToProps)(Configure);

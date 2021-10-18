@@ -1,5 +1,9 @@
+/* @import "./fonts/font.css"; */
 .App {
   /* text-align: center; */
+  font-family: "IntelOne-Display-Regular" !important;
+  color:"#262626" !important;
+  /* font:IntelOne-Display-Medium !important; */
 }
 
 .App-logo {
@@ -28,6 +32,18 @@
   color: #61dafb;
 }
 
+button{
+  background: "#fff 0% 0% no-repeat padding-box";
+  border: "1px solid #2B2C30";
+  border-radius:5px;
+  color:"#262626";
+}
+button:hover{
+    background:"#E9EAEB 0% 0% no-repeat padding-box";
+    border: "1px solid #2B2C30";
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -36,3 +52,18 @@
     transform: rotate(360deg);
   }
 }
+
+
+@font-face {
+font-family: "IntelOne-Display-Regular";
+src: local("IntelOne-Display-Regular");
+src: url("fonts/intelone-display-regular.ttf") format('truetype'),
+    url("fonts/intelone-display-regular.woff") format('woff'),
+    url("fonts/intelone-display-regular.woff2") format('woff2'),
+   url("fonts/intelone-display-regular.otf") format("otf");
+}
+/* @font-face {
+  font-family: "IntelOne-Display-Medium";
+  src: local("IntelOne-Display-Medium"),
+  url ("../fonts/intelone-display-medium.ttf") format("truetype");
+  } */

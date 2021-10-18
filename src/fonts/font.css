@@ -1,0 +1,62 @@
+
+
+@font-face {
+    font-family: "IntelOne-Display-Bold";
+    src: local("IntelOne-Display-Bold"),
+     url ("./intelone-display-bold.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-Light";
+    src: local("IntelOne-Display-Light"),
+    url ("./intelone-display-light.ttf") format("truetype");
+  }
+  @font-face {
+  font-family: "IntelOne-Display-Medium";
+  src: local("IntelOne-Display-Medium"),
+  url ("./intelone-display-medium.ttf") format("truetype");
+  }
+  @font-face {
+  font-family: "IntelOne-Display-Regular";
+  src: local("IntelOne-Display-Regular"),
+  url ("./intelone-display-regular.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-Bold";
+    src: local("IntelOne-Display-Bold"),
+    url ("./intelone-text-bold.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-BoldItalics";
+    src: local("IntelOne-Display-BoldItalics"),
+    url ("./intelone-text-bolditalic.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-Italics";
+    src: local("IntelOne-Display-Italics"),
+    url ("./intelone-text-italic.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-Light";
+    src: local("IntelOne-Display-Light"),
+    url ("./intelone-text-light.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-LightItalics";
+    src: local("IntelOne-Display-LightItalics"),
+    url ("./intelone-text-lightitalic.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-Medium";
+    src: local("IntelOne-Display-Medium"),
+    url ("./intelone-text-medium.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-MediumItalics";
+    src: local("IntelOne-Display-MediumItalics"),
+    url ("./intelone-text-mediumitalic.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "IntelOne-Display-Regular";
+    src: local("IntelOne-Display-Regular"),
+    url ("./intelone-text-regular.ttf") format("truetype");
+  }

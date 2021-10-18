@@ -1,3 +1,24 @@
+/* Copyright (c) 2021 Intel Corporation.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import React from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -12,9 +33,6 @@ import PauseCircleOutlineIcon from '@material-ui/icons/PauseCircleOutline';
 import Slider from '@material-ui/core/Slider';
 import FormLabel from '@material-ui/core/FormLabel';
 import "./TestProfileSettings.css";
-
-
-
 
 const TestProfileSettings = () => {
     const [state, setState] = React.useState({
@@ -33,8 +51,6 @@ const TestProfileSettings = () => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                // checked={state.checkedB}
-                                // onChange={handleChange}
                                 name="checkedB"
                                 color="primary"
                             />
@@ -56,11 +72,7 @@ const TestProfileSettings = () => {
                             </span>
                             <span class="col-sm-4">
                                 <Slider
-                                    // value={value}
-                                    // onChange={handleChange}
                                     valueLabelDisplay="auto"
-                                // aria-labelledby="range-slider"
-                                // getAriaValueText={valuetext}
                                 />
                             </span>
 
@@ -74,11 +86,7 @@ const TestProfileSettings = () => {
                             </span>
                             <span class="col-sm-4">
                                 <Slider
-                                    // value={value}
-                                    // onChange={handleChange}
                                     valueLabelDisplay="auto"
-                                // aria-labelledby="range-slider"
-                                // getAriaValueText={valuetext}
                                 />
                             </span>
                         </div>
@@ -91,11 +99,7 @@ const TestProfileSettings = () => {
                             </span>
                             <span class="col-sm-4">
                                 <Slider
-                                    // value={value}
-                                    // onChange={handleChange}
                                     valueLabelDisplay="auto"
-                                // aria-labelledby="range-slider"
-                                // getAriaValueText={valuetext}
                                 />
                             </span>
 
@@ -110,11 +114,7 @@ const TestProfileSettings = () => {
                             </span>
                             <span class="col-sm-4">
                                 <Slider
-                                    // value={value}
-                                    // onChange={handleChange}
                                     valueLabelDisplay="auto"
-                                // aria-labelledby="range-slider"
-                                // getAriaValueText={valuetext}
                                 />
                             </span>
                         </div>
@@ -127,11 +127,7 @@ const TestProfileSettings = () => {
                             </span>
                             <span class="col-sm-4">
                                 <Slider
-                                    // value={value}
-                                    // onChange={handleChange}
                                     valueLabelDisplay="auto"
-                                // aria-labelledby="range-slider"
-                                // getAriaValueText={valuetext}
                                 />
                             </span>
                         </div>
@@ -147,12 +143,8 @@ const TestProfileSettings = () => {
                     </span>
                     <span class="col-sm-6">
                         <button
-                            // variant="contained"
-                            // type='submit'
-                            // onClick={projectSetupSubmit}
                             style={{ width: 100, height: 40, lineHeight: 1, borderRadius: 5, backgroundColor: '#fff', marginLeft: 80 }}
                         >
-                            {/* <Link to="/Dynamic">OK</Link> */}
                             Save & Restart
                         </button>
 
@@ -162,8 +154,6 @@ const TestProfileSettings = () => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                // checked={state.checkedB}
-                                // onChange={handleChange}
                                 name="checkedB"
                                 color="primary"
                             />
@@ -174,7 +164,6 @@ const TestProfileSettings = () => {
                     <div class="col-sm-12" style={{ textAlign: "center" }}>
                         <div style={{ marginBottom: 10 }}>
                             <FormControl component="fieldset" >
-                                {/* <FormLabel  labelPlacement="start"component="legend">Gender</FormLabel> */}
                                 <RadioGroup aria-label="quiz" name="quiz" style={{ display: "block" }} >
                                     <span>Decode Pligin:</span>
                                     <FormControlLabel value="CPU" control={<Radio color="primary" />} label="CPU" />

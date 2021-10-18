@@ -1,3 +1,24 @@
+/* Copyright (c) 2021 Intel Corporation.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import React, { useState } from 'react';
 import 'react-tabs/style/react-tabs.css';
 import Box from '@material-ui/core/Box';
@@ -24,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
     color:"#262626",
       '&:hover': {
         background:"#E9EAEB 0% 0% no-repeat padding-box",
-        // backgroundColor:"#004A86",
         border: "1px solid #2B2C30",
   }
   },
@@ -78,12 +98,6 @@ const [error,setError ] = useState({
               ...error,
               project_name:true,
           });
-          // setTimeout(()=>{
-          //   setError({
-          //     ...error,
-          //     project_name:false,
-          //    })
-          // },3000)
       
     }
 
@@ -161,7 +175,6 @@ const [error,setError ] = useState({
               control={<Radio  color="primary" onChange={getProjectList}/>}
               label='Open an existing project'
               className="openRadio width220"
-              // style={{borderTop:'1px solid #BBBBBB'}}
             />
             <div className="openDiv">
               <span>
@@ -177,7 +190,6 @@ const [error,setError ] = useState({
           <button    
             onClick={projectSetupSubmit}
             className={classes.butOk}
-            // style={{ borderRadius: 5, backgroundColor: '#fff',border:"1px solid #2B2C30",color:"#262626", position: 'relative', left: 350 }}
           >
             OK
           </button>

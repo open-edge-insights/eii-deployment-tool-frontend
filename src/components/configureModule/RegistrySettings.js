@@ -1,3 +1,24 @@
+/* Copyright (c) 2021 Intel Corporation.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
     },
     checkboxlabel: {
-        // border: "1px solid red",
         fontSize: 12
       }
 }));
@@ -63,8 +83,6 @@ export default function RegistrySettings() {
                 classes={{label:classes.checkboxlabel}}
                         control={
                             <Checkbox
-                                // checked={state.checkedB}
-                                // onChange={handleChange}
                                 name="checkedB"
                                 color="primary"
                             />
@@ -115,15 +133,6 @@ export default function RegistrySettings() {
                         </div>
                        
                     </div>
-                    {/* <button
-                        // variant="contained"
-                        // type='submit'
-                        // onClick={projectSetupSubmit}
-                        style={{ width: 100, height: 40, lineHeight: 1, borderRadius: 5, backgroundColor: '#fff', marginLeft: 80 }}
-                    >
-                        Save
-                    </button> */}
-
                 </FormGroup>
                 </div>
                 <div class="col-sm-7">             
@@ -147,14 +156,10 @@ export default function RegistrySettings() {
                        
                     </div>
                     <button
-                        // variant="contained"
-                        // type='submit'
-                        // onClick={projectSetupSubmit}
                         style={{ width: 70, height: 30, lineHeight: 1, borderRadius: 5, backgroundColor: '#fff', marginLeft: 80 ,fontSize:14}}
                     >
                         Save
                     </button>
-
                 </FormGroup>
                 </div>
             </div>
@@ -169,9 +174,6 @@ export default function RegistrySettings() {
                         <Box>
                  <p style={{ textAlign: 'center' }}>Registry</p>
                  <button
-                        // variant="contained"
-                        // type='submit'
-                        // onClick={projectSetupSubmit}
                         style={{ width: 70, height: 30, lineHeight: 1, borderRadius: 5, backgroundColor: '#fff', marginLeft: 80 ,fontSize:14}}
                     >
                         Start
@@ -207,8 +209,6 @@ export default function RegistrySettings() {
                             <span class="col-sm-6">
                                 <input type="text" id="pname" name="pname" style={{ width: 160, lineHeight: 1.7 }} />
                             </span>
-                           
-
                         </div>
                         <div class="row" style={{ marginBottom: 10 }}>
                             <span class="col-sm-4">
@@ -217,7 +217,6 @@ export default function RegistrySettings() {
                             <span class="col-sm-6">
                                 <input type="text" id="pname" name="pname" style={{ width: 160, lineHeight: 1.7 }} />
                             </span>
-                            
                         </div>
                         <div class="row" style={{ marginBottom: 10 }}>
                             <span class="col-sm-4">
@@ -226,25 +225,15 @@ export default function RegistrySettings() {
                             <span class="col-sm-6">
                                 <input type="text" id="pname" name="pname" style={{ width: 160, lineHeight: 1.7 }} />
                             </span>
-                           
-
                         </div>
-                        
-                       
                     </div>
                     <div>
                     <button
-                        // variant="contained"
-                        // type='submit'
-                        // onClick={projectSetupSubmit}
                         style={{ width: 100, height: 40, lineHeight: 1, borderRadius: 5, backgroundColor: '#fff',fontSize:12,marginLeft:40,marginRight:40 }}
                     >
                         Deploy Another
                     </button>
                     <button
-                        // variant="contained"
-                        // type='submit'
-                        // onClick={projectSetupSubmit}
                         style={{ width: 100, height: 40, lineHeight: 1, borderRadius: 5, backgroundColor: '#fff', fontSize:12 }}
                     >
                         Deploy
