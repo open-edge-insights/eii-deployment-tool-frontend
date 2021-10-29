@@ -1,3 +1,24 @@
+/* Copyright (c) 2021 Intel Corporation.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import React, { createRef } from 'react';
 import './ConfigForm.css';
 import _ from 'lodash';
@@ -55,7 +76,6 @@ export default function ConfigForm(props) {
     o_cfg = DB;
     var html = [];
 
-    // var cfg_copy = DB; // JSON.parse(JSON.stringify(o_cfg));
     var cfg_copy = JSON.parse(JSON.stringify(o_cfg));
     var config = processDict(cfg_copy.config);
   
@@ -118,24 +138,6 @@ export default function ConfigForm(props) {
     }
   }
 
-
-  // add a select option
-
-  // function AddInSelectObject(obj, prop, newValue) {
-  //   var a = prop.split('.');
-
-  //   a = _.map(a, (e) => {
-  //     return e.split('_')[0];
-  //   });
-
-  //   return (function f(o, v, i) {
-  //     if (i == a.length - 1) {
-  //       o[a[i]].push(JSON.parse(v));
-  //       return o;
-  //     }
-  //     return f(o[a[i]], v, ++i);
-  //   })(obj, newValue, 0);
-  // }
 
   const _AddInSelect = (withKey, value) => {
     var result = AddInSelectObject(DB, withKey, value);
@@ -202,7 +204,6 @@ export default function ConfigForm(props) {
     console.log({ id, key: removeNo(key), sel, withKey });
 
     if (n > 1) {
-      // create new option element
       var opt = document.createElement('option');
       let exist = true;
       let str = null;
@@ -501,29 +502,23 @@ export default function ConfigForm(props) {
 
   const openTab = (tabs, evt = null) => {
   
-    // Declare all variables
     var i, tabcontent, tablinks;
 
-    // Get all elements with className="tabcontent" and hide them
     tabcontent = document.getElementsByClassName('tabcontent');
     for (i = 0; i < tabcontent.length; i++) {
       tabcontent[i].style.display = 'none';
     }
 
-    // Show the current tab, and add an "active" className to the button that opened the tab
     if (Array.isArray(tabs)) {
       for (let i = 0; i < tabs.length; i++) {
         var tabId = tabs[i];
       
         if (document.getElementById(tabId)) document.getElementById(tabId).style.display = 'block';
-        //    document.getElementById(tabId).className += " active";
       }
     } else {
       document.getElementById(tabs).style.display = 'block';
-      //    document.getElementById(tabs).className += " active";
     }
     if (evt) {
-      // Get all elements with className="tablinks" and remove the className "active"
       tablinks = document.getElementsByClassName('tablinks');
       for (i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(' active', '');
@@ -541,20 +536,7 @@ export default function ConfigForm(props) {
       {main_title} Configuration
     </DialogTitle>
     <DialogContent>
-      {/* <form> */}
-        {/* <TextareaAutosize
-          autoFocus
-          rows="20"
-          cols="60"
-          // margin="dense"
-          id="config.js.data"
-          // label="Size"
-          type="textarea"
-          defaultValue={JSON.stringify({ "config": currentSelectedComp.config, "interfaces": currentSelectedComp.interfaces }, undefined, 4)}
-        //fullWidth
-        ></TextareaAutosize> */}
           <div>{generate()}</div>
-      {/* </form> */}
     </DialogContent>
     <DialogActions>
       <Button onClick={onConfigCancel} color="primary">
