@@ -20,21 +20,14 @@
  */
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import './AddTab.css';
-import TabPanel from './TabPanel';
 import { connect } from 'react-redux';
 import ComponentsLayout from './ComponentsLayout';
-import ComponentSettings from './ComponentSettings'
-import Video from './Video';
-import localforage from 'localforage';
 import "./DynamicTabs.css";
+import Paper from "@material-ui/core/Paper";
+
 
 
 function a11yProps(index) {
@@ -68,25 +61,18 @@ export function DynamicTabs(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  for (let index = 0; index < props?.projectSetup?.noOfStreams; index++) {
-    tabsHeader.push(
-      <Tab
-        className="border borderRadius"
-        label={`Data Stream #${index + 1}`}
-        {...a11yProps(index)}
-      />
-    );
-  }
+ 
+  console.log("props?.projectSetup?.noOfStreams",props?.projectSetup?.noOfStreams)
 
-  for (let index = 0; index < props?.projectSetup?.noOfStreams; index++) {
+  if (0 < props?.projectSetup?.noOfStreams) {
     tabsContaner.push(
-      <TabPanel key={index} value={value} index={index}>
-        <div
+        <Paper
            className='row col-sm-12 tabpan'
           
         >
           <ComponentsLayout name={props.appName}
             className='col-sm-6'
+     
            >
             <Box>
               <p className="textAlignCenter">Components Layout</p>
@@ -98,18 +84,13 @@ export function DynamicTabs(props) {
               </button>
             </Box>
           </ComponentsLayout>
-        </div>
-      </TabPanel>
+         
+        </Paper>
     );
   }
   return (
     <div className={classes.root}>
-      <Tabs value={value} onChange={handleChange}
-        variant="scrollable"
-        scrollButtons="on"
-        indicatorColor="primary">
-        {tabsHeader}
-      </Tabs>
+
 
       {tabsContaner}
     </div>
@@ -129,3 +110,4 @@ const mapStateToProps = (state) => {
 
 
 export default connect(mapStateToProps, null)(DynamicTabs);
+

@@ -18,7 +18,7 @@
 }
 .positionrel{
     position: relative !important;
-    left:12px !important;
+    left:0px !important;
     padding:10px !important;
     border-radius: 5px !important;
 

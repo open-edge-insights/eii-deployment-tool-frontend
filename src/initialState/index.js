@@ -19,6 +19,7 @@
  * SOFTWARE.
  */
 
+
 export const initialState = {
   projectSetup: {
     isCreateProject: false,
@@ -34,7 +35,9 @@ export const initialState = {
   },
   existProjects: [],
   projects: [],
+  
   componentsInitialState:  {
+    data_stream_id:undefined,
     selectedIndex: undefined,
     selectedComponents: {   provisioned: false,
                             needReProvision: false,
@@ -44,6 +47,7 @@ export const initialState = {
                             params: [], 
                             nodes: [],
                             currentComponent: null,
+                          
                         },
     components:[
         {
@@ -60,18 +64,27 @@ export const initialState = {
             dirName:"VideoAnalytics",
             containerName: "ia_video_analytics"
         },
+      
         {
             type:'output',
             appName:"WebVisualizer",
             dirName:"WebVisualizer",
             containerName: "ia_web_visualizer"
-        }
+        },
+   
     ],   
     
-},
+   },
+
+componentsStateData:[],
 getData:{
     appName:'',
     appNameleft:'',
     isOpen:false,
-}   
+}   ,
+buildResponse:{
+    data:[],
+    status:false,
+    other:[]
+}
 };

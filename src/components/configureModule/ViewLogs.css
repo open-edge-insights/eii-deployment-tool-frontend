@@ -1,0 +1,47 @@
+ 
+.dialogBody {
+    width: 100%;
+}
+.logText {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  padding: 5%;
+  text-align: justify;
+  font-family: Consolas;
+}
+.closeDialog {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.8;
+  position: relative;
+  min-width: 70px;
+  border-radius: 2px;
+  font-size: 14px;
+  white-space: normal;
+  color: #fff;
+  background-color: #0068b5;
+  border: medium solid transparent;
+  -webkit-appearance: button;
+  cursor: pointer;
+  border-width: 0;
+  padding: 0.3em 4em;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: auto;
+  margin-bottom: 5% ;
+  cursor: pointer;
+}
+.closeDialogDiv {
+    display: flex;
+    justify-content: right;
+    padding-right: 5%;
+    padding-left: 5%;
+}
+.dialogTitle {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: capitalize;
+    padding-left: 5%;
+    padding-top: 5%;
+    color: #0068b5;
+}

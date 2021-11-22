@@ -22,7 +22,7 @@ version: '3.6'
 
 services:
   ## Define deployment-tool-frontend service
-  ia_deployment_tool_frontend:
+  deployment_tool_frontend:
     build:
       context: $PWD
       dockerfile: $PWD/Dockerfile
@@ -33,9 +33,9 @@ services:
         CMAKE_INSTALL_PREFIX: ${EII_INSTALL_PATH}
         UBUNTU_IMAGE_VERSION: ${UBUNTU_IMAGE_VERSION}
     read_only: true
-    image: ia_deployment_tool_frontend:${EII_VERSION}
-    container_name: ia_deployment_tool_frontend
-    hostname: ia_deployment_tool_frontend
+    image: deployment_tool_frontend:${EII_VERSION}
+    container_name: deployment_tool_frontend
+    hostname: deployment_tool_frontend
     restart: unless-stopped
     ipc: "none"
     security_opt:
@@ -44,14 +44,14 @@ services:
       test: ["CMD-SHELL", "exit", "0"]
       interval: 5m
     environment:
-      AppName: "deployment-tool-frontend"
-      DEV_MODE: ${DEV_MODE}
+      AppName: "DeploymentToolFrontend"
+      dev_mode: "false"
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eii_no_proxy},ia_deployment_tool_backend
-      NO_PROXY: ${eii_no_proxy},ia_deployment_tool_backend
+      no_proxy: ${eii_no_proxy},deployment_tool_backend
+      NO_PROXY: ${eii_no_proxy},deployment_tool_backend
       CertType: "zmq,pem"
       DEPLOYMENT_TOOL_BACKEND_PORT: 5100
-      DEPLOYMENT_TOOL_BACKEND_HOST: ia_deployment_tool_backend
+      DEPLOYMENT_TOOL_BACKEND_HOST: deployment_tool_backend
       PORT: 3100
     ports:
       - 3100:3100
@@ -59,7 +59,15 @@ services:
       - vol_dep_tool_fe_data:/app
       - /home/$EII_USER_NAME
       - /tmp:/tmp
-
+    networks:
+      - eii
+    secrets:
+      - cert
+      - key
+networks:
+  eii:
+    external:
+      name: eii
 
 volumes:
   vol_dep_tool_fe_data:
@@ -68,3 +76,8 @@ volumes:
       type: local
       o: bind
       device: ${EII_INSTALL_PATH}/tools_output/deployment-tool-fe/
+secrets:
+  cert:
+    file: certificates/server_cert.pem
+  key:
+    file: certificates/server_key.pem

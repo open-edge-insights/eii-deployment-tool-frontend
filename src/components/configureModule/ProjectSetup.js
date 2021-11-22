@@ -28,45 +28,39 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import './AddTab.css';
 import { connect } from 'react-redux';
-import "./ProjectSetup.css";
-import { CallMissedSharp } from '@material-ui/icons';
+import './ProjectSetup.css';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
-   butOk:{
+  butOk: {
     width: 100,
     height: 40,
-    background: "#fff 0% 0% no-repeat padding-box",
-    border: "1px solid #2B2C30",
-    borderRadius:5,
-    position: 'relative', 
+    background: '#fff 0% 0% no-repeat padding-box',
+    border: '1px solid #2B2C30',
+    borderRadius: 5,
+    position: 'relative',
     left: 350,
-    color:"#262626",
-      '&:hover': {
-        background:"#E9EAEB 0% 0% no-repeat padding-box",
-        border: "1px solid #2B2C30",
-  }
+    color: '#262626',
+    '&:hover': {
+      background: '#E9EAEB 0% 0% no-repeat padding-box',
+      border: '1px solid #2B2C30',
+    },
   },
-  
-  borGrey:{
-    border: "1px solid #C9CACE !important",
-  },
-  RadioGroup:{
-    '&$checked': {
-      color: '#0068B5',
-    }
-  },
-  checked: {}
-}));
 
+  borGrey: {
+    border: '1px solid #C9CACE !important',
+  },
+ 
+}));
 
 const ProjectSetup = (props) => {
   const classes = useStyles();
-const [projectList,setProjectList ] = useState([])
-const [error,setError ] = useState({
-    project_name:false,
-})
+  const [projectList, setProjectList] = useState([]);
+  const [newProject, setNewProject] = useState([]);
+  const [error, setError] = useState({
+    project_name: false,
+  });
 
   const [state, setState] = useState({
     isCreateProject: false,
@@ -74,85 +68,155 @@ const [error,setError ] = useState({
     projectName: '',
     projectLocation: '',
     existingProjectLocation: '',
+    openProjectName: '',
   });
 
   const onChangeHandle = (e, type) => {
     let currentState = { ...state },
       value = '';
-    if (e && e.target && e.target.value !== undefined){ 
-        value = e.target.value
-         sendProjectName(value)
-    };
+    if (e && e.target && e.target.value !== undefined) {
+      value = e.target.value;
+      //sendProjectName(value);
+    }
     currentState[type] = value;
     setState(currentState);
     console.log('1', currentState);
     console.log(currentState);
-    
+  };
+
+  const onChangeHandleProject = (e, type) => {
+    let currentState = { ...state },
+      value = '';
+    if (e && e.target && e.target.value !== undefined) {
+      value = e.target.value;
+      
+    }
+    currentState[type] = value;
+    setState(currentState);
+    console.log('1', currentState);
+    console.log(currentState);
   };
 
   const projectSetupSubmit = () => {
-    if(state.projectName.trim() != ''){
-      props.updateProjectInfo({ ...state },props.getStateVal);
-    }else{
-          setError({
-              ...error,
-              project_name:true,
-          });
-      
-    }
+    if (state.projectName.trim() != '' || state.openProjectName) {
+      props.updateProjectInfo({ ...state }, props.getStateVal);
+            sendProjectName(state.projectName);
 
+    } else {
+      setError({
+        ...error,
+        project_name: true,
+      });
+     
+    }
   };
 
-  const getProjectList = (event)=>{
+  const getProjectList = (event) => {
     axios.get('/eii/ui/project/list')
-    .then((e)=>{
-       console.log(e);
-      setProjectList(JSON.parse(e?.data?.data) || []);
-    }).catch((e)=>{
-         console.log(e);
-    }) 
-  }
+   
+      .then((e) => {
+      
+        var data = [];
+        if (e?.data?.data) {
+          data = JSON.parse(e?.data?.data);
+          
+        }
+        console.log('project_names', data);
+        setProjectList(data || []);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    
+  };
 
-  const  sendProjectName = (value)=>{
-    axios.post('/eii/ui/project/store',{"name": value})
-    .then((e)=>{
-         console.log(e)
-    }).catch((e)=>{
-         console.log({e});
-    }) 
-  }
+  const sendProjectName = (value) => {
+    axios
+      .post('eii/ui/project/store', { name: value })
+      .then((e) => {
+        console.log(e);
+      })
+      .catch((e) => {
+        console.log({ e });
+      });
+  };
+  const sendProjectNamedetails = (value) => {
+    console.log('load project details');
+    axios
+      .post('eii/ui/project/load', { name: value })
+      .then((e) => {
+        console.log(e);
+      })
+      .catch((e) => {
+        console.log({ e });
+      });
+  };
+  const handelRadioButton = (e) => {
+    let currentState = { ...state };
+    currentState['projectName'] = '';
+    if (e.target.value.toLocaleLowerCase() == 'new') {
+      
+      currentState['isCreateProject'] = true;
+
+      setState(currentState);
+      setError({
+        ...error,
+        project_name: false,
+      });
+      setProjectList([]);
+    } else {
+      getProjectList(e);
+      currentState['isCreateProject'] = false;
+      setState(currentState);
+    }
+
+    console.log('1', currentState);
+  };
   return (
-    <div className="marTop50">
-      <Box className="boxSetting"
+    <div>
+      <Box
+        className='boxSetting'
         sx={{
           bgcolor: '#F5F5F5',
           margin: '0 auto',
-          border:'1px solid #F5F5F5',
-   
+          border: '1px solid #F5F5F5',
         }}
       >
-        <FormControl className="forWidth" component='fieldset'>
-          <RadioGroup aria-label='projecSelect' name='projecSelect' 
-          classes={{root: classes.RadioGroup, checked: classes.checked}}>
-            <FormControlLabel value='New' className="width220" control={<Radio color="primary" />} label='Create a new project' ></FormControlLabel>
-            <div className="formFirstWidth">
+        <FormControl className='forWidth' component='fieldset'>
+          <RadioGroup
+            aria-label='projecSelect'
+            name='projecSelect'
+            classes={{ root: classes.RadioGroup, checked: classes.checked }}
+          >
+            <FormControlLabel
+              value='New'
+              className='width220'
+              control={<Radio color='primary' onChange={handelRadioButton} />}
+              label='Create a new project'
+            ></FormControlLabel>
+            <div className='formFirstWidth'>
               <span>
-                <label for='fname' className="padLeft15">Project name:</label>
+                <label for='fname' className='padLeft15'>
+                  Project name:
+                </label>
                 <input
                   type='text'
-                  placeholder="Project name"
+                  placeholder='Project name'
                   onBlur={(e) => onChangeHandle(e, 'projectName')}
                   id='pname'
                   name='pname'
-                  className={error.project_name && "input_error"}
+                  className={error.project_name && state.isCreateProject && 'input_error'}
                 />
               </span>
             </div>
-          
-            <div className="formSecondWidth">
+
+            <div className='formSecondWidth'>
               <span>
-                <label className="padLeft15" for='fname'>Number of data streams for your project:</label>
-                <select className="createSelect"
+                <label className='padLeft15' for='fname'>
+                  Number of data streams for your projects:
+                </label>
+                <select
+                  className='createSelect'
                   value={state.noOfStreams}
                   onChange={(e) => onChangeHandle(e, 'noOfStreams')}
                 >
@@ -164,7 +228,6 @@ const [error,setError ] = useState({
                   <option value='5'>5</option>
 
                   <option value='6'>6</option>
-
                 </select>
               </span>
             </div>
@@ -172,22 +235,26 @@ const [error,setError ] = useState({
 
             <FormControlLabel
               value='Open'
-              control={<Radio  color="primary" onChange={getProjectList}/>}
-              label='Open an existing project'
-              className="openRadio width220"
+              control={<Radio color='primary' onChange={handelRadioButton} />}
+              label='Open a existing project'
+              className='openRadio width220'
             />
-            <div className="openDiv">
+            <div className='openDiv'>
               <span>
-                <select  className="openSelect">
-                  <option value='1'>Select Project</option>
-                  {projectList.map((el,index)=>{
-                      return ( <option key={index} value={el}>{el}</option>);
+                <select className='openSelect' onChange={(e) => onChangeHandleProject(e, 'projectName')}>
+                  <option>Select Project</option>
+                  {projectList.map((el, index) => {
+                    return (
+                      <option key={index} value={el}>
+                        {el}
+                      </option>
+                    );
                   })}
                 </select>
               </span>
             </div>
           </RadioGroup>
-          <button    
+          <button
             onClick={projectSetupSubmit}
             className={classes.butOk}
           >
@@ -206,19 +273,20 @@ const mapStateToProps = (state) => {
     projectName: '',
     projectLocation: '',
     existingProjectLocation: '',
-    getStateVal : state,
+    getStateVal: state,
   };
 };
 const mapDispatchToProps = (dispatch) => {
-  console.log("checking tab value:",dispatch);
+  console.log('checking tab value:', dispatch);
   return {
     onTabValue: () => dispatch({ type: 'ON_TABVALUE' }),
-    updateProjectInfo: (projectData,curState) => {
-      console.log("curState1:", curState);
-      dispatch({ type: 'UPDATE_PROJECT_INFO', value:projectData });
+    updateProjectInfo: (projectData, curState) => {
+      console.log('curState1:', curState);
+      dispatch({ type: 'UPDATE_PROJECT_INFO', value: projectData });
     },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectSetup);
+
 

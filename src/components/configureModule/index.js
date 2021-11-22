@@ -19,63 +19,75 @@
  * SOFTWARE.
  */
 
-import React,{useEffect} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import AddTab from './AddTab';
 import ComponentList from './ComponentList';
 import ConfigBuild from './ConfigBuild';
 import DynamicTabs from './DynamicTabs';
-import ComponentsLayout from './ComponentsLayout'
 import { useState } from 'react';
 import { connect } from 'react-redux';
-import SplashScreen from './SplashScreen';
-import Dialog from '@material-ui/core/Dialog';
+
+const styles = {
+  Paper: {
+    marginTop: 10,
+    marginBottom: 10,
+    height: 630,
+    overflowY: "auto",
+  },
+};
 
 
-const styles = (theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-});
+
 
 const Configure = (props) => {
   const [state, setState] = useState(true);
   const [name, setName] = useState();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => setOpen(true);
 
 
+
+  
   const { isCreateProject } = props;
   const setTabValues = () => {
+   
+
     props.setSelectedTab({ ...state });
   };
  
 
   return (
-    <div>
+    <div style={{ padding: 0 }}>
    
       <p style={{ textAlign: 'center' }}>
         Create or select a project, import your code, then configure your data streams.
       </p>
 
-      <div class='container fluid'>
-        <div class='row'>
-          <div class='col-sm-2' style={{ padding: 0 }}>
+      <div className='container-fluid'>
+        <div className='row'>
+          <div className='col-sm-2' style={{ padding: 0}}>
             <ComponentList setName={setName} />
           </div>
-          <div class='col-sm-7'>
+          <div className='col-sm-7' style={{ padding: 0 }}>
             <AddTab isCreateProject={isCreateProject} />
+           
             <DynamicTabs />
+         
           </div>
-          <div class='col-sm-3'>
+         
+         <div className='col-sm-3' style={{ padding: 0,margintop:70 }}>
             <ConfigBuild />
           </div>
+        
+         
         </div>
+
+        
+       
       </div>
+     
     </div>
   );
 };
@@ -89,15 +101,18 @@ const mapStateToProps = (state) => {
   return {
     tab: state.tab,
     createProjectLayout: state.ConfigBuildReduce,
+    noOfStreams: state?.ConfigureBuildReducer?.projectSetup?.noOfStreams,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
+  
     setSelectedTab: (projectData) => {
       console.log("Project data:", projectData)
       dispatch({ type: "ON_SELECTED_TAB", projectData });
     }
   };
 };
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Configure);

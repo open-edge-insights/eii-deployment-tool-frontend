@@ -1,10 +1,69 @@
-.thumb{
-    width: 5rem;
-    height: 2rem;
-    display:inline-flex;
-    background-color: grey;
+.thumb {
+  width: 5rem;
+  height: 2rem;
+  display: inline-flex;
+  background-color: grey;
 }
-.positionSet{
-    margin-top:35px;
-    position: relative;
+.positionSet {
+  margin-top: 35px;
+  position: relative;
+}
+.root {
+  padding: 5px;
+  font-size: 13px;
+  border: 1px solid #707070;
+  border-radius: 2px;
+  position: relative;
+}
+.root1 {
+  margin-top: 580px;
+  padding: 15px;
+  font-size: 13px;
+  border: 1px solid #707070;
+  border-radius: 2px;
+}
+.startConfig {
+  display: flex;
+  justify-content: center;
+}
+.startConfigButton {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.42857143;
+  position: relative;
+  border-radius: 2px;
+  font-size: 14px;
+  white-space: normal;
+  color: #fff;
+  background-color: #0068b5;
+  border: medium solid transparent;
+  cursor: pointer;
+  border-width: 0;
+  padding: 5px 40px 5px 40px;
+}
+.progressBarConfig {
+  background-color: #0068b5 !important;
+}
+.viewButton {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.42857143;
+  position: relative;
+  min-width: 60px;
+  border-radius: 2px;
+  font-size: 12px;
+  white-space: normal;
+  color: #fff;
+  background-color: #0068b5;;
+  border: medium solid transparent;
+  cursor: pointer;
+  border-width: 0;
+  height: 25px;
+
+}
+.titleStyle {
+    font-weight: bold;
+    font-size: 14px;
 }

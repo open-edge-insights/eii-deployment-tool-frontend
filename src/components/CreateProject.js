@@ -73,7 +73,7 @@ function a11yProps(index) {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
   },
   header:{
     color: "#FFFFFF", 
@@ -142,7 +142,7 @@ const CreateProject = (props) => {
           <Configure />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-
+     
           <Test />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
@@ -150,26 +150,29 @@ const CreateProject = (props) => {
         </TabPanel>
       </SwipeableViews>
       <div className='row' style={{ marginTop: 20 }}>
-        <div className='col-sm-8'></div>
-        <div className='col-sm-4'>
-          {props.currentTabCount > 0 && <button
+        <div className='col-sm-9'></div>
+        <div className='col-sm-3'>
+          {/* {  props.projectSetup.noOfStreams<0} */}
+          { props.currentTabCount > 0 && props.projectSetup.noOfStreams!==0 &&<button
             onClick={() => props.setTabValues(props.currentTabCount - 1)}
-            style={{ width: 150, height: 30, borderRadius: 5, backgroundColor: '#fff', float: 'Right' }}
+            style={{ width: 135, height: 30, borderRadius: 5, backgroundColor: '#fff', float: 'Right' }}
           >
             Back
           </button>}
 
-          {props.currentTabCount < 2 &&
+          {props.currentTabCount < 2 && props.projectSetup.noOfStreams!==0 &&
             <button
               onClick={() => props.setTabValues(props.currentTabCount + 1)}
-              style={{ width: 150, height: 30, borderRadius: 5, backgroundColor: '#fff', float: 'Right' }}
+              style={{ width: 135, height: 30, borderRadius: 5, backgroundColor: '#fff', float: 'Right' }}
             >
               Next
             </button>
           }
-          <button style={{ width: 150, height: 30, borderRadius: 5, backgroundColor: '#fff' }}>
+          {props.projectSetup.noOfStreams!==0 &&
+          <button style={{ width: 135, height: 30, borderRadius: 5, backgroundColor: '#fff' }}>
             Cancel
           </button>
+        }
         </div>
       </div>
     </div>
@@ -193,5 +196,8 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 
+
 export default connect(mapStateToProps, mapDispatchToProps)(CreateProject);
+
+
 

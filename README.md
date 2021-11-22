@@ -8,7 +8,13 @@
 
 ## Configuration
 
-  * The frontend server will run on the port defined at the env variable PORT in docker-compose.yml
+  * The frontend server will run on the port defined at the env variable PORT in docker-compose.yml. 
+  * The frontend server will run in dev mode (http/insecure) or prod mode (https/secure) depending on the env variable 'dev_mode' in docker-compose.yml.
+    By default prod mode is enabled.
+
+    ```
+    dev_mode: "false"
+    ```
 
 ## Running the tool
 
@@ -57,5 +63,16 @@
       ```shell
       $ ./run.sh -d
       ```
-      
+    * **Launching the UI:**
 
+        To launch the UI, open your browser and navigate to http(s)://\<host-ip\>:\<host-port\>
+
+        For e.g.
+        ```
+        https://127.0.0.1:3100
+        ```
+        when in prod mode, or
+        ```
+        http://127.0.0.1:3100
+        ```
+        when in dev mode.

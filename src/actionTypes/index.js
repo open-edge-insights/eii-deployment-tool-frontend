@@ -33,3 +33,4 @@ UPDATE_APP_NAME:"UPDATE_APP_NAME"
 
 
 export default ActionType;
+

@@ -19,24 +19,22 @@
  * SOFTWARE.
  */
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+import React from "react";
+import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core/styles";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import { update } from "lodash";
+import { useState, useRef, useEffect } from "react";
 
 function LinearProgressWithLabel(props) {
   return (
     <Box display="flex" alignItems="center">
       <Box width="100%" mr={1}>
-        <LinearProgress variant="determinate" value={50} {...props} />
+        <LinearProgress variant="determinate" value={0} {...props} />
       </Box>
-      <Box minWidth={35}>
-        <Typography variant="body2" color="textSecondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </Box>
+      <Box minWidth={35}></Box>
     </Box>
   );
 }
@@ -51,18 +49,23 @@ LinearProgressWithLabel.propTypes = {
 
 const useStyles = makeStyles({
   root: {
-    width: '100%',
+    width: "100%",
   },
 });
 
-export default function LinearWithValueLabel() {
+export default function LinearWithValueLabel(props) {
+  const [progress, setProgress] = useState(0);
   const classes = useStyles();
-  const [progress, setProgress] = React.useState(10);
-
-
+  React.useEffect(() => {
+    if (props.value != undefined) {
+      setProgress((prevProgress) =>
+        prevProgress != props.value ? props.value : 0
+      );
+    }
+  }, [props.value]);
   return (
-    <div className={classes.root}>
+    <Box sx={{ width: "100%" }}>
       <LinearProgressWithLabel value={progress} />
-    </div>
+    </Box>
   );
 }
