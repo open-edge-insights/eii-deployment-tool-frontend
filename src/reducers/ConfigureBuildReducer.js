@@ -19,9 +19,9 @@
  * SOFTWARE.
  */
 
-import { combineReducers } from 'redux';
 import { initialState } from '../initialState';
 import ActionType from '../actionTypes';
+import _ from 'lodash';
 
 export default function ConfigureBuildReducer(state = initialState, action) {
   const newState = { ...state };
@@ -32,8 +32,9 @@ export default function ConfigureBuildReducer(state = initialState, action) {
         ...state,
         createProjectLayout: false,
       };
-    
+  
     case ActionType.UPDATE_PROJECT_INFO: {
+   
       return {
         ...state,
         projectSetup: {
@@ -50,6 +51,7 @@ export default function ConfigureBuildReducer(state = initialState, action) {
         projectSetup:{
           ...action.projectSetup,
           tabCount:action.value,
+       
         }
       }
     }
@@ -62,24 +64,45 @@ export default function ConfigureBuildReducer(state = initialState, action) {
         }
       }
     }
-    
+    case ActionType.UPDATE_APP_NAME: {
+      console.log("Update:",action.value);
+      return {
+        ...state,
+        getData: {
+          ...state.getData,
+          appName:action.value
+        },
+      };
+    }
     case ActionType.UPDATE_MAIN_OBJECT: {
-      console.log("Update main object1213:",action.value);
+   
+      
       var obj = {
         ...state,
+    
         componentsInitialState: {
-          ...state.componentsInitialState,
-         ... action.value
+            ...state.componentsInitialState,
+            ...action.value
           }
       };
-      console.log("obj",obj)
+    
       return{
          ...obj,
         };
     } 
-  
+    case ActionType.UPDATE_CONFIG_OBJECT:{
+                  let currentData = {...state};
+                  console.log("action.response:",action.response);
+                  currentData.selectedComponents=action.response;
+                  console.log("action.response selected:",currentData.selectedComponents);
+      
+                  return currentData.selectedComponents;
+              }
     default:
       console.log("actionss:", state);
       return newState;
   }
+
+
 }
+

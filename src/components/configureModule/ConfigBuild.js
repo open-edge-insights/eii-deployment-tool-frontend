@@ -19,93 +19,259 @@
  * SOFTWARE.
  */
 
-import React, { useState, useEffect } from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import LinearWithValueLabel from './LinearProgress';
-import Box from '@material-ui/core/Box';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import LinearWithValueLabel from "./LinearProgress";
+import { connect } from "react-redux";
 import "./ConfigBuild.css";
+import { makeStyles } from "@material-ui/core/styles";
+import _ from "lodash";
+import {
+  startProvisioning,
+  getStatusPercentage,
+  buildContainer,
+} from "./configureAndBuildAction";
+import { Report } from "@material-ui/icons";
+import ViewLogs from "./ViewLogs";
 
-
-
+const useStyles = makeStyles((theme) => ({
+  divPos: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    background: "rgba(0,0,0,0.1)",
+    padding: 20,
+    cursor: "not-allowed",
+    border: "1px solid #C9CACE",
+  },
+  texCenter: {
+    textAlign: "center",
+  },
+  // button: {
+  //   "&:hover": {
+  //     background: "#030e1642",
+  //     color: "black",
+  //     padding: "5px 40px 5px 40px",
+  //   },
+  // },
+  divSpec: {
+    width: "100%",
+    fontSize: 13,
+    marginTop: 20,
+    marginRight: 0,
+    display: "flex",
+  },
+  nameFloat: {
+    float: "left",
+    width: 126,
+  },
+  progressFloaat: {
+    width: 160,
+    padding: 0,
+    marginTop: "10px",
+  },
+}));
 
 const ConfigBuild = (props) => {
-    useEffect(() => {
-        console.log("check thumbnail value", props);
-    },[]);
-    const thumb = [];
+  const classes = useStyles();
+  const [ProvisionProgressPercentage, setProvisionProgress] = useState(0);
+  const [BuildProgressPercentage, setBuildProgress] = useState(0);
+  const [ProvisionStatusText, setProvisioningText] = useState("");
+  const [BuildStatusText, setBuildStatusText] = useState("");
+  const [disableStartButton, setStartButtonEnabledOrDisabled] = useState(false);
+  const [enableProvisionView, setProvisionViewFlag] = useState(false);
+  const [enableBuildView, setBuildViewFlag] = useState(false);
+  const [ViewProcessLogs, setViewLogs] = useState("");
+  const [openViewLogDialog, setViewLogsDialog] = useState(false);
+  let promiseResolve;
+  let promiseReject;
 
-    console.log("check thumbnail value", props);
+  useEffect((props) => {}, []);
+  /* Mayanka: Starting the provisioning & build process respectively*/
+  const startProvisionProcessAndBuild = () => {
+    setStartButtonEnabledOrDisabled(true);
+    let progressPercentage = 0;
+    let ProcessName = "provisioning";
+    /* Mayanka: Calling the provisioning api first */
+    startProvisioning().then((response) => {
+      if (response?.status == 200) {
+        setProvisioningText("Started");
+        let prom = new Promise((res, rej) => {
+          promiseResolve = res;
+          promiseReject = rej;
+          getStatus(ProcessName, promiseResolve, promiseReject);
+        });
+        prom
+          .then(() => {
+            /* Mayanka: Calling build api after provisioning is complete */
+            buildContainer().then((buildResponse) => {
+              setBuildViewFlag(true);
+              let response = buildResponse?.data;
+              response = JSON.stringify(response);
+              if (response.status != "Failed") {
+                setBuildStatusText("Started");
+                setStartButtonEnabledOrDisabled(true);
+                setBuildProgress(0);
+                getStatus("build", promiseResolve, promiseReject);
+              }
+            });
+          })
+          .catch((error) => {});
 
-    for (let index = 0; index < props?.projectSetup?.noOfStreams; index++) {
+        /* Mayanka: Calling the status api after success */
+      } else if (response?.status == 200) {
+        setProvisioningText("Error");
+        setProvisionViewFlag(true);
+        setStartButtonEnabledOrDisabled(false);
 
-        thumb.push(
-            <Box m={1} p={0.8} className="thumb" 
-                key={index} index={index}
-            >
+      }
+    });
+  };
+  /* Mayanka: To get the update of progress percent call status api every 5 seconds */
+  const getStatus = (processName, res, rej) => {
+    let ProcessName = processName;
+    let progressPercentage = 0;
+    const interval = setInterval(
+      () =>
+        getStatusPercentage().then((response) => {
+          if (response) {
+            ProcessName.includes("provision")
+              ? setProvisioningText("In Progress")
+              : setBuildStatusText("In Progress");
 
-            </Box>)
-    }
-    const isActive = props?.projectSetup?.noOfStreams >= 0;
-    return (
-        <div style={{ marginTop: 35,position:"relative",padding:5,fontSize:13 }}>
-           {isActive &&  <div style={{position:"absolute",top:0,bottom:0,left:0,right: "-32px",background:"rgba(0,0,0,0.1)",padding:20,cursor:"not-allowed",border: "1px solid grey"}}></div> }
-            <p style={{ textAlign: "center" }}>Configure & Build</p>
-            <div style={{ textAlign: "center" }}>
-                <button disabled={isActive} type="submit" style={{ width: 100, height: 30, borderRadius: 5, backgroundColor: "#fff" }}>Start</button>
-            </div>
-            <div class="row" style={{ width: "100%", fontSize: 13, marginTop: 20, marginRight: 0 }}>
-                <div style={{ float: 'left', width: 110 }}>
-                    <p>Services & Communications</p>
-                </div>
-                <div style={{ float: 'left', width: 130, padding: 0 }}>
-                    <LinearWithValueLabel />
-                </div>
-                <div style={{ float: 'left', width: 5, padding: 0 }}>
-                    <button disabled={isActive} type="submit" style={{ width: 50, height: 30, borderRadius: 5, backgroundColor: "#fff" }}>View</button>
-                </div>
-            </div>
-            <div class="row" style={{ width: "100%", fontSize: 13, marginTop: 20, marginRight: 0 }}>
-                <div style={{ float: 'left', width: 110 }}>
-                    <p>State & Metadata:</p>
-                </div>
-                <div style={{ float: 'left', width: 130, padding: 0 }}>
-                    <LinearWithValueLabel />
-                </div>
-                <div style={{ float: 'left', width: 5, padding: 0 }}>
-                    <button type="submit" disabled={isActive} style={{ width: 50, height: 30, borderRadius: 5, backgroundColor: "#fff" }}>View</button>
-                </div>
-            </div>
-            <div class="row" style={{ width: "100%", fontSize: 13, marginTop: 20, marginRight: 0 }}>
-                <div style={{ float: 'left', width: 110 }}>
-                    <p>Containers</p>
-                </div>
-                <div style={{ float: 'left', width: 130, padding: 0 }}>
-                    <LinearWithValueLabel />
-                </div>
-                <div style={{ float: 'left', width: 5, padding: 0 }}>
-                    <button type="submit" disabled={isActive} style={{ width: 50, height: 30, borderRadius: 5, backgroundColor: "#fff" }}>View</button>
-                </div>
-            </div>
-            {thumb}
+            /* Mayanka: Get the progress % and convert it to integer */
+            let progressString = JSON.parse(response.data);
+            progressPercentage = progressString.progress;
+            /* Mayanka: Setting state value , progress bar % */
+            ProcessName.includes("provision")
+              ? setProvisionProgress(parseInt(progressPercentage))
+              : setBuildProgress(parseInt(progressPercentage));
+            if (
+              progressPercentage == 100 ||
+              progressString.status == "Failed"
+            ) {
+              setStartButtonEnabledOrDisabled(false);
+              ProcessName.includes("provision")
+                ? setProvisioningText("Done")
+                : setBuildStatusText("Done");
+              setProvisionViewFlag(true);
+              clearInterval(interval);
+              res("Success");
+            }
+          } else {
+            rej("error");
+          }
+        }),
+      5000
+    );
+  };
+  const viewLogs = (processname) => {
+    setViewLogs(processname);
+    setViewLogsDialog(true);
+  };
+  const closeViewLogs = () => {
+    setViewLogsDialog(false);
+  };
+  console.log("dialog", openViewLogDialog);
+  const thumb = [];
+  const isActive = props?.projectSetup?.noOfStreams === 0;
+  return (
+    <div className={`${isActive ? "root" : "root1"}`}>
+      {isActive && <div className={classes.divPos}></div>}
+      <p className={`${classes.texCenter} titleStyle`}>Configure & Build</p>
+      <div className={`${classes.texCenter} startConfig`}>
+        <button
+          disabled={disableStartButton || isActive}
+          className={"startConfigButton"}
+          onClick={startProvisionProcessAndBuild}
+          id={disableStartButton || isActive ? "disableStart" : ""}
+        >
+          Start
+        </button>
+      </div>
+      <div className={classes.divSpec}>
+        <div className={classes.nameFloat}>
+          <p>Provisioning</p>
         </div>
-
-    )
-}
+        <div className={classes.progressFloaat}>
+          <LinearWithValueLabel
+            className="progressBarConfig"
+            value={ProvisionProgressPercentage}
+          />{" "}
+          {ProvisionProgressPercentage + "%"}
+          <span
+            className={
+              ProvisionStatusText == "Started" ||
+              ProvisionStatusText == "In Progress"
+                ? "Progress"
+                : ProvisionStatusText == "Done"
+                ? "Success"
+                : "ErrorText"
+            }
+          >
+            {/* {ProvisionStatusText} */}
+          </span>
+        </div>
+        <div>
+          <button
+            type="submit"
+            disabled={isActive || !enableProvisionView}
+            onClick={() => viewLogs("provision")}
+            className="viewButton"
+            id={!enableProvisionView || isActive ? "disableStart" : ""}
+          >
+            View
+          </button>
+        </div>
+      </div>
+      <div className={classes.divSpec}>
+        <div className={classes.nameFloat}>
+          <p>Build Containers</p>
+        </div>
+        <div className={classes.progressFloaat}>
+          <LinearWithValueLabel
+            className="progressBarConfig"
+            value={BuildProgressPercentage}
+          />
+          <span
+          // className={
+          //   BuildStatusText == "Started" || BuildStatusText == "In Progress"
+          //     ? "Progress"
+          //     : BuildStatusText == "Done"
+          //     ? "Success"
+          //     : "ErrorText"
+          // }
+          >
+            {BuildProgressPercentage + "%"}
+          </span>
+        </div>
+        <div>
+          <button
+            type="submit"
+            disabled={isActive || !enableBuildView}
+            className="viewButton"
+            onClick={() => viewLogs("build")}
+            id={!enableProvisionView || isActive ? "disableStart" : ""}
+          >
+            View
+          </button>
+        </div>
+      </div>
+      {thumb}
+      <ViewLogs
+        processname={ViewProcessLogs}
+        open={openViewLogDialog}
+        handleCloseViewLog={closeViewLogs}
+      />
+    </div>
+  );
+};
 const mapStateToProps = (state) => {
-    console.log("Config:", state);
-    return {
-        projectSetup: state?.ConfigureBuildReducer?.projectSetup,
-    
-
-    };
+  return {
+    projectSetup: state?.ConfigureBuildReducer?.projectSetup,
+    componentsStateData: state?.ConfigureBuildReducer?.componentsStateData,
+  };
 };
 
 export default connect(mapStateToProps)(ConfigBuild);
-

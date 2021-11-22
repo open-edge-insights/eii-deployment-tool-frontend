@@ -29,7 +29,6 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import ComponentsLayout from './ComponentsLayout';
 import Video from '../configureModule/Video';
-import { auto } from 'async';
 import TestProfileSettings from './TestProfileSettings';
 import Output from './Output';
 import { connect } from 'react-redux';

@@ -20,16 +20,51 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set -a
-source ../build/.env
-set +a
-sudo mkdir -p $EII_INSTALL_PATH/tools_output/deployment-tool-fe
-sudo chown -R $EII_USER_NAME:$EII_USER_NAME $EII_INSTALL_PATH/tools_output/deployment-tool-fe
+function create_docker_network() {
+    echo "Checking eii docker network.."
+    docker_networks=$(docker network ls --filter name=eii| awk '{print $2}')
+    docker_net_list=(`echo ${docker_networks}`);
+    network_present=false
+    for dn in "${docker_net_list[@]}"
+    do
+        if [[ "$dn" = "eii" ]];then
+            network_present=true
+            break
+        fi
+    done
+    if [[ "$network_present" = false ]]; then
+        echo "Creating eii docker bridge network as it is not present.."
+        docker network create eii
+    fi
+}
+
+function sourceEnv() {
+    set -a
+    source ../build/.env
+    set +a
+}
+
+function setupHost() {
+    sudo mkdir -p $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
+    sudo chown -R $EII_USER_NAME:$EII_USER_NAME $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
+    create_docker_network
+    if [ -d ../DeploymentToolBackend/certificates ];then
+        sudo cp -rf ../DeploymentToolBackend/certificates .
+        sudo chmod -R auo+r ./certificates
+    else
+        echo "Could not find certificates in DeploymentToolBackend directory. Please build the backend first!"
+        exit
+    fi
+}
+
+sourceEnv
+
 if [ "$1" ==  "--build" -o "$1" == "-b" ]; then
-    docker-compose build $2
+    setupHost && \
+    docker-compose build $2 && \
     docker-compose up -d
 elif [ "$1" ==  "--restart" -o "$1" == "-r" ]; then
-    docker-compose down
+    docker-compose down && \
     docker-compose up -d
 elif [ "$1" ==  "--down" -o "$1" == "-d" ]; then
     docker-compose down

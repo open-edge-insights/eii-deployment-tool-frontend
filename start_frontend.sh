@@ -26,4 +26,8 @@ rm -rf ./src && cp -r /files/src .
 rm -rf ./public && cp -r /files/public .
 cp /files/package.json .
 npm install
-npm start
+if [ "$dev_mode" != "true" ]; then
+    HTTPS=true SSL_CRT_FILE=/run/secrets/cert SSL_KEY_FILE=/run/secrets/key npm start
+else
+    npm start
+fi

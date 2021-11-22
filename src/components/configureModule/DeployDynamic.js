@@ -107,11 +107,11 @@ export function DeployDynamic(props) {
                     <Box class="col-sm-9 height100 borderLeft" >
                         <Box class="row col-sm-12 height100" >
                             <Box class="col-sm-6 height100" >
-                                {/* <TestProfileSettings /> */}
+        
                                 <Output />
                             </Box>
                             <Box class="col-sm-6 height100" >
-                                {/* <Video /> */}
+                     
                             </Box>
                         </Box>
                     </Box>

@@ -30,7 +30,9 @@ LABEL description="EII Web UI Deployment Tool Front-end Image"
 
 
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends \
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     nodejs \
     npm && \
     rm -rf /var/lib/apt/lists/*

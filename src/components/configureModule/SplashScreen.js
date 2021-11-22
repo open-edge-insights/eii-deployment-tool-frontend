@@ -29,16 +29,23 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+
 import "./SplashScreen.css";
 import companyLogo from '../../images/logo-black.png';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import LoginScreen from './LoginScreen';
+
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+  
     backgroundColor: theme.palette.background.paper,
   },
   chip: {
@@ -47,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
   section1: {
     margin: theme.spacing(0),
     maxWidth: 360,
+   
   },
   section2: {
     margin: theme.spacing(2),
@@ -120,21 +128,22 @@ const SplashScreen = (props) => {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <Typography component="div" className={classes.seeFullmar} >
-              Welcome to the Edge Insights for Industrial (EII) Deployment Tool. This tool will guide you through the process of configuring, provisioning, debugging and deploying your application for your project.
+              Welcome to the Edge Insights for Industrial (EII) Deployment Tool.This tool will guide you through the process of configuring, provisioning,debugging, and deploying you application for your project.
             </Typography>
             <Typography component="div" className={classes.conBor} >
               <List component="nav" aria-label="secondary mailbox folders">
                 <ListItem  >
                   <ListItemText >
-                    <span className={ classes.seeFull } >The main steps of the EII deployment process are:
+                    <span className={ classes.seeFull } >The main step of the EII deployment process are:
                     </span>
                   </ListItemText>
 
                 </ListItem>
+               
                 <ol>
-                  <li style={{marginBottom:15}}>&nbsp;Configure & provision your analytic application.</li>
-                  <li style={{marginBottom:15}}>&nbsp;Build your project containers.</li>
-                  <li style={{marginBottom:15}}>&nbsp;Deploy & debug your analytic application.</li>
+                  <li style={{marginBottom:15}}>Configure & provision your analytic application.</li>
+                  <li style={{marginBottom:15}}>Build your project containers.</li>
+                  <li style={{marginBottom:15}}>Deploy & debug your analytic application.</li>
                 </ol>
 
               </List>
@@ -142,13 +151,9 @@ const SplashScreen = (props) => {
             </Typography>
 
           </DialogContentText>
+           <LoginScreen />
         </DialogContent>
-        <DialogActions className={classes.marRight15}>
- 
-          <Button onClick={()=> props.handleClose(false)} className={classes.butOk} >
-              Ok
-          </Button>
-        </DialogActions>
+        
     </div>
   );
 }
