@@ -31,10 +31,6 @@ import './AddTab.css';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-  console.log({
-    value,
-    index,
-  });
   return (
     <div
       role='tabpanel'

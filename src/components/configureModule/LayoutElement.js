@@ -28,7 +28,6 @@ import dagre from "dagre";
 
 const initialElements = [];
 
-console.log("initialElements:", initialElements);
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 

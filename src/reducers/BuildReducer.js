@@ -19,49 +19,30 @@
  * SOFTWARE.
  */
 
-import React, { useRef } from 'react';
-import { FrameContextConsumer } from 'react-frame-component';
-import IframeComm from "react-iframe-comm";
+import { BUILD_COMPLETE, BUILD_FAILED } from "../actionTypes/buildTypes";
 
+const initialState = {
+  BuildComplete: false,
+  BuildError: false,
+  BuildErrorMessage: "",
+};
 
-
-
-const Video = (props) => {
-    const attributes = {
-        src: "https://pbojinov.github.io/iframe-communication/iframe.html",
-        src: "",
-        width: "100%",
-        height: "175",
-        frameBorder: 1, // show frame border just for fun...
-    };
-
-    const postMessageData = "hello iframe";
-
-    const onReceiveMessage = () => {
-    };
-
-    const onReady = () => {
-    };
-
-    return (
-        <div>
-
-
-            <video width="470" height="250" controls="controls" >
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/ogg" />
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/mp4" />
-                {/* <embed src="http://www.youtube.com/embed/xDMP3i36naA" width="470" height="250"/> */}
-                Your browser does not support the video tag.
-
-
-            </video>
-
-        </div>
-    );
+export default function BuildReducer(state = initialState, action) {
+  switch (action.type) {
+    case BUILD_COMPLETE:
+      return {
+        ...state,
+        BuildComplete: action.payload.BuildComplete,
+        BuildError: action.payload.BuildError,
+      };
+    case BUILD_FAILED:
+      return {
+        ...state,
+        BuildComplete: action.payload.BuildComplete,
+        BuildError: action.payload.BuildError,
+        BuildErrorMessage: action.payload.BuildErrorMessage,
+      };
+    default:
+      return state;
+  }
 }
-
-
-
-
-
-export default Video;

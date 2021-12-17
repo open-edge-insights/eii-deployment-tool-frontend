@@ -41,13 +41,12 @@ const TestProfileSettings = () => {
     });
 
     const handleChange = (event) => {
-        console.log("handlechange");
         setState({ ...state, [event.target.name]: event.target.checked });
     };
     return (
         <div>
             <div>
-                <FormGroup row>
+                <FormGroup className="TestProfileForm col-sm-4">
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -136,21 +135,13 @@ const TestProfileSettings = () => {
 
                 </FormGroup>
             </div>
-            <div style={{ borderTop: "2px solid grey" }}>
+            <div>
                 <div class="col-sm-12 row" style={{ display: "inline-flex", marginTop: 5 }}>
                     <span class="col-sm-6">
                         <p> Pipeline Settings</p>
                     </span>
-                    <span class="col-sm-6">
-                        <button
-                            style={{ width: 100, height: 40, lineHeight: 1, borderRadius: 5, backgroundColor: '#fff', marginLeft: 80 }}
-                        >
-                            Save & Restart
-                        </button>
-
-                    </span>
                 </div>
-                <FormGroup row>
+                <FormGroup className="col-sm-4">
                     <FormControlLabel
                         control={
                             <Checkbox

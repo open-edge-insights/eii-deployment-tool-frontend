@@ -1,26 +1,24 @@
-import axios from "axios";
-// import Cookies from 'universal-cookie';
-export async function startProvisioning() {
-  return fetch("/eii/ui/provision", {
-    credentials: "include",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ dev_mode: true }),
-  })
-    .then((response) => {
-      console.log(response, "data");
-      if (response.status == 200) {
-        return response;
-      } else {
-        alert("Some Error occured");
-      }
-    })
-    .catch((error) => {
-      alert(error);
-    });
-}
+/* Copyright (c) 2021 Intel Corporation.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 export async function getStatusPercentage() {
   return fetch("/eii/ui/status", {
     method: "GET",
@@ -48,15 +46,16 @@ export async function buildContainer() {
     },
     body: JSON.stringify({
       services: ["*"],
+      sequential: false,
       no_cache: false,
     }),
   })
     .then((data) => data.json())
     .then(function (data) {
-      if (data) {
+      if (data.status_info.status) {
         return data;
       } else {
-        alert("Some Error occured");
+        alert("Some Error occured: " + data.status_info.error_detail);
       }
     })
     .catch((error) => {

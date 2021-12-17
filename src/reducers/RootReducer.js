@@ -19,9 +19,18 @@
  * SOFTWARE.
  */
 
-import {combineReducers} from 'redux';
+import { combineReducers } from "redux";
 import ConfigureBuildReducer from "./ConfigureBuildReducer";
-
-const rootReducer = combineReducers({ConfigureBuildReducer})
+import BuildReducer from "./BuildReducer";
+import DeploymentReducer from "./DeployReducer";
+import DeployOptionEnabled from "./DeployOptionEnabled";
+import ProjectSelectionReducer from "./ProjectSelectionReducer";
+const rootReducer = combineReducers({
+  ConfigureBuildReducer,
+  BuildReducer,
+  DeploymentReducer,
+  DeployOptionEnabled,
+  ProjectSelectionReducer
+});
 
 export default rootReducer;

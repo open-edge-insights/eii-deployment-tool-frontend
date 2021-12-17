@@ -21,46 +21,39 @@
 
 import React, { useEffect, useState } from "react";
 import Dialog from "@material-ui/core/Dialog";
-import { viewLogs } from "./viewLogsApi";
-import "./ViewLogs.css";
-export default function ViewLogs(props) {
+import './ConfirmDialog.css';
+export default function ConfirmDialog(props) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [logs, setLogs] = useState("");
   useEffect(() => {
-    setLogs("");
     setOpenDialog(props?.open);
-    props?.processname &&
-      viewLogs(props?.processname).then((response) => {
-        let logs = JSON.parse(response?.data);
-        setLogs(props?.processname && logs[props.processname]);
-      });
- 
-  }, [props.processname, props.open]);
-  
-  var decodedString = logs && atob(logs).replace(/\033\[[0-9;]*m/g, "");
-
+  }, [props]);
+  /* Storing the Ids of selected checkboxes */
   return (
-    logs && (
-      <div className="ViewLogs">
-        <Dialog
-          open={openDialog}
-          onClose={props?.handleCloseViewLog}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <div className="dialogBodyViewLogs">
-            <div className="viewLogDialogTitle">{props?.processname} Logs</div>
-            <div className="logText">
-              {logs ? decodedString : "No Logs Found"}
-            </div>
-          </div>
-          <div className="closeDialogDiv">
-            <button className="closeDialog" onClick={props?.handleCloseViewLog}>
-              Close
+    <div className="confirmationDialogBody">
+      <Dialog
+        open={openDialog}
+        onClose={props?.handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <div className="confirmDialogBody">
+          <div className="ConfirmDialogText">Are you sure you want to logout?</div>
+          <div className="closeConfirmDialogDiv">
+            <button
+              className="closeConfirmDialogBtn closeConfirmYesBtn"
+              onClick={props.logout}
+            >
+              Yes
+            </button>
+            <button
+              className="closeConfirmDialogBtn closeConfirmNoBtn"
+              onClick={props?.handleCloseDialog}
+            >
+              No
             </button>
           </div>
-        </Dialog>
-      </div>
-    )
+        </div>
+      </Dialog>
+    </div>
   );
 }

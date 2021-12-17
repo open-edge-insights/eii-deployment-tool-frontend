@@ -19,15 +19,15 @@
  * SOFTWARE.
  */
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import AddTab from './AddTab';
-import ComponentList from './ComponentList';
-import ConfigBuild from './ConfigBuild';
-import DynamicTabs from './DynamicTabs';
-import { useState } from 'react';
-import { connect } from 'react-redux';
-
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import AddTab from "./AddTab";
+import ComponentList from "./ComponentList";
+import ConfigBuild from "./ConfigBuild";
+import DynamicTabs from "./DynamicTabs";
+import { useState } from "react";
+import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 const styles = {
   Paper: {
     marginTop: 10,
@@ -37,57 +37,69 @@ const styles = {
   },
 };
 
-
-
-
 const Configure = (props) => {
   const [state, setState] = useState(true);
   const [name, setName] = useState();
   const [open, setOpen] = useState(false);
-
+  const [ImportBtnActive, setEnableImportBtn] = useState();
+  const [NodeSelected, setNodeSelected] = useState();
+  const [updateconfig, setUpdatedConfig] = useState();
+  const [streamCount, setStreamCount] = useState(0);
+  const [selectedIds, setId] = useState([0]);
+  const [updatedUDFFunc, setUDFFunc] = useState(function () {});
   const handleClickOpen = () => setOpen(true);
-
-
-
-  
   const { isCreateProject } = props;
   const setTabValues = () => {
-   
-
     props.setSelectedTab({ ...state });
   };
- 
-
+  const enableImportBtn = (enableImportBtn, NodeSelected, noOfStreams) => {
+    setEnableImportBtn(enableImportBtn);
+    setNodeSelected(NodeSelected);
+    setStreamCount(noOfStreams);
+  };
+  const udfConfig = (updatedConfig, streamIds) => {
+    setUpdatedConfig(updatedConfig);
+    setId(streamIds);
+  };
+  /* Getting the buildComplete state from redux store */
+  const BuildComplete = useSelector(
+    (state) => state.BuildReducer.BuildComplete
+  );
+  const BuildError = useSelector((state) => state.BuildReducer.BuildError);
   return (
     <div style={{ padding: 0 }}>
-   
-      <p style={{ textAlign: 'center' }}>
-        Create or select a project, import your code, then configure your data streams.
+      <p style={{ textAlign: "center" }} className="mainpageDivTitletext">
+        Create or select a project, import your code, then configure your data
+        streams.
       </p>
-
-      <div className='container-fluid'>
-        <div className='row'>
-          <div className='col-sm-2' style={{ padding: 0}}>
-            <ComponentList setName={setName} />
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-sm-2" style={{ padding: 0 }}>
+            <ComponentList
+              setName={setName}
+              isImportBtnActive={ImportBtnActive}
+              streamCount={streamCount}
+              NodeSelected={NodeSelected}
+              udfConfig={udfConfig}
+            />
           </div>
-          <div className='col-sm-7' style={{ padding: 0 }}>
+          <div className="col-sm-10" style={{ padding: 0 }}>
             <AddTab isCreateProject={isCreateProject} />
-           
-            <DynamicTabs />
-         
-          </div>
-         
-         <div className='col-sm-3' style={{ padding: 0,margintop:70 }}>
-            <ConfigBuild />
-          </div>
-        
-         
-        </div>
 
-        
-       
+            <DynamicTabs
+              enableImportBtn={enableImportBtn}
+              udfConfig={updateconfig}
+              streamIds={selectedIds}
+            />
+          </div>
+
+          {props.noOfStreams > 0 && (
+            <div className="col-sm-12 configBuildComponentIndex">
+              <ConfigBuild />
+            </div>
+          )}
+        </div>
       </div>
-     
     </div>
   );
 };
@@ -97,7 +109,6 @@ Configure.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  console.log("createProjectLayout:", state);
   return {
     tab: state.tab,
     createProjectLayout: state.ConfigBuildReduce,
@@ -106,13 +117,10 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-  
     setSelectedTab: (projectData) => {
-      console.log("Project data:", projectData)
       dispatch({ type: "ON_SELECTED_TAB", projectData });
-    }
+    },
   };
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Configure);

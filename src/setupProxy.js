@@ -22,8 +22,21 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 module.exports = function(app) {
     let prot = (process.env.dev_mode=="true") ? "http":"https";
-    let ip = process.env.DEPLOYMENT_TOOL_BACKEND_HOST;
-    let port = process.env.DEPLOYMENT_TOOL_BACKEND_PORT;
-    let target_url = prot + '://' + ip + ':' + port;
-    app.use('/eii/ui/*', createProxyMiddleware({target: target_url, changeOrigin: true, secure: false}));
+    let be_ip = process.env.DEPLOYMENT_TOOL_BACKEND_HOST;
+    let be_port = process.env.DEPLOYMENT_TOOL_BACKEND_PORT;
+    let wv_ip = process.env.WEB_VISUALIZER_HOST;
+    let wv_port = process.env.WEB_VISUALIZER_DEV_PORT;
+
+    /* Proxy for backend REST APIs */
+    app.use('/eii/ui/*', createProxyMiddleware({
+	target: prot + '://' + be_ip + ':' + be_port,
+	changeOrigin: true,
+	secure: false}));
+
+    /* Proxy for WebVisualizer APIs */
+    app.use('/webvisualizer/*', createProxyMiddleware({
+	target: "http://" + wv_ip + ":" + wv_port,
+        pathRewrite: {'^/webvisualizer/*': '/'},
+	changeOrigin: true,
+	secure: false}));
 }

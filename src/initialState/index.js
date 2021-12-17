@@ -33,21 +33,21 @@ export const initialState = {
     tabCount:0,
     popUp:true,
   },
+  instance_count: 0,
   existProjects: [],
   projects: [],
   
   componentsInitialState:  {
     data_stream_id:undefined,
     selectedIndex: undefined,
-    selectedComponents: {   provisioned: false,
-                            needReProvision: false,
+    selectedComponents: {
                             devMode: true,
                             output: false,
                             action: null, 
                             params: [], 
                             nodes: [],
                             currentComponent: null,
-                          
+                            showWebVisualizer: false 
                         },
     components:[
         {
@@ -55,6 +55,7 @@ export const initialState = {
             color: '#ff00ff',
             appName:"VideoIngestion",
             dirName: "VideoIngestion",
+            hasVideoUdf: true,
             containerName: "ia_video_ingestion"
         },
         {
@@ -62,29 +63,42 @@ export const initialState = {
             color: '#ff00ff',
             appName:"VideoAnalytics",
             dirName:"VideoAnalytics",
+            hasVideoUdf: true,
             containerName: "ia_video_analytics"
         },
-      
         {
             type:'output',
             appName:"WebVisualizer",
             dirName:"WebVisualizer",
+            hasVideoUdf: false,
             containerName: "ia_web_visualizer"
         },
-   
+        {
+            type:'output',
+            appName:"ImageStore",
+            dirName:"ImageStore",
+            hasVideoUdf: false,
+            containerName: "ia_imagestore"
+        },
+	{
+	    type:'output',
+            appName:"OpcuaExport",
+            dirName:"OpcuaExport",
+            hasVideoUdf: false,
+            containerName: "ia_opcua_export"
+	},
     ],   
-    
-   },
+  },
 
-componentsStateData:[],
-getData:{
+  componentsStateData:[],
+  getData:{
     appName:'',
     appNameleft:'',
     isOpen:false,
-}   ,
-buildResponse:{
+  },
+  buildResponse:{
     data:[],
     status:false,
     other:[]
-}
+  }
 };

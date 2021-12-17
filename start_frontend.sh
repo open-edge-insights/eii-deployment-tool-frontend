@@ -25,7 +25,9 @@ cd /app
 rm -rf ./src && cp -r /files/src .
 rm -rf ./public && cp -r /files/public .
 cp /files/package.json .
+npm config set update-notifier false
 npm install
+echo "REACT_APP_"$(env | grep 'EII_VERSION') > /app/.env
 if [ "$dev_mode" != "true" ]; then
     HTTPS=true SSL_CRT_FILE=/run/secrets/cert SSL_KEY_FILE=/run/secrets/key npm start
 else

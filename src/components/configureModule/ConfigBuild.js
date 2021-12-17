@@ -26,13 +26,12 @@ import "./ConfigBuild.css";
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
 import {
-  startProvisioning,
   getStatusPercentage,
   buildContainer,
 } from "./configureAndBuildAction";
-import { Report } from "@material-ui/icons";
 import ViewLogs from "./ViewLogs";
-
+import { useSelector, useDispatch } from "react-redux";
+import { StartContainers } from "../api/StartContainers";
 const useStyles = makeStyles((theme) => ({
   divPos: {
     position: "absolute",
@@ -75,92 +74,122 @@ const useStyles = makeStyles((theme) => ({
 
 const ConfigBuild = (props) => {
   const classes = useStyles();
-  const [ProvisionProgressPercentage, setProvisionProgress] = useState(0);
   const [BuildProgressPercentage, setBuildProgress] = useState(0);
-  const [ProvisionStatusText, setProvisioningText] = useState("");
   const [BuildStatusText, setBuildStatusText] = useState("");
   const [disableStartButton, setStartButtonEnabledOrDisabled] = useState(false);
-  const [enableProvisionView, setProvisionViewFlag] = useState(false);
   const [enableBuildView, setBuildViewFlag] = useState(false);
   const [ViewProcessLogs, setViewLogs] = useState("");
   const [openViewLogDialog, setViewLogsDialog] = useState(false);
+  /* Getting the buildComplete state from redux store */
+  const BuildComplete = useSelector(
+    (state) => state.BuildReducer.BuildComplete
+  );
+  const BuildError = useSelector((state) => state.BuildReducer.BuildError);
   let promiseResolve;
   let promiseReject;
-
-  useEffect((props) => {}, []);
-  /* Mayanka: Starting the provisioning & build process respectively*/
-  const startProvisionProcessAndBuild = () => {
+  const dispatch = useDispatch();
+  useEffect((props) => {
+    setBuildProgress(BuildComplete ? 100 : 0);
+  }, [BuildComplete]);
+  /* Starting the build process */
+  const startBuild = (e) => {
+    e.preventDefault();
     setStartButtonEnabledOrDisabled(true);
+    setBuildStatusText("");
     let progressPercentage = 0;
-    let ProcessName = "provisioning";
-    /* Mayanka: Calling the provisioning api first */
-    startProvisioning().then((response) => {
-      if (response?.status == 200) {
-        setProvisioningText("Started");
-        let prom = new Promise((res, rej) => {
-          promiseResolve = res;
-          promiseReject = rej;
-          getStatus(ProcessName, promiseResolve, promiseReject);
+    let ProcessName = "building";
+    setBuildProgress(1);
+    /* Stop containers so that changes take effect when containers are started in Test screen */
+    StartContainers("stop").then((containerStart) => {
+      let response = containerStart?.status_info?.status;
+      if (response) {
+        setBuildProgress(5);
+        /* Calling the build api */
+        buildContainer().then((buildResponse) => {
+          setBuildViewFlag(true);
+          let response = buildResponse?.data;
+          response = JSON.stringify(response);
+          setStartButtonEnabledOrDisabled(true);
+          getStatus("build", promiseResolve, promiseReject);
         });
-        prom
-          .then(() => {
-            /* Mayanka: Calling build api after provisioning is complete */
-            buildContainer().then((buildResponse) => {
-              setBuildViewFlag(true);
-              let response = buildResponse?.data;
-              response = JSON.stringify(response);
-              if (response.status != "Failed") {
-                setBuildStatusText("Started");
-                setStartButtonEnabledOrDisabled(true);
-                setBuildProgress(0);
-                getStatus("build", promiseResolve, promiseReject);
-              }
-            });
-          })
-          .catch((error) => {});
-
-        /* Mayanka: Calling the status api after success */
-      } else if (response?.status == 200) {
-        setProvisioningText("Error");
-        setProvisionViewFlag(true);
-        setStartButtonEnabledOrDisabled(false);
-
+      } else {
+        alert("Failed stop containers: " + containerStart?.status_info?.error_detail);
       }
-    });
+    })
+    .catch((error) => {
+      alert("Some error occured: " + error);
+    });      
+    
+    return false;
   };
-  /* Mayanka: To get the update of progress percent call status api every 5 seconds */
+  /* To get the update of progress percent call status api every 5 seconds */
   const getStatus = (processName, res, rej) => {
     let ProcessName = processName;
     let progressPercentage = 0;
+    let progressString;
     const interval = setInterval(
       () =>
         getStatusPercentage().then((response) => {
           if (response) {
-            ProcessName.includes("provision")
-              ? setProvisioningText("In Progress")
-              : setBuildStatusText("In Progress");
-
-            /* Mayanka: Get the progress % and convert it to integer */
-            let progressString = JSON.parse(response.data);
-            progressPercentage = progressString.progress;
-            /* Mayanka: Setting state value , progress bar % */
-            ProcessName.includes("provision")
-              ? setProvisionProgress(parseInt(progressPercentage))
-              : setBuildProgress(parseInt(progressPercentage));
+            /* Get the progress % and convert it to integer */
+            progressString = JSON.parse(response.data);
+            /* if the progress percentage for eg.goes from 10% back to 0% it signifies an error, check for the same */
             if (
-              progressPercentage == 100 ||
-              progressString.status == "Failed"
+              parseInt(progressPercentage) > parseInt(progressString.progress)
             ) {
-              setStartButtonEnabledOrDisabled(false);
-              ProcessName.includes("provision")
-                ? setProvisioningText("Done")
-                : setBuildStatusText("Done");
-              setProvisionViewFlag(true);
-              clearInterval(interval);
-              res("Success");
+              if (processName.includes("build")) {
+                setBuildStatusText("Error");
+                /* displatch the build completion status*/
+                dispatch({
+                  type: "BUILD_FAILED",
+                  payload: {
+                    BuildComplete: false,
+                    BuildError: true,
+                    BuildErrorMessage: "Error",
+                  },
+                });
+                clearInterval(interval);
+                setStartButtonEnabledOrDisabled(false);
+                //rej("error");
+              } 
+            } else {
+              progressPercentage = progressString.progress;
+              /* Setting state value , progress bar % */
+              setBuildProgress(parseInt(progressPercentage));
+              if (progressPercentage == 100) {
+                if (
+                  ProcessName.includes("build") &&
+                  progressString.status == "Success"
+                ) {
+                  dispatch({
+                    type: "BUILD_COMPLETE",
+                    payload: { BuildComplete: true, BuildError: false },
+                  });
+                }
+                setStartButtonEnabledOrDisabled(false);
+                clearInterval(interval);
+                //res("Success");
+              } else if (progressString.status == "Failed") {
+                setStartButtonEnabledOrDisabled(false);
+                if (processName.includes("build")) {
+                  setBuildStatusText("Error");
+                  /* displatch the build completion status*/
+                  dispatch({
+                    type: "BUILD_FAILED",
+                    payload: {
+                      BuildComplete: false,
+                      BuildError: true,
+                      BuildErrorMessage: "Error",
+                    },
+                  });
+                  clearInterval(interval);
+                  //rej("error");
+                }
+                clearInterval(interval);
+                setStartButtonEnabledOrDisabled(false);
+                //rej("error");
+              }
             }
-          } else {
-            rej("error");
           }
         }),
       5000
@@ -173,7 +202,6 @@ const ConfigBuild = (props) => {
   const closeViewLogs = () => {
     setViewLogsDialog(false);
   };
-  console.log("dialog", openViewLogDialog);
   const thumb = [];
   const isActive = props?.projectSetup?.noOfStreams === 0;
   return (
@@ -184,46 +212,17 @@ const ConfigBuild = (props) => {
         <button
           disabled={disableStartButton || isActive}
           className={"startConfigButton"}
-          onClick={startProvisionProcessAndBuild}
-          id={disableStartButton || isActive ? "disableStart" : ""}
+          onClick={startBuild}
+          id={
+            disableStartButton ||
+            isActive ||
+            (BuildComplete == true && BuildError == false)
+              ? "disableStart"
+              : ""
+          }
         >
           Start
         </button>
-      </div>
-      <div className={classes.divSpec}>
-        <div className={classes.nameFloat}>
-          <p>Provisioning</p>
-        </div>
-        <div className={classes.progressFloaat}>
-          <LinearWithValueLabel
-            className="progressBarConfig"
-            value={ProvisionProgressPercentage}
-          />{" "}
-          {ProvisionProgressPercentage + "%"}
-          <span
-            className={
-              ProvisionStatusText == "Started" ||
-              ProvisionStatusText == "In Progress"
-                ? "Progress"
-                : ProvisionStatusText == "Done"
-                ? "Success"
-                : "ErrorText"
-            }
-          >
-            {/* {ProvisionStatusText} */}
-          </span>
-        </div>
-        <div>
-          <button
-            type="submit"
-            disabled={isActive || !enableProvisionView}
-            onClick={() => viewLogs("provision")}
-            className="viewButton"
-            id={!enableProvisionView || isActive ? "disableStart" : ""}
-          >
-            View
-          </button>
-        </div>
       </div>
       <div className={classes.divSpec}>
         <div className={classes.nameFloat}>
@@ -234,16 +233,10 @@ const ConfigBuild = (props) => {
             className="progressBarConfig"
             value={BuildProgressPercentage}
           />
-          <span
-          // className={
-          //   BuildStatusText == "Started" || BuildStatusText == "In Progress"
-          //     ? "Progress"
-          //     : BuildStatusText == "Done"
-          //     ? "Success"
-          //     : "ErrorText"
-          // }
-          >
-            {BuildProgressPercentage + "%"}
+          <span className={BuildStatusText == "Error" ? "ErrorTextBuild" : ""}>
+            {BuildStatusText == "Error"
+              ? BuildStatusText
+              : BuildProgressPercentage + "%"}
           </span>
         </div>
         <div>
@@ -252,7 +245,7 @@ const ConfigBuild = (props) => {
             disabled={isActive || !enableBuildView}
             className="viewButton"
             onClick={() => viewLogs("build")}
-            id={!enableProvisionView || isActive ? "disableStart" : ""}
+            id={isActive ? "disableStart" : ""}
           >
             View
           </button>

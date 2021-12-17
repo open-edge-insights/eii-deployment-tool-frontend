@@ -18,50 +18,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import axios from 'axios';
 
-import React, { useRef } from 'react';
-import { FrameContextConsumer } from 'react-frame-component';
-import IframeComm from "react-iframe-comm";
+const StoreProjectApi = {
+ store: function (projectName, successCallback, errorCallback) {
+    axios
+      .post('/eii/ui/project/store', {
+       name: projectName
+      })
+      .then((response) => {
+        if (response && response?.data.status_info.status) successCallback(response.data);
+        else errorCallback(response.data);
+      });
+  },
+};
 
+export default StoreProjectApi;
 
-
-
-const Video = (props) => {
-    const attributes = {
-        src: "https://pbojinov.github.io/iframe-communication/iframe.html",
-        src: "",
-        width: "100%",
-        height: "175",
-        frameBorder: 1, // show frame border just for fun...
-    };
-
-    const postMessageData = "hello iframe";
-
-    const onReceiveMessage = () => {
-    };
-
-    const onReady = () => {
-    };
-
-    return (
-        <div>
-
-
-            <video width="470" height="250" controls="controls" >
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/ogg" />
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/mp4" />
-                {/* <embed src="http://www.youtube.com/embed/xDMP3i36naA" width="470" height="250"/> */}
-                Your browser does not support the video tag.
-
-
-            </video>
-
-        </div>
-    );
-}
-
-
-
-
-
-export default Video;

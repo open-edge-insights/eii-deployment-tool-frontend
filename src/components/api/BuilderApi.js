@@ -18,41 +18,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import axios from 'axios';
+import axios from "axios";
 
-const BuilderApi={
-    builder:function(services,  instances, reset, successCallback, errorCallback){
-          if(services.indexOf("EtcdUI") == -1) {
-            services.push("EtcdUI");
-          }
-         
-            services =  services.filter((el)=>{
-              return el != '' ;
-            })
-        
-          console.log("el",{services,0:services[0]})
-
-          var configData = {"names": services, "instance_count": instances, "reset": reset};
-          console.log("services,env,instances:",services,instances);
-            axios.post("/eii/ui/config/generate", configData)
-           .then((response)=>{
-            console.log("response.data:",response);
-               if(response.data.data){
-                 response.data = JSON.parse(response.data.data);
-              }else{
-                response.data = {};
-              }
-
-             console.log("response.data:",response.data);
-              if(response && response.data) 
-                successCallback(response.data);
-              else
-                 errorCallback(response.data);
-           });
+const BuilderApi = {
+  builder: function (
+    services,
+    instances,
+    reset,
+    dev_mode,
+    successCallback,
+    errorCallback)
+  {
+    if(services.length > 0) {
+      if (services.indexOf("EtcdUI") == -1) {
+        services.push("EtcdUI");
+      }
+      if (services.indexOf("ConfigMgrAgent") == -1) {
+        services.push("ConfigMgrAgent");
+      }
     }
-  }
 
+    services = services.filter((el) => {
+      return el != "";
+    });
+
+    let configData = {
+      names: services,
+      instance_count: instances,
+      reset: reset,
+      dev_mode: dev_mode,
+    };
+    axios.post("/eii/ui/config/generate", configData).then((response) => {
+      if (response?.data?.status_info?.status) {
+        let data = JSON.parse(response.data.data);
+        successCallback(data, response);
+      } else {
+        errorCallback(response?.data);
+      }
+    });
+  },
+};
 export default BuilderApi;
-
-
-

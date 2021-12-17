@@ -18,27 +18,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import axios from 'axios';
 
-const GetConfigApi={
-    getconfig:function(services, successCallback, errorCallback){    
-      let req = {};
-      req["names"] = services;
-      axios.post("/eii/ui/config/get", req)
-      .then((response)=>{
-        if(response && response.data) { 
-           response.data.data = JSON.parse(response.data.data);
-           console.log("=======Get-Config-Api=========");
-           console.log(response.data);
-           successCallback(response.data);
-        } else {
-          errorCallback(null);
-      }})
-      .catch((error)=>{
-          console.log(error);
-          errorCallback({"status": {"error": "Network error!"}});
-      });
-    }
+import { PROJECT_SELECTION_ACTIVE} from "../actionTypes/projectSelection";
+import { PROJECT_SELECTION_INACTIVE} from "../actionTypes/projectSelection";
+
+const initialState = {
+  projectSelection : false
+};
+
+export default function ProjectSelectionReducer(state = initialState, action) {
+  switch (action.type) {
+    case PROJECT_SELECTION_ACTIVE:
+      return {
+        ...state,
+        projectSelection: action.payload.projectSelection,
+      };
+    case PROJECT_SELECTION_INACTIVE:
+      return {
+        ...state,
+        projectSelection: action.payload.projectSelection,
+      };
+    default:
+      return state;
+  }
 }
-
-export default GetConfigApi;

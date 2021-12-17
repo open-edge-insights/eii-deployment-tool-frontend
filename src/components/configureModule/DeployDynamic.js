@@ -139,7 +139,6 @@ export function DeployDynamic(props) {
     );
 }
 const mapStateToProps = (state) => {
-    console.log("Dynamic tab:", state)
     return {
       projectSetup: state?.ConfigureBuildReducer?.projectSetup,
       isOpen: state?.ConfigureBuildReducer?.getData?.isOpen,

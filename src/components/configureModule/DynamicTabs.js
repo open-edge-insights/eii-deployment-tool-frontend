@@ -19,21 +19,19 @@
  * SOFTWARE.
  */
 
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import './AddTab.css';
-import { connect } from 'react-redux';
-import ComponentsLayout from './ComponentsLayout';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import "./AddTab.css";
+import { connect } from "react-redux";
+import ComponentsLayout from "./ComponentsLayout";
 import "./DynamicTabs.css";
 import Paper from "@material-ui/core/Paper";
-
-
 
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -61,53 +59,49 @@ export function DynamicTabs(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
- 
-  console.log("props?.projectSetup?.noOfStreams",props?.projectSetup?.noOfStreams)
-
+  const reactFlowchartProps = (
+    enableImportBtn,
+    NodeSelected,
+    noOfStreams,
+    updateConfigData
+  ) => {
+    props.enableImportBtn(
+      enableImportBtn,
+      NodeSelected,
+      noOfStreams,
+      updateConfigData
+    );
+  };
   if (0 < props?.projectSetup?.noOfStreams) {
     tabsContaner.push(
-        <Paper
-           className='row col-sm-12 tabpan'
-          
+      <div className="row col-sm-12 tabpan">
+        <ComponentsLayout
+          name={props.appName}
+          enableImportBtn={reactFlowchartProps}
+          updatedConfig={props && props.udfConfig}
+          streamIds={props.streamIds}
+          displayConfigForm={true}
+          className="col-sm-6"
         >
-          <ComponentsLayout name={props.appName}
-            className='col-sm-6'
-     
-           >
-            <Box>
-              <p className="textAlignCenter">Components Layout</p>
-              <button
-                type='submit'
-               className="butvalue"
-              >
-                Import Code
-              </button>
-            </Box>
-          </ComponentsLayout>
-         
-        </Paper>
+          <Box>
+            <p className="textAlignCenter">Components Layout</p>
+            <button type="submit" className="butvalue">
+              Import Code
+            </button>
+          </Box>
+        </ComponentsLayout>
+      </div>
     );
   }
-  return (
-    <div className={classes.root}>
-
-
-      {tabsContaner}
-    </div>
-  );
+  return <div className={classes.root}>{tabsContaner}</div>;
 }
 
 const mapStateToProps = (state) => {
-  console.log("Dynamic tab:", state)
   return {
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
     isOpen: state?.ConfigureBuildReducer?.getData?.isOpen,
     appName: state.ConfigureBuildReducer.getData.appName,
-
   };
 };
 
-
-
 export default connect(mapStateToProps, null)(DynamicTabs);
-

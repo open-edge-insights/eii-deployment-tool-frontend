@@ -1,35 +1,147 @@
-.box{
-    border-right:1px solid grey !important;
-    border-left:1px solid grey !important;
-    border-bottom:1px solid grey !important;
-    border-top: 1px solid grey !important;
+.box {
+  border-right: 1px solid grey !important;
+  border-left: 1px solid grey !important;
+  border-bottom: 1px solid grey !important;
+  border-top: 1px solid grey !important;
 }
-.height370{
-    height: 370px;
+.height370 {
+  height: 370px;
 }
-.height570{
-    height: 570px;
+.height570 {
+  height: 570px;
 }
-.positionrel{
-    position: relative;
-    left: 12px;
+.positionrel {
+  position: relative;
+  left: 12px;
 }
-.padding0{
-    padding:0px !important;
+.padding0 {
+  padding: 0px !important;
 }
-.height100{
-    height: 100%;
-
+.height100 {
+  min-height: 100px;
 }
-.textAlignCenter{
-    text-align: center;
+.textAlignCenter {
+  text-align: center;
 }
-.borderLeft{
-    border-left:1px solid grey;
+.borderLeft {
+  border-left: 1px solid grey;
 }
-.borderTop{
-    border-top:1px solid grey;
+.borderTop {
+  border-top: 1px solid grey;
 }
-.borderRadius{
- border-radius: '11 0 0 0 0'
+.borderRadius {
+  border-radius: "11 0 0 0 0";
+}
+.componentsLayoutTestTabTitle {
+  font-weight: bold;
+  font-size: 16px;
+}
+.TestTabTitle {
+  font-weight: bold;
+  font-size: 18px;
+  padding: 10px;
+  display: flex;
+}
+.layout1 {
+  border: none !important;
+}
+.componentsLayoutTestTab {
+  border: 1px solid black;
+}
+.tabpan {
+  border: 1px solid grey !important;
+  overflow: hidden !important;
+}
+.TestTabSubTitle {
+  font-size: 16px;
+  font-weight: bold;
+  padding-top: 10px;
+}
+.WebVisalizerPreviewTestImg {
+  height: 300px;
+  width: 410px;
+  margin-top: 17px;
+  display: block;
+}
+.WebVisalizerPreviewTestDiv {
+  margin-left: 45px;
+  padding-top: 10px;
+}
+.WebVisalizerPreviewTestTitle {
+  font-size: 14px;
+  color: #6e6767;
+  position: relative;
+  top: 10px;
+}
+.WebVisualizerTestSettings {
+  word-break: break-all;
+  font-size: 18px;
+  padding: 36px;
+}
+.webvisualizerUdfConfigArr {
+  padding-bottom: 10px;
+  display: flex;
+}
+.webvisualizerUdfConfigArrLabel {
+  padding-bottom: 10px;
+  padding-left: 0px;
+}
+.webvisualizerUdfConfigArrTextField div input{
+  padding: 10px;
+}
+.cameraConfigVal div input {
+  padding: 2px
+}
+.WebVisualizerSaveRestartBtnDiv {
+  margin: 10em 0px 0px 5em !important;
+  cursor: pointer;
+}
+.WebVisualizerNoPreview {
+  width: 300px;
+  height: 250px;
+  border: 1px solid gainsboro;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  padding-top: 100px;
+}
+#disableSaveRestart {
+  cursor: not-allowed;
+  background-color: #ccc;
+  color: black;
+}
+.pipelineSettingTitle {
+  padding-left: 30px;
+}
+.react-flow {
+  height: 100% !important;
+}
+.targetDeviceDeploytextFieldDiv {
+  display: flex;
+  padding: 2px;
+}
+.deployScreenApplyBtn {
+  position: absolute !important;
+  top: 0px !important;
+  right: 90px !important;
+}
+.cameraConfigVal {
+  width:40px;
+  height:20px;
+  font-size:small;
+}
+.cameraConfigReset {
+  width:40px;
+  height:20px;
+  font-size:small;
+}
+.cameraConfigResetAll {
+  width:80px;
+  height:40px;
+  font-size:small;
+}
+.TestTabSliderResetBtn {
+  padding-left: 10px;
 }

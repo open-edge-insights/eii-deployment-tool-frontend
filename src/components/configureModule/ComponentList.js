@@ -19,65 +19,185 @@
  * SOFTWARE.
  */
 
-import React, {  useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import Box from "@material-ui/core/Box";
-import "./ComponentList.css"
-
+import "./ComponentList.css";
+import "./ImportCode.css";
+import { listFiles, generateUDFConfig } from "./importCodeApis";
+import ImportCodeDialog from "./ImportCodeDialog";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import { Path } from "history";
 
 const ComponentList = (props) => {
-  useEffect(() => {
-    console.log("componentsdata", props.componentsdata);
-  }, []);
+  const [files, setFiles] = useState([]);
+  const [directories, setDirectories] = useState([]);
+  const [openImportCodeDialog, setDialogOpen] = useState(false);
+  const basePath = "/common/video/udfs/";
+  const [configPath, setConfigPath] = useState("");
+  const [SelectedFileForConfig, setFileName] = useState("");
+  const [openAlert, setAlertOpen] = useState(false);
+  const [AlertMsg, setAlertMsg] = useState("");
+  const [UDFConfig, setUDFConfig] = useState();
+
+  var Path = require("path");
+  useEffect(() => {}, []);
   const onDragStart = (event, dataType, appName) => {
     event.dataTransfer.setData("application/reactflow", dataType);
     props.updateAppname(appName);
-    console.log("onDragStart:3",appName);
     event.dataTransfer.effectAllowed = "move";
   };
-   const isActive = props?.projectSetup?.noOfStreams === 0;
+  /* Call get files api to display list fo files and directories */
+  const importCode = (dirsName) => {
+    let PathToApi = configPath ? configPath : basePath;
+    if (dirsName && typeof dirsName == "string") {
+      if (PathToApi[PathToApi.length - 1] == "/")
+        PathToApi = PathToApi + dirsName;
+      else PathToApi = PathToApi + "/" + dirsName;
+    }
+    PathToApi = Path.normalize(PathToApi);
+    if (PathToApi.length <= basePath.length) PathToApi = basePath;
+    setConfigPath(PathToApi);
+    listFilesFunc(PathToApi);
+  };
+  const listFilesFunc = (_path) => {
+    setFileName("");
+    let path = _path;
+    listFiles(path).then((fileResponse) => {
+      let data = fileResponse?.data && JSON.parse(fileResponse.data);
+      setFiles([...data.files]);
+      if (path == basePath) setDirectories([...data.dirs]);
+      else setDirectories([...data.dirs, ".."]);
+      setDialogOpen(true);
+    });
+  };
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setFileName("");
+    setUDFConfig("");
+    setFileName("");
+  };
+  /* Back to the root directory */
+  const backToBaseURL = () => {
+    setConfigPath(basePath);
+    setDialogOpen(false);
+  };
+  /* Generate UDF config for the selected file */
+  const generateUDFConfigFunc = (streamIds) => {
+    if (SelectedFileForConfig && props && props.NodeSelected) {
+      let fileName = SelectedFileForConfig;
+      setDialogOpen(false);
+      let PathToApi = configPath ? configPath : basePath;
+      if (PathToApi[PathToApi.length - 1] == "/")
+        PathToApi = PathToApi + fileName;
+      else PathToApi = PathToApi + "/" + fileName;
+      generateUDFConfig(PathToApi)
+        .then((UDFResponse) => {
+          let UDF = UDFResponse.data && JSON.parse(UDFResponse.data);
+          setUDFConfig(UDF);
+          props.udfConfig(UDF, streamIds);
+        })
+        .catch((error) => {
+          alert("Please Select a valid UDF file!");
+        });
+    } else {
+      alert("Please select a file to proceed");
+      setAlertOpen(true);
+      setAlertMsg("Please select a file to proceed");
+    }
+  };
+  const selectTheFileToGenerateConfig = (fileName) => {
+    let SelectedFile = fileName;
+    if (SelectedFile && typeof SelectedFile == "string") {
+      setFileName(SelectedFile);
+    }
+  };
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+    setAlertMsg("");
+  };
+  const isActive = props?.projectSetup?.noOfStreams === 0;
   return (
-    <div>
-      <div className="positionrel fontSize14 border1px" >
-     { isActive && ( <div className="positionisActive">
-
-</div> )}  
-        <p className="coldrag" >Drag a component to add it to the components Layout.</p>
-        <p className="fontweight400 ">Components List</p>
-        <div className="overflowclip">
-          {props.componentsdata && props.componentsdata.map((data) => {
-            return (
-
-
-              <Box
-                type="input"
-                className="dndnode input drapval"
-                boxShadow={1}
-                m={1}
-                p={0.8}
-                onDragStart={(event) =>
-                  onDragStart(event, data.type, data.appName)
-                }
-                draggable={!isActive}
-              
-              >
-                {data.appName}
-              </Box>
-
-            );
-          })}
+    !isActive && (
+      <div>
+        <div className="positionrel fontSize14 border1px ComponentListMainDiv">
+          {isActive && <div className="positionisActive"></div>}
+          <p className="coldrag">
+            Drag a component to add it to the components Layout.
+          </p>
+          <p className="fontweight400 ">Components List</p>
+          <div className="overflowclip">
+            {props.componentsdata &&
+              props.componentsdata.map((data) => {
+                return (
+                  <Box
+                    type="input"
+                    className="dndnode input drapval"
+                    boxShadow={1}
+                    m={1}
+                    p={0.8}
+                    onDragStart={(event) =>
+                      onDragStart(event, data.type, data.appName)
+                    }
+                    draggable={!isActive}
+                  >
+                    {data.appName}
+                  </Box>
+                );
+              })}
+          </div>
         </div>
+        <div className="importCodeBtnDiv">
+          <button
+            className={
+              isActive || !props.isImportBtnActive
+                ? "disableImportBtn"
+                : "importCodeBtn"
+            }
+            onClick={importCode}
+            disabled={isActive || !props.isImportBtnActive}
+          >
+            Import Code/UDF
+          </button>
+        </div>
+        <ImportCodeDialog
+          files={files}
+          dirs={directories}
+          handleCloseDialog={closeDialog}
+          open={openImportCodeDialog}
+          getFiles={importCode}
+          backToBaseURL={backToBaseURL}
+          generateUDFConfigFunc={generateUDFConfigFunc}
+          selectFile={selectTheFileToGenerateConfig}
+          selectedFile={SelectedFileForConfig}
+          addressBar={configPath}
+          NodeSelected={props.NodeSelected}
+          streamCount={props?.streamCount}
+        />
+        <Snackbar
+          open={openAlert}
+          autoHideDuration={4000}
+          onClose={handleAlertClose}
+          message={AlertMsg}
+          anchorOrigin={{ horizontal: "top", vertical: "center" }}
+        >
+          <Alert severity="warning">{AlertMsg}</Alert>
+        </Snackbar>
       </div>
-    </div>
-  )
+    )
+  );
+};
 
-}
+const getCurrCompName = () => {
+  return;
+};
 
 const mapStateToProps = (state) => {
-  console.log("state1 appname:",state.ConfigureBuildReducer.getData.appName);
   return {
-    componentsdata: state.ConfigureBuildReducer.componentsInitialState.components,
-    appName:state.ConfigureBuildReducer.getData.appName,
+    componentsdata:
+      state.ConfigureBuildReducer.componentsInitialState.components,
+    appName: state.ConfigureBuildReducer.getData.appName,
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
   };
 };
@@ -85,9 +205,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateAppname: (appName) => {
-      console.log("Update_APP_NAME:", appName);
       dispatch({ type: "UPDATE_APP_NAME", value: appName });
-    }
-  }
-}
+    },
+  };
+};
+
 export default connect(mapStateToProps, mapDispatchToProps)(ComponentList);

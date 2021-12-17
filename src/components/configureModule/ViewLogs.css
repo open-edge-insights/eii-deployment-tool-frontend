@@ -1,5 +1,5 @@
  
-.dialogBody {
+.dialogBodyViewLogs {
     width: 100%;
 }
 .logText {
@@ -37,7 +37,7 @@
     padding-right: 5%;
     padding-left: 5%;
 }
-.dialogTitle {
+.viewLogDialogTitle {
     font-size: 20px;
     font-weight: bold;
     text-transform: capitalize;

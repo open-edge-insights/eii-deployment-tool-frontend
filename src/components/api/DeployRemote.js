@@ -18,50 +18,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-import React, { useRef } from 'react';
-import { FrameContextConsumer } from 'react-frame-component';
-import IframeComm from "react-iframe-comm";
-
-
-
-
-const Video = (props) => {
-    const attributes = {
-        src: "https://pbojinov.github.io/iframe-communication/iframe.html",
-        src: "",
-        width: "100%",
-        height: "175",
-        frameBorder: 1, // show frame border just for fun...
-    };
-
-    const postMessageData = "hello iframe";
-
-    const onReceiveMessage = () => {
-    };
-
-    const onReady = () => {
-    };
-
-    return (
-        <div>
-
-
-            <video width="470" height="250" controls="controls" >
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/ogg" />
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/mp4" />
-                {/* <embed src="http://www.youtube.com/embed/xDMP3i36naA" width="470" height="250"/> */}
-                Your browser does not support the video tag.
-
-
-            </video>
-
-        </div>
-    );
+export async function DeployRemote(images, ip_address, username, password, path) {
+  return fetch(`/eii/ui/deploy/remote`, {
+    credentials: "include",
+    method: "POST",
+    headers: {
+      "Access-Control-Allow-Credentials": true,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST",
+      "Access-Control-Allow-Headers": "application/json",
+      "Content-Type": "application/json",
+    },
+    body : JSON.stringify({
+      images: images,
+      ip_address: ip_address,
+      username: username,
+      password: password,
+      path: path
+    })
+  })
+    .then((response) => response.json())
+    .then(function (response) {
+      if (response.status_info.status) {
+        return response;
+      } else {
+        alert("Failed to deploy to remote machine " + response.status_info.error_detail)
+      }
+    })
+    .catch((error) => {
+      alert(error);
+    });
 }
-
-
-
-
-
-export default Video;

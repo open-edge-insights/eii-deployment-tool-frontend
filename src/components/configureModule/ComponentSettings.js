@@ -41,7 +41,6 @@ const ComponentSettings = () => {
   });
 
   const handleChange = (event) => {
-    console.log("handlechange");
     setState({ ...state, [event.target.name]: event.target.checked });
   };
   return (

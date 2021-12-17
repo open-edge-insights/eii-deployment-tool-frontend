@@ -1,0 +1,57 @@
+.nextButtonMainPage,
+.cancelButtonMainPage,
+.backButtonMainPage {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.42857143;
+  position: relative;
+  min-width: 100px;
+  border-radius: 2px;
+  font-size: 12px;
+  white-space: normal;
+  color: #fff;
+  background-color: #0068b5;
+  border: medium solid transparent;
+  cursor: pointer;
+  border-width: 0;
+  height: 30px;
+}
+.createProjectNextCancelBtnDiv {
+  padding-bottom: 10px;
+  text-align: right;
+  padding-right: 40px;
+}
+.nextButtonMainPage,
+.backButtonMainPage {
+  margin-right: 10px;
+}
+.cancelButtonMainPageSpan {
+  margin-right: 10px;
+}
+.nextButtonMainPageDisabled {
+  cursor: not-allowed !important;
+  background-color: #ccc !important;
+  color: black !important;
+}
+.configBuildComponentIndex {
+  display: flex;
+  justify-content: center;
+}
+.mainpageDivTitletext {
+  font-size: 16px;
+}
+.deploymentProgressBar {
+  padding: 200px 0px 100px 650px;
+}
+.deploymentProgressBarText {
+  font-size: 18px;
+  font-weight: bold;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+.deployBtnProjectScreen {
+  position: absolute;
+  right: 77em;
+  bottom: 37em;
+}

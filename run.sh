@@ -47,6 +47,7 @@ function sourceEnv() {
 function setupHost() {
     sudo mkdir -p $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
     sudo chown -R $EII_USER_NAME:$EII_USER_NAME $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
+    sudo chmod a+rw -R $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
     create_docker_network
     if [ -d ../DeploymentToolBackend/certificates ];then
         sudo cp -rf ../DeploymentToolBackend/certificates .

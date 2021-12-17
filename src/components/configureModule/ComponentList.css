@@ -20,12 +20,12 @@
     position: relative !important;
     left:0px !important;
     padding:10px !important;
-    border-radius: 5px !important;
+    border-radius: 2px !important;
 
 }
 .border1px{
     border:1px solid #707070;
-
+    border-right: none !important;
 }
 .positionisActive{
     position:absolute;
@@ -35,7 +35,7 @@
     right:0;
     background:rgba(0,0,0,0.1) !important;
     cursor:not-allowed !important;
-    border-radius: 5px !important;
+    border-radius: 2px !important;
 }
 .coldrag{
     color: #0068B5 !important;
@@ -44,7 +44,7 @@
     font-weight: 400;
 }
 .overflowclip{
-    height: 160px !important;
+    height: 240px !important;
      /* overflow-x: clip !important;
       overflow-y: scroll !important; */
 }
@@ -55,4 +55,7 @@
      display: inline-flex;
      background-color: white !important;
      color: black; 
+}
+.ComponentListMainDiv {
+    border-right: none;
 }

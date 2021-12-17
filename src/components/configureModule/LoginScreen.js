@@ -19,114 +19,84 @@
  * SOFTWARE.
  */
 
-import React,{useState} from 'react';
+import React, { useState } from "react";
 import "./LoginScreen.css";
-import Box from "@material-ui/core/Box";
-import Paper from '@material-ui/core/Paper';
-import { Link } from 'react-router-dom';
-import companyLogo from '../../images/logo-white.png';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Cookies from 'universal-cookie';
-
-
-
-
+import Cookies from "universal-cookie";
 
 async function loginUser(credentials) {
   const cookies = new Cookies();
-
-  return fetch('/eii/ui/login', {
-    method: 'POST',
+  return fetch("/eii/ui/login", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(credentials)
+    body: JSON.stringify(credentials),
   })
-    .then(data => data.json())
-    .then(function(data){
-      console.log("data.error:",data); 
-      cookies.set("session",JSON.parse(data.data));
-      console.log("session:",cookies.get("session"));
-       if(data!==null){
-        
-         console.log("login screen:",JSON.stringify(data));
-         console.log("login screen:",(data.data));
-     
-         window.location.href = '/CreateProject';
-        
-       }
-       else{
-           console.log("not working");
-       }
+    .then((data) => data.json())
+    .then(function (data) {
+      
+      cookies.set("dt_session", JSON.parse(data.data));
+      if (data !== null) {
+        window.location.href = "/CreateProject";
+      } else {
+      }
     });
- }
-
-
-
-  const LoginScreen = () => {
-
+}
+const LoginScreen = () => {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
-  
-  const handleSubmit = async e => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await loginUser({
       username,
-      password
+      password,
     });
-  
-  }
-   let DisableLogin = false;
+  };
+  let DisableLogin = false;
   DisableLogin = username && password ? false : true;
-   
-    return (
-        <div>
-           
-      <form onSubmit={handleSubmit} >
-                 <h3 className="signIn">Sign In</h3>
-                                 
-                    <div className="col-sm-12 loginScreen" >
-                        <div className="col-sm-12 row" style={{ marginBottom: 10 }}>
-                               
-                            <span className="col-sm-8">
-                                <input type="text" id="username" name="username"  className="username" placeholder="Username"   onChange={e => setUserName(e.target.value)}
-required />
-                            </span>
-                         
-                        </div>
-                        <div className="col-sm-12 row" style={{ marginBottom: 10 }}>
-                                
-                            <span className="col-sm-8">
-                                <input type="password" id="password" className="password" name="password"  placeholder="Password"   onChange={e => setPassword(e.target.value)} required/>
-                            </span>
-                           
-                        </div>
-                       
-                       
-                    </div>
-                    <span className="col-sm-3 loginSpan">
-                        <button
-                        className="loginButton"
-                            type='submit'
-                           
-                            
-                        >
-                                     
 
-Login       
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <h3 className="signIn">Sign In</h3>
 
- </button>
-
-                    </span>
-
-                </form>
-     
-             
-            </div>
-         
-    )
-}
+        <div className="col-sm-12 loginScreen">
+          <div className="col-sm-12 row" style={{ marginBottom: 10 }}>
+            <span className="col-sm-8">
+              <input
+                type="text"
+                id="username"
+                name="username"
+                className="username"
+                placeholder="Username"
+                onChange={(e) => setUserName(e.target.value)}
+                required
+              />
+            </span>
+          </div>
+          <div className="col-sm-12 row" style={{ marginBottom: 10 }}>
+            <span className="col-sm-8">
+              <input
+                type="password"
+                id="password"
+                className="password"
+                name="password"
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </span>
+          </div>
+        </div>
+        <span className="col-sm-3 loginSpan">
+          <button className="loginButton" type="submit">
+            Login
+          </button>
+        </span>
+      </form>
+    </div>
+  );
+};
 
 export default LoginScreen;
-

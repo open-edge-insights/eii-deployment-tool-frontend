@@ -1,0 +1,43 @@
+.closeConfirmDialogBtn {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.8;
+  position: relative;
+  min-width: 30px;
+  border-radius: 2px;
+  font-size: 12px;
+  white-space: normal;
+  color: #fff;
+  background-color: #0068b5;
+  border: medium solid transparent;
+  -webkit-appearance: button;
+  cursor: pointer;
+  border-width: 0;
+  width: auto;
+  margin-bottom: 10px;
+  padding: 5px 35px 5px 20px;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+}
+.confirmDialogBody {
+  width: 100%;
+  min-height: 100px;
+  padding: 20px;
+  padding-bottom: 0px;
+}
+.closeConfirmYesBtn {
+  margin-right: 10px;
+  background-color: green;
+}
+.closeConfirmNoBtn {
+  background-color: red;
+}
+.ConfirmDialogText {
+  font-weight: 600;
+}
+.closeConfirmDialogDiv {
+  margin-top: 30px;
+  display: flex;
+  justify-content: right;
+}

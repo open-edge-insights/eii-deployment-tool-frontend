@@ -18,50 +18,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-import React, { useRef } from 'react';
-import { FrameContextConsumer } from 'react-frame-component';
-import IframeComm from "react-iframe-comm";
-
-
-
-
-const Video = (props) => {
-    const attributes = {
-        src: "https://pbojinov.github.io/iframe-communication/iframe.html",
-        src: "",
-        width: "100%",
-        height: "175",
-        frameBorder: 1, // show frame border just for fun...
-    };
-
-    const postMessageData = "hello iframe";
-
-    const onReceiveMessage = () => {
-    };
-
-    const onReady = () => {
-    };
-
-    return (
-        <div>
-
-
-            <video width="470" height="250" controls="controls" >
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/ogg" />
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/mp4" />
-                {/* <embed src="http://www.youtube.com/embed/xDMP3i36naA" width="470" height="250"/> */}
-                Your browser does not support the video tag.
-
-
-            </video>
-
-        </div>
-    );
+export async function getCameraConfig(cameraConfig) {
+  return fetch("/eii/ui/camera/config/get", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(
+      cameraConfig
+    ),
+  })
+    .then((data) => data.json())
+    .then(function (data) {
+      if (data) {
+        return data;
+      } else {
+        alert("Some Error occured");
+      }
+    })
+    .catch((error) => {
+      alert(error);
+    });
 }
-
-
-
-
-
-export default Video;
+export async function setCameraConfig(cameraConfig) {
+  return fetch("/eii/ui/camera/config/set", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(cameraConfig),
+  })
+    .then((data) => data.json())
+    .then(function (data) {
+      if (data.status_info.status) {
+        return data;
+      } else {
+       // alert("Some Error occured: " + data.status_info.error_detail);
+      }
+    })
+    .catch((error) => {
+      alert(error);
+    });
+}

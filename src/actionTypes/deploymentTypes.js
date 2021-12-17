@@ -19,49 +19,6 @@
  * SOFTWARE.
  */
 
-import React, { useRef } from 'react';
-import { FrameContextConsumer } from 'react-frame-component';
-import IframeComm from "react-iframe-comm";
-
-
-
-
-const Video = (props) => {
-    const attributes = {
-        src: "https://pbojinov.github.io/iframe-communication/iframe.html",
-        src: "",
-        width: "100%",
-        height: "175",
-        frameBorder: 1, // show frame border just for fun...
-    };
-
-    const postMessageData = "hello iframe";
-
-    const onReceiveMessage = () => {
-    };
-
-    const onReady = () => {
-    };
-
-    return (
-        <div>
-
-
-            <video width="470" height="250" controls="controls" >
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/ogg" />
-                <source src="http://www.youtube.com/embed/xDMP3i36naA" type="video/mp4" />
-                {/* <embed src="http://www.youtube.com/embed/xDMP3i36naA" width="470" height="250"/> */}
-                Your browser does not support the video tag.
-
-
-            </video>
-
-        </div>
-    );
-}
-
-
-
-
-
-export default Video;
+export const DEPLOYMENT_PROGRESS = "DEPLOYMENT_PROGRESS";
+export const DEPLOYMENT_SUCCESSFUL = "DEPLOYMENT_SUCCESSFUL"; 
+export const DEPLOYMENT_FAILED = "DEPLOYMENT_FAILED";

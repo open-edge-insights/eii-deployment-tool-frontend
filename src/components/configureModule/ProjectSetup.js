@@ -31,6 +31,7 @@ import { connect } from 'react-redux';
 import './ProjectSetup.css';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
+import GetStatusApi from '../api/GetStatusApi';
 
 const useStyles = makeStyles((theme) => ({
   butOk: {
@@ -80,8 +81,6 @@ const ProjectSetup = (props) => {
     }
     currentState[type] = value;
     setState(currentState);
-    console.log('1', currentState);
-    console.log(currentState);
   };
 
   const onChangeHandleProject = (e, type) => {
@@ -93,23 +92,30 @@ const ProjectSetup = (props) => {
     }
     currentState[type] = value;
     setState(currentState);
-    console.log('1', currentState);
-    console.log(currentState);
   };
 
-  const projectSetupSubmit = () => {
-    if (state.projectName.trim() != '' || state.openProjectName) {
-      props.updateProjectInfo({ ...state }, props.getStateVal);
-            sendProjectName(state.projectName);
+	const projectSetupSubmit = () => {
+	if (state.projectName.trim() != '' || state.openProjectName) {
+		GetStatusApi.getstatus(
+			(data) => {
+				if(data.status != "In Progress") {
+					props.updateProjectInfo({ ...state }, props.getStateVal);
+				} else {
+					alert("A " + data.task + " task is already in progress.Please try again later"); 
+				}
+			},
+			(data) => {
+				alert("Error: failed to get status!");
+			}
+		);
+	} else {
+		setError({
+			...error,
+			project_name: true,
+		});
 
-    } else {
-      setError({
-        ...error,
-        project_name: true,
-      });
-     
-    }
-  };
+	}
+};
 
   const getProjectList = (event) => {
     axios.get('/eii/ui/project/list')
@@ -121,7 +127,6 @@ const ProjectSetup = (props) => {
           data = JSON.parse(e?.data?.data);
           
         }
-        console.log('project_names', data);
         setProjectList(data || []);
       })
       .catch((e) => {
@@ -129,23 +134,10 @@ const ProjectSetup = (props) => {
       });
     
   };
-
-  const sendProjectName = (value) => {
-    axios
-      .post('eii/ui/project/store', { name: value })
-      .then((e) => {
-        console.log(e);
-      })
-      .catch((e) => {
-        console.log({ e });
-      });
-  };
   const sendProjectNamedetails = (value) => {
-    console.log('load project details');
     axios
       .post('eii/ui/project/load', { name: value })
       .then((e) => {
-        console.log(e);
       })
       .catch((e) => {
         console.log({ e });
@@ -170,7 +162,6 @@ const ProjectSetup = (props) => {
       setState(currentState);
     }
 
-    console.log('1', currentState);
   };
   return (
     <div>
@@ -277,16 +268,15 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = (dispatch) => {
-  console.log('checking tab value:', dispatch);
   return {
     onTabValue: () => dispatch({ type: 'ON_TABVALUE' }),
     updateProjectInfo: (projectData, curState) => {
-      console.log('curState1:', curState);
       dispatch({ type: 'UPDATE_PROJECT_INFO', value: projectData });
     },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectSetup);
+
 
 

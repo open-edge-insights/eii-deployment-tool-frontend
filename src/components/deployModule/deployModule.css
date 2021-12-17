@@ -1,0 +1,32 @@
+.DeployScreenRadioBtn .MuiTypography-body1{
+    font-size: 14px;
+    display: block;
+}
+.tabpan {
+    border: none;
+}
+.deployScreenDivider {
+    border: 1px solid rgba(134, 121, 121, 0.877);
+    position: relative;
+    right: 200px;
+}
+.targetDeviceDeploytextFieldLabel {
+    text-transform: capitalize;
+    padding-right: 10px;
+    font-size: 14px;
+}
+.deployToTargetDevice {
+    padding: 10px;
+    padding-left: 0px;
+    padding-top: 20px;
+}
+.deploymentscreenOptions {
+    display: flex;
+    margin-left: 330px;
+}
+.bottomPaddingCustom {
+    padding-bottom: 50px;
+}
+.deployToTargetDeviceBtn {
+    margin: 20px 0px 0px 60px;
+}

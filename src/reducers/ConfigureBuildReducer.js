@@ -19,22 +19,20 @@
  * SOFTWARE.
  */
 
-import { initialState } from '../initialState';
-import ActionType from '../actionTypes';
-import _ from 'lodash';
+import { initialState } from "../initialState";
+import ActionType from "../actionTypes";
+import _ from "lodash";
 
 export default function ConfigureBuildReducer(state = initialState, action) {
   const newState = { ...state };
   switch (action.type) {
     case ActionType.ON_TABVALUE:
-      console.log('createProjectLayout');
       return {
         ...state,
         createProjectLayout: false,
       };
-  
+
     case ActionType.UPDATE_PROJECT_INFO: {
-   
       return {
         ...state,
         projectSetup: {
@@ -44,65 +42,60 @@ export default function ConfigureBuildReducer(state = initialState, action) {
         },
       };
     }
-    case ActionType.ON_SELECTED_TAB:{
-      console.log('ontabselected', action.tabdata);
-      return{
+    case ActionType.ON_SELECTED_TAB: {
+      return {
         ...state,
-        projectSetup:{
+        projectSetup: {
           ...action.projectSetup,
-          tabCount:action.value,
-       
-        }
-      }
+          tabCount: action.value,
+        },
+      };
     }
-    case ActionType.HANDLE_SETTINGS:{
-      return{
-        ...state,
-        getData:{
-          ...state.getData,
-          isOpen:action.value
-        }
-      }
-    }
-    case ActionType.UPDATE_APP_NAME: {
-      console.log("Update:",action.value);
+    case ActionType.HANDLE_SETTINGS: {
       return {
         ...state,
         getData: {
           ...state.getData,
-          appName:action.value
+          isOpen: action.value,
+        },
+      };
+    }
+    case ActionType.UPDATE_APP_NAME: {
+      return {
+        ...state,
+        getData: {
+          ...state.getData,
+          appName: action.value,
         },
       };
     }
     case ActionType.UPDATE_MAIN_OBJECT: {
-   
-      
       var obj = {
         ...state,
-    
+
         componentsInitialState: {
-            ...state.componentsInitialState,
-            ...action.value
-          }
+          ...state.componentsInitialState,
+          ...action.value,
+        },
       };
-    
-      return{
-         ...obj,
-        };
-    } 
-    case ActionType.UPDATE_CONFIG_OBJECT:{
-                  let currentData = {...state};
-                  console.log("action.response:",action.response);
-                  currentData.selectedComponents=action.response;
-                  console.log("action.response selected:",currentData.selectedComponents);
-      
-                  return currentData.selectedComponents;
-              }
+
+      return {
+        ...obj,
+      };
+    }
+    case ActionType.UPDATE_CONFIG_OBJECT: {
+      let currentData = { ...state };
+      currentData.selectedComponents = action.response;
+      return currentData.selectedComponents;
+    }
+
+    case ActionType.INSTANCE_COUNT: {
+      return {
+        ...state,
+        instance_count: action.payload.instance_count,
+      };
+    }
     default:
-      console.log("actionss:", state);
       return newState;
   }
-
-
 }
-

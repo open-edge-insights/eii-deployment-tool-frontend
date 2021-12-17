@@ -54,6 +54,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${CMAKE_INSTALL_PREFIX}/lib \
 RUN mkdir -p /app && chown $EII_UID /app
 RUN mkdir -p /home/$EII_USER_NAME && chown $EII_UID /home/$EII_USER_NAME
 USER $EII_USER_NAME
+ENV NO_UPDATE_NOTIFIER=true
 HEALTHCHECK NONE
 ENTRYPOINT ["/bin/sh", "/files/start_frontend.sh"]
 
