@@ -96,7 +96,7 @@ const Deploy = (props) => {
     images.push(
       "openedgeinsights/ia_etcd_ui:" + process.env.REACT_APP_EII_VERSION
     );
-    images.push("ia_config_mgragent:" + process.env.REACT_APP_EII_VERSION);
+    images.push("ia_configmgr_agent:" + process.env.REACT_APP_EII_VERSION);
     return images;
   }
   /* Write the deploy to target device funcitonality inside this fun */
