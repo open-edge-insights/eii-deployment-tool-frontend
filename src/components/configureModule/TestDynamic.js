@@ -32,7 +32,9 @@ import UpdateConfigApi from "../api/UpdateConfigApi";
 import StoreProjectApi from "../api/StoreProjectApi";
 import { useDispatch } from "react-redux";
 import Slider from "@material-ui/core/Slider";
+import { CircularProgress } from "@material-ui/core";
 import { getCameraConfig, setCameraConfig } from "../api/CameraConfigApi";
+
 // import { MdReplay } from "react-icons/md";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +54,7 @@ export function TestDynamic(props) {
   const [enableSaveAndRestart, setEnableRestart] = useState(true);
   const [cameraPipeline, setCameraPipeline] = useState(null);
   const [cameraConfigSettings, setCameraSettings] = useState(null);
+  const [progressIndicator, setShowProgress] = useState(false);
   const dispatch = useDispatch();
   let udfItems = [];
   let AlgorithmsUsed = "";
@@ -209,6 +212,7 @@ export function TestDynamic(props) {
   /* Saving new config and then restarting containers */
   const saveAndRestartFunc = () => {
     setEnableRestart(false);
+    setShowProgress(true);
     /* Set the updated config - calling set api */
     let config = {};
     config[NodeSelected] = udfconfigCopy;
@@ -219,14 +223,16 @@ export function TestDynamic(props) {
           props.projectSetup.projectName,
           (response) => {
             StartContainers("restart")
-              .then((response) => { setEnableRestart(true)
+              .then((response) => { setEnableRestart(true);setShowProgress(false);
                 let status = response?.status_info?.status;
                 if (status == false) {
                   setEnableRestart(true);
+                  setShowProgress(false);
                 }
               })
               .catch((error) => {
               setEnableRestart(true)
+              setShowProgress(false);
                 alert(
                   "Some error occured while restarting containers: " + error
                 );
@@ -294,6 +300,12 @@ export function TestDynamic(props) {
       <div className="pipelineSettingTitle TestTabSubTitle">
         {NodeSelected && "Pipeline settings"}
       </div>
+      {progressIndicator ? (
+        <div className="deploymentProgressBar" >
+          <CircularProgress size={100} />
+          <p className="deploymentProgressBarText">saving</p>
+        </div>
+      ) : (
       <div className="TestProfileSettingsInTestTab col-sm-5 WebVisualizerTestSettings">
         {/* <TestProfileSettings /> this space is for test profile settings tab - !important */}
         {NodeSelected && udfTextBox()}
@@ -359,6 +371,11 @@ export function TestDynamic(props) {
           </span>
         </div>
       </div>
+      )}
+      {progressIndicator ? (
+        <div className="deploymentProgressBar" >
+        </div>
+      ) : (
       <div className="WebVisualizerSaveRestartBtnDiv col-sm-1">
         <button
           className="nextButtonMainPage WebVisualizerSaveRestartBtn"
@@ -376,6 +393,11 @@ export function TestDynamic(props) {
           Apply
         </button> */}
       </div>
+      )}
+      {progressIndicator ? (
+        <div className="deploymentProgressBar" >
+        </div>
+      ) : (
       <div className="WebVisalizerPreviewTestDiv col-sm-4">
         <span className="WebVisalizerPrevie]wTestTitle">
           Algorithm : {AlgorithmsUsed}
@@ -392,6 +414,7 @@ export function TestDynamic(props) {
           />
         )}
       </div>
+      )}
     </div>
   );
 }

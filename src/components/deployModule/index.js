@@ -34,10 +34,15 @@ import "./deployModule.css";
 import { compose } from "redux";
 import GetStatusApi from "../api/GetStatusApi";
 import { responsiveFontSizes } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
+
 
 const Deploy = (props) => {
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
-
+  
+  const DeployInLocalMachineProgress = useSelector(
+    (state) => state.DeploymentReducer.DeployInLocalMachineProgress
+  );
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
@@ -162,6 +167,12 @@ const Deploy = (props) => {
           className="deployScreenDivider"
           style={{ width: window.screen.width }}
         />
+        {DeployInLocalMachineProgress ? (
+        <div className="deploymentProgressBar" >
+          <CircularProgress size={100} />
+          <p className="deploymentProgressBarText">Deployment In Progress</p>
+        </div>
+      ) : (
         <div class="row">
           <div class="col-sm-12 deploymentscreenOptions" style={{ padding: 0 }}>
             <div style={{ marginBottom: 10 }} className="col-sm-5">
@@ -213,6 +224,7 @@ const Deploy = (props) => {
             </div>
           </div>
         </div>
+      )}
       </div>
     </div>
   );

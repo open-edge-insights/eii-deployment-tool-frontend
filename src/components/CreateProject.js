@@ -109,6 +109,9 @@ const CreateProject = (props) => {
   const BuildComplete = useSelector(
     (state) => state.BuildReducer.BuildComplete
   );
+  const DeployInLocalMachineProgress = useSelector(
+    (state) => state.DeploymentReducer.DeployInLocalMachineProgress
+  );
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
 
   /* Getting deployment status from redux store */
@@ -155,6 +158,12 @@ const CreateProject = (props) => {
   /* Builder and container restart called in sequence */
   const showProgressBar = () => {
     if (DeploymentInProgress == true) {
+      dispatch({
+        type: "DEPLOYMENT_PROGRESS",
+        payload: {
+          DeployInLocalMachineProgress: true,
+        },
+      });
       setShowDeploymentProgress(true);
       setDeploymentStatusText("Deployment in progress");
       BuilderApi.builder(
@@ -168,6 +177,12 @@ const CreateProject = (props) => {
               let response = containerStart?.status_info?.status;
               if (response) {
                 /*TODO: call DeployRemote API here - fetch parameters from Deployment screen (new text boxes)*/
+                dispatch({
+                  type: "DEPLOY_IN_LOCAL_MACHINE_PROGRESS_SUCCESSFUL",
+                  payload: {
+                    DeployInLocalMachineProgress: false,
+                  },
+                });
                 dispatch({
                   type: "DEPLOYMENT_SUCCESSFUL",
                   payload: {
@@ -185,6 +200,12 @@ const CreateProject = (props) => {
                     DeploymentError: true,
                     DeploymentErrorMessage:
                       "Error in deploying",
+                  },
+                });
+                dispatch({
+                  type: "DEPLOY_IN_LOCAL_MACHINE_PROGRESS_FAILED",
+                  payload: {
+                    DeployInLocalMachineProgress: false,
                   },
                 });
                 setDeploymentStatusText(
@@ -239,12 +260,6 @@ const CreateProject = (props) => {
   };
   return (
     <div className={classes.root}>
-      {deployProgressbar ? (
-        <div className="deploymentProgressBar">
-          <CircularProgress size={100} />
-          <p className="deploymentProgressBarText">{deploymentStatusText}</p>
-        </div>
-      ) : (
         <>
           {props.popup === true && <SplashScreen />}
           <AppBar position="static" color="default">
@@ -324,7 +339,7 @@ const CreateProject = (props) => {
                   Next
                 </button>
               )}
-              {value == 2 && props.projectSetup.noOfStreams !== 0 && (
+              {value == 2 && props.projectSetup.noOfStreams !== 0 && !DeployInLocalMachineProgress && (
                 <button
                   className="nextButtonMainPage deployBtnProjectScreen"
                   onClick={showProgressBar}
@@ -340,7 +355,6 @@ const CreateProject = (props) => {
             logout={logoutFunc}
           />
         </>
-      )}
     </div>
   );
 };

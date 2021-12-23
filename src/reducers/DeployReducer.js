@@ -26,7 +26,8 @@ const initialState = {
   DeploymentError: false,
   DeploymentErrorMessage: "",
   DeploymentInProgress: false,
-  DeployInDevOrProd: ""
+  DeployInDevOrProd: "",
+  DeployInLocalMachineProgress:false
 };
 
 export default function DeploymentReducer(state = initialState, action) {
@@ -38,7 +39,8 @@ export default function DeploymentReducer(state = initialState, action) {
         DeploymentError: false,
         DeploymentErrorMessage: "",
         DeploymentInProgress: action.payload.DeploymentInProgress,
-        DeployInDevOrProd:  action.payload.DeployInDevOrProd
+        DeployInDevOrProd:  action.payload.DeployInDevOrProd,
+        DeployInLocalMachineProgress:action.payload.DeployInLocalMachineProgress
       };
     case DeployTypes.DEPLOYMENT_SUCCESSFUL:
       return {
@@ -56,6 +58,16 @@ export default function DeploymentReducer(state = initialState, action) {
           DeploymentErrorMessage: action.payload.DeploymentErrorMessage,
           DeploymentInProgress: false
         };
+        case DeployTypes.DEPLOY_IN_LOCAL_MACHINE_PROGRESS_SUCCESSFUL:
+          return{
+            ...state,
+            DeployInLocalMachineProgress:action.payload.DeployInLocalMachineProgress
+          };
+        case DeployTypes.DEPLOY_IN_LOCAL_MACHINE_PROGRESS_FAILED:
+          return{
+            ...state,
+            DeployInLocalMachineProgress:false
+          };
     default:
       return state;
   }
