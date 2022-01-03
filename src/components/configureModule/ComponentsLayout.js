@@ -54,6 +54,7 @@ import horizontal from "../../images/horizontal.png";
 import vertical from "../../images/vertical.png";
 import LoadCompApi from "../api/LoadCompApi";
 import { useDispatch, useSelector } from "react-redux";
+import {getCameraStatus, startCamera, stopCamera } from "../api/CameraStreamApi";
 import { PROJECT_SELECTION_ACTIVE } from "../../actionTypes/projectSelection";
 var timer = null;
 const initialElements = [];
@@ -93,6 +94,7 @@ const ComponentsLayout = (props) => {
   const [streamCount, setStreamCount] = useState(0);
   const [executeUdffunc, setexecuteUdf] = useState(false);
   const [progressIndicator, setShowProgress] = useState(false);
+  const [cameraSource, setCameraSource] = useState(props.cameraSource);
 
   let currentComponentData = { ...stateComponent };
   const dispatch = useDispatch();
@@ -105,9 +107,16 @@ const ComponentsLayout = (props) => {
   const CurrentTabIndex = useSelector(
     (state) => state.ConfigureBuildReducer.tabCount
   );
+  
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
+
+  useEffect(() => {
+      let imgElem = document.getElementById("cameraPreviewTN");    
+      if(imgElem)
+        imgElem.src = cameraSource;
+  }, [cameraSource]);
   /* Modifying the configeration as soon as we get the updated config */
   useEffect(() => {
     let selectedStreamId = props.streamIds;
@@ -295,12 +304,61 @@ const ComponentsLayout = (props) => {
   const handlePaneClick = (event) => {
     setOpen(false);
     setImportBtnActive(false);
+    stopCameraPreview();
   };
+
+  function startCameraPreview(pipeline) {
+    if(pipeline.length <= 1) {
+      alert("Unsupported camera device id:" + pipeline)
+      return;
+    }
+    let config = {devices: [], width: 200};
+    config.devices.push(pipeline);
+    getCameraStatus(config).then(
+      (response) => {
+        let data = JSON.parse(response.data);
+        if(data[pipeline].status == "Not Running") {
+          startCamera(config).then(
+            (response) => {
+              if(response?.status_info?.status) {
+                let sdata = JSON.parse(response.data)
+                if(sdata[pipeline].status == "Running") {
+                  let stream_id = sdata[pipeline].stream_id
+                  setCameraSource("/eii/ui/camera/stream/" + stream_id);
+                } else {
+                  console.log("Camera ", pipeline, "Not running!");
+                }
+              } else {
+                console.log("Camera Start API failed")
+              }
+            }
+          )
+        } else if(data[pipeline].status == "Running") {
+          let stream_id = data[pipeline].stream_id
+          setCameraSource("/eii/ui/camera/stream/" + stream_id);
+        }
+      }
+    )
+  }
+  function stopCameraPreview() {
+    let imageElem = document.getElementById("cameraPreviewTN");
+    let config = {devices: []};
+    stopCamera(config).then(
+      (response) => {
+        if(response.status_info.status) {
+          setCameraSource("");
+          if(imageElem)
+            imageElem.src = "";
+        }
+      }
+    );
+  }
 
   const handleElementClick = (event, data) => {
     if (getComponentById(data.id) == null) {
       setNodeSelected(null);
       setImportBtnActive(false);
+      startCameraPreview(null);
       return;
     }
     setNodeSelected(data.data.name);
@@ -328,6 +386,12 @@ const ComponentsLayout = (props) => {
         refreshComponentLabel(currentSelectedComp);
         setOpen(false);
         setOpen(true);
+        if(configData.config.ingestor?.type == "opencv" &&
+          configData.config.ingestor.pipeline.startsWith("/dev/")) {
+          startCameraPreview(configData.config.ingestor?.pipeline);
+        } else if(cameraSource) {
+          stopCameraPreview();
+        }
       },
       (response) => {
         alert("failed to get config for " + JSON.stringify(services));
@@ -881,6 +945,12 @@ const ComponentsLayout = (props) => {
 
   const onLoad = (event, reactFlowInstance) => {
     setReactFlowInstance(event);
+    stopCamera({devices:[]}).then((response) => {
+      if(!response?.status_info?.status) {
+        alert("Failed to stop cameras");
+      }
+    });
+
     if (ProjectSelectionActive == true) {
       setShowProgress(true);
       // Stop all EII docker containers running on host
@@ -1488,6 +1558,7 @@ const mapStateToProps = (state, oldProps) => {
     appName: state.ConfigureBuildReducer.getData.appName,
     noOfStreams: state?.ConfigureBuildReducer?.projectSetup?.noOfStreams,
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
+    cameraSource: state?.ConfigureBuildReducer?.cameraSource,
   };
 };
 

@@ -250,6 +250,11 @@ const ConfigBuild = (props) => {
             View
           </button>
         </div>
+        <div>
+          <span class="col-sm-5" style={{marginLeft:150}}>
+          <img id="cameraPreviewTN" src="" alt="No Preview" style={{ width:200, backgroundColor:"lightgray" }} ></img>
+          </span>
+        </div>
       </div>
       {thumb}
       <ViewLogs

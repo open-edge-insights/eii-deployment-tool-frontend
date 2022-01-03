@@ -18,8 +18,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-export async function getCameraConfig(cameraConfig) {
-  return fetch("/eii/ui/camera/config/get", {
+export async function startCamera(cameraConfig) {
+  return fetch("/eii/ui/camera/start", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -37,11 +37,12 @@ export async function getCameraConfig(cameraConfig) {
       }
     })
     .catch((error) => {
-      alert(error);
+      console.log(error);
     });
 }
-export async function setCameraConfig(cameraConfig) {
-  return fetch("/eii/ui/camera/config/set", {
+
+export async function stopCamera(cameraConfig) {
+  return fetch("/eii/ui/camera/stop", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -53,10 +54,32 @@ export async function setCameraConfig(cameraConfig) {
       if (data.status_info.status) {
         return data;
       } else {
-        console.log("Error while starting camera: " + data.status_info.error_detail);
+        console.log("Error while stopping camera: " + data.status_info.error_detail);
       }
     })
     .catch((error) => {
-      alert(error);
+      console.log(error);
     });
 }
+
+export async function getCameraStatus(cameraConfig) {
+  return fetch("/eii/ui/camera/status", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(cameraConfig),
+  })
+    .then((data) => data.json())
+    .then(function (data) {
+      if (data.status_info.status) {
+        return data;
+      } else {
+        console.log("Error while getting camera status: " + data.status_info.error_detail);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
