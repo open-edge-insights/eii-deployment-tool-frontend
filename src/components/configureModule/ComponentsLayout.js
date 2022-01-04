@@ -104,8 +104,8 @@ const ComponentsLayout = (props) => {
   const ProjectSelectionActive = useSelector(
     (state) => state.ProjectSelectionReducer.projectSelection
   );
-  const CurrentTabIndex = useSelector(
-    (state) => state.ConfigureBuildReducer.tabCount
+  const currentTabIndex = useSelector(
+    (state) => state.ConfigureBuildReducer.projectSetup.tabCount
   );
   
   useEffect(() => {
@@ -945,6 +945,15 @@ const ComponentsLayout = (props) => {
 
   const onLoad = (event, reactFlowInstance) => {
     setReactFlowInstance(event);
+    if (currentComponentData) {
+      let instances;
+      let services = [];
+      var c = currentComponentData.selectedComponents.nodes;
+      for (let i = 0; i < c.length; i++) 
+       services.push(c[i].dirName);
+      instances = getInstanceCount(services);
+      setStreamCount(instances);
+    }
     stopCamera({devices:[]}).then((response) => {
       if(!response?.status_info?.status) {
         alert("Failed to stop cameras");
@@ -1489,10 +1498,7 @@ const ComponentsLayout = (props) => {
               </button>
               <ReactFlow
                 style={{
-                  borderRight:
-                   CurrentTabIndex == 0
-                      ? "1px solid gray"
-                      : "",
+                  borderRight: currentTabIndex == 0 ? "1px solid gray" : "",
                 }}
                 elements={elements}
                 nodesConnectable={true}

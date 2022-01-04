@@ -41,6 +41,7 @@ import ConfirmDialog from "./ConfirmDialog";
 import { CircularProgress } from "@material-ui/core";
 import BuilderApi from "./api/BuilderApi";
 import { StartContainers } from "./api/StartContainers";
+import ActionType from "../actionTypes/index";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -104,6 +105,8 @@ const CreateProject = (props) => {
   const dispatch = useDispatch();
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    props.setTabValues(newValue);
+
   };
   /* Getting the buildComplete state from redux store */
   const BuildComplete = useSelector(
@@ -129,6 +132,7 @@ const CreateProject = (props) => {
   );
   const handleChangeIndex = (index) => {
     setValue(index);
+    props.setTabValues(index);
   };
   useEffect(() => {
     setValue(props.currentTabCount);
@@ -215,9 +219,8 @@ const CreateProject = (props) => {
               }
             })
             .catch((error) => {
-              //container start error
+             console.log(error)
             });
-//            clearInterval(interval);
           } else {
             setDeploymentStatusText("Deployment failed");
             setShowDeploymentProgress(false);
@@ -228,8 +231,7 @@ const CreateProject = (props) => {
                 DeploymentError: true,
                 DeploymentErrorMessage: "Error in deploying",
               },
-            })              
-            .catch((error) => {
+            }).catch((error) => {
               setDeploymentStatusText("Deployment failed");
               setShowDeploymentProgress(false);
               dispatch({
@@ -369,7 +371,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setTabValues: (tabdata) => {
-      dispatch({ type: "ON_SELECTED_TAB", value: tabdata });
+      dispatch({ type: ActionType.ON_SELECTED_TAB, value: tabdata });
     },
   };
 };
