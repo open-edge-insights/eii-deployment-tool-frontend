@@ -168,7 +168,7 @@ export function TestDynamic(props) {
     setNodeSelected(NodeSelected);
   };
   const udfTextBox = () => {
-    udfConfigSelectedNode?.config?.udfs.map((udfItem, index) => {
+    udfConfigSelectedNode?.config?.udfs?.map((udfItem, index) => {
       for (let itemkey in udfItem) {
         if (!AlgorithmsUsed.includes(udfItem["name"]))
           AlgorithmsUsed = udfItem["name"] + " , " + AlgorithmsUsed;

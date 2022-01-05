@@ -169,8 +169,8 @@ const CreateProject = (props) => {
       BuilderApi.builder(
         [],
         instance_count,
-        DeployEnv == "dev" ? true : false,
         false,
+        DeployEnv == "Dev" ? true : false,
         (configresponse, statusresponse) => {
           if (statusresponse?.data?.status_info.status) {
             StartContainers("restart").then((containerStart) => {
