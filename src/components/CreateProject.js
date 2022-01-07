@@ -340,6 +340,7 @@ const CreateProject = (props) => {
                       : "nextButtonMainPage"
                   }
                   onClick={() => handleChangeIndex(value + 1)}
+                  disabled={!BuildComplete}
                 >
                   Next
                 </button>

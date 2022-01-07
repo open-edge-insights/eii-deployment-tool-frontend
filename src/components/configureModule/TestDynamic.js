@@ -51,7 +51,7 @@ export function TestDynamic(props) {
   const [udfConfigSelectedNode, setUDFconfigInfo] = useState({});
   const [updateArray, setUpdateFlag] = useState(false);
   const udfconfigCopy = udfConfigSelectedNode;
-  const [enableSaveAndRestart, setEnableRestart] = useState(true);
+  const [enableSaveAndRestart, setEnableRestart] = useState(false);
   const [cameraPipeline, setCameraPipeline] = useState(null);
   const [cameraConfigSettings, setCameraSettings] = useState(null);
   const [progressIndicator, setShowProgress] = useState(false);
@@ -192,6 +192,7 @@ export function TestDynamic(props) {
     return udfItems;
   };
   const modifyUdfSettings = (event, itemkey, modifiedudfindex) => {
+  setEnableRestart(true);
     if (udfconfigCopy?.config?.udfs) {
       let udfKey = itemkey;
       let modifiedvalue = event.target.value;

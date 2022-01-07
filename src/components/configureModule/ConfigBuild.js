@@ -245,7 +245,7 @@ const ConfigBuild = (props) => {
             disabled={isActive || !enableBuildView}
             className="viewButton"
             onClick={() => viewLogs("build")}
-            id={isActive ? "disableStart" : ""}
+            id={isActive || BuildProgressPercentage<5 ? "disableStart" : ""}
           >
             View
           </button>

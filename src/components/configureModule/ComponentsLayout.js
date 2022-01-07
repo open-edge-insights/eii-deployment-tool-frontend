@@ -315,6 +315,7 @@ const ComponentsLayout = (props) => {
     setOpen(false);
     setImportBtnActive(false);
     stopCameraPreview();
+    setNodeSelected("");
   };
 
   function startCameraPreview(pipeline) {
