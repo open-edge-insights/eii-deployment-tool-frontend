@@ -33,8 +33,8 @@ export default function ImportCodeDialog(props) {
   }, [props]);
   useEffect(() => {
     if (props.streamCount == 1 && props.NodeSelected != "") {
-      setStreamId(["1"]);
-    } else if (props.streamCount > 1 && props.NodeSelected != "") {
+      setStreamId(["1"]); 
+    } else if (props.streamCount > 1 && props.NodeSelected != "" && props.NodeSelected) {
       let selectedNodeId = props.NodeSelected[props.NodeSelected.length - 1];
       let arr = [];
       arr.push(selectedNodeId);
