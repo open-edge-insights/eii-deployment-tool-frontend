@@ -210,7 +210,7 @@ const ConfigBuild = (props) => {
       <p className={`${classes.texCenter} titleStyle`}>Configure & Build</p>
       <div className={`${classes.texCenter} startConfig`}>
         <button
-          disabled={disableStartButton || isActive}
+          disabled={disableStartButton || isActive || BuildComplete == true}
           className={"startConfigButton"}
           onClick={startBuild}
           id={

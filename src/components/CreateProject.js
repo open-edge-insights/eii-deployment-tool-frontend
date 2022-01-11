@@ -278,7 +278,7 @@ const CreateProject = (props) => {
             </Typography>
             <Tabs
               value={value}
-              onChange={handleChange}
+              //onChange={handleChange}
               indicatorColor="primary"
               textColor="primary"
               variant="fullWidth"
@@ -347,7 +347,7 @@ const CreateProject = (props) => {
               )}
               {value == 2 && props.projectSetup.noOfStreams !== 0 && !DeployInLocalMachineProgress && (
                 <button
-                  className="nextButtonMainPage deployBtnProjectScreen"
+                  className={!DeployEnv?" deployBtnProjectScreen nextButtonMainPageDisabled nextButtonMainPage":"nextButtonMainPage deployBtnProjectScreen"}
                   onClick={showProgressBar}
                 >
                   Deploy
