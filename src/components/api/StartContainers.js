@@ -35,10 +35,10 @@ export async function StartContainers(action) {
       if (response.status_info.status) {
         return response;
       } else {
-        alert("Failed to " + action + " containers: " + response.status_info.error_detail)
+        console.log("Failed to " + action + " containers: " + response.status_info.error_detail)
       }
     })
     .catch((error) => {
-      alert(error);
+      console.log(error);
     });
 }

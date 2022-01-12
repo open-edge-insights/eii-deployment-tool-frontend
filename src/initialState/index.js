@@ -37,6 +37,7 @@ export const initialState = {
   existProjects: [],
   projects: [],
   services_generateApi: [],
+  cameraPreviewInConfigScreen: "",
   componentsInitialState:  {
     data_stream_id:undefined,
     selectedIndex: undefined,

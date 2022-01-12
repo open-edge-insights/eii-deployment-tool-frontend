@@ -26,8 +26,7 @@ import "./AddTab.css";
 import { connect } from "react-redux";
 import ComponentsLayout from "./ComponentsLayout";
 import "./DynamicTabs.css";
-import Paper from "@material-ui/core/Paper";
-
+import { useSelector } from "react-redux";
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
@@ -55,7 +54,9 @@ export function DynamicTabs(props) {
 
   var tabsHeader = [];
   var tabsContaner = [];
-
+  const ProjectSelectionScreen = useSelector(
+    (state) => state.ProjectSelectionReducer.projectSelection
+  );
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -72,7 +73,7 @@ export function DynamicTabs(props) {
       updateConfigData
     );
   };
-  if (0 < props?.projectSetup?.noOfStreams) {
+  if (!ProjectSelectionScreen) {
     tabsContaner.push(
       <div className="row col-sm-12 tabpan">
         <ComponentsLayout

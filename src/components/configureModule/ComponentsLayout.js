@@ -109,6 +109,15 @@ const ComponentsLayout = (props) => {
   );
   
   useEffect(() => {
+    StartContainers("stop")
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log("Stop containers error", error);
+      });
+  }, [currentTabIndex]);
+  useEffect(() => {
     let WebVisualizerFlag =
       currentComponentData.selectedComponents.showWebVisualizer;
     let c = currentComponentData.selectedComponents.nodes;
@@ -117,12 +126,16 @@ const ComponentsLayout = (props) => {
       for (let i = 0; i < c.length; i++)
         services_generate_api_arr.push(c[i].service);
     }
-   
+
     props.dispatchServices(services_generate_api_arr);
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
 
   useEffect(() => {
+    dispatch({
+      type: ActionType.CAMERA_THUMBNAIL_PREVIEW_CONFIG_SCREEN,
+      cameraPreviewInConfigScreen: cameraSource,
+    });
       let imgElem = document.getElementById("cameraPreviewTN");    
       if(imgElem)
         imgElem.src = cameraSource;
@@ -293,7 +306,7 @@ const ComponentsLayout = (props) => {
               saveProject();
               setAlertConfig(true);
             } else {
-              alert(
+              console.log(
                 "Failed to update config. Reason: " +
                   data.status_info.error_detail
               );
@@ -405,7 +418,7 @@ const ComponentsLayout = (props) => {
         }
       },
       (response) => {
-        alert("failed to get config for " + JSON.stringify(services));
+        console.log("failed to get config for " + JSON.stringify(services));
       }
     );
   };
@@ -958,17 +971,17 @@ const ComponentsLayout = (props) => {
   const onLoad = (event, reactFlowInstance) => {
     setReactFlowInstance(event);
     if (currentComponentData) {
-      let instances;
-      let services = [];
-      var c = currentComponentData.selectedComponents.nodes;
-      for (let i = 0; i < c.length; i++) 
-        services.push(c[i].dirName);
-      instances = getInstanceCount(services);
-      setStreamCount(instances);
-    }
+            let instances;
+            let services = [];
+            var c = currentComponentData.selectedComponents.nodes;
+            for (let i = 0; i < c.length; i++) 
+              services.push(c[i].dirName);
+            instances = getInstanceCount(services);
+            setStreamCount(instances);
+          }
     stopCamera({devices:[]}).then((response) => {
       if(!response?.status_info?.status) {
-        alert("Failed to stop cameras");
+        console.log("Failed to stop cameras");
       }
     });
 
@@ -989,7 +1002,8 @@ const ComponentsLayout = (props) => {
               });
               let c = currentComponentData.selectedComponents.nodes;
               let services = [];
-              for (let i = 0; i < c.length; i++) services.push(c[i].dirName);
+              for (let i = 0; i < c.length; i++) 
+                services.push(c[i].dirName);
               reloadAndRenderComponents(false, services);
               setLoading(false);
 
@@ -1047,8 +1061,8 @@ const ComponentsLayout = (props) => {
       });
     } else {
       setShowProgress(true);
-      LoadCompApi.get(
-        props?.projectSetup?.projectName,
+      props.projectSetup.projectName&& LoadCompApi.get(
+        props.projectSetup.projectName,
         (response) => {
           let config = response;
           removeAllNodes();

@@ -263,6 +263,7 @@ const CreateProject = (props) => {
       alert("Please select an environment to deploy");
     }
   };
+  console.log("tabvalue",value)
   return (
     <div className={classes.root}>
         <>

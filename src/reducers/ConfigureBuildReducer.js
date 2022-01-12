@@ -100,6 +100,12 @@ export default function ConfigureBuildReducer(state = initialState, action) {
         services_generateApi: action.services_generate_api_arr,
       };
     }
+    case ActionType.CAMERA_THUMBNAIL_PREVIEW_CONFIG_SCREEN: {
+      return {
+        ...state,
+        cameraPreviewInConfigScreen: action.cameraPreviewInConfigScreen,
+      };
+    }
     default:
       return newState;
   }

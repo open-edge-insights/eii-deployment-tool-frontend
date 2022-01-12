@@ -130,7 +130,7 @@ const Deploy = (props) => {
                 }
               },
               (response) => {
-                alert(
+                console.log(
                   "Failed to get status! reason: " +
                     response?.data?.status_info?.error_detail
                 );

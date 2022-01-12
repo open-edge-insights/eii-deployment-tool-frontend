@@ -42,7 +42,7 @@ export async function DeployRemote(images, ip_address, username, password, path)
       if (response.status_info.status) {
         return response;
       } else {
-        alert("Failed to deploy to remote machine " + response.status_info.error_detail)
+        console.log("Failed to deploy to remote machine " + response.status_info.error_detail)
       }
     })
     .catch((error) => {

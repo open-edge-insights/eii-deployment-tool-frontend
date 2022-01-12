@@ -85,6 +85,9 @@ const ConfigBuild = (props) => {
     (state) => state.BuildReducer.BuildComplete
   );
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
+  const cameraPreviewThumbnail = useSelector(
+    (state) => state.ConfigureBuildReducer.cameraPreviewThumbnail
+  );
   let promiseResolve;
   let promiseReject;
   const dispatch = useDispatch();
@@ -252,7 +255,7 @@ const ConfigBuild = (props) => {
         </div>
         <div>
           <span class="col-sm-5" style={{marginLeft:150}}>
-          <img id="cameraPreviewTN" src="" alt="No Preview" style={{ width:200, backgroundColor:"lightgray" }} ></img>
+          <img id="cameraPreviewTN" src={cameraPreviewThumbnail} alt="No Preview" style={{ width:200, backgroundColor:"lightgray" }}/>
           </span>
         </div>
       </div>
