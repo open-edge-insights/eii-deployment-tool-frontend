@@ -127,6 +127,9 @@ const CreateProject = (props) => {
   const instance_count = useSelector(
     (state) => state.ConfigureBuildReducer.instance_count
   );
+  const services_to_deploy = useSelector(
+    (state) => state.ConfigureBuildReducer.services_generateApi
+  );
   const DeployEnv = useSelector(
     (state) => state.DeploymentReducer.DeployInDevOrProd
   );
@@ -171,7 +174,7 @@ const CreateProject = (props) => {
       setShowDeploymentProgress(true);
       setDeploymentStatusText("Deployment in progress");
       BuilderApi.builder(
-        [],
+        services_to_deploy.length > 0 ?  ["VideoIngestion", "VideoAnalytics", "WebVisualizer"]: [],
         instance_count,
         false,
         DeployEnv == "Dev" ? true : false,

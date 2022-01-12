@@ -109,6 +109,16 @@ const ComponentsLayout = (props) => {
   );
   
   useEffect(() => {
+    let WebVisualizerFlag =
+      currentComponentData.selectedComponents.showWebVisualizer;
+    let c = currentComponentData.selectedComponents.nodes;
+    let services_generate_api_arr = [];
+    if (WebVisualizerFlag) {
+      for (let i = 0; i < c.length; i++)
+        services_generate_api_arr.push(c[i].service);
+    }
+   
+    props.dispatchServices(services_generate_api_arr);
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
 
@@ -884,6 +894,7 @@ const ComponentsLayout = (props) => {
     if (services == null) {
       services = [];
       var c = currentComponentData.selectedComponents.nodes;
+
       for (let i = 0; i < c.length; i++) services.push(c[i].dirName);
     }
     let builder_services = services.filter(
@@ -950,7 +961,7 @@ const ComponentsLayout = (props) => {
       let services = [];
       var c = currentComponentData.selectedComponents.nodes;
       for (let i = 0; i < c.length; i++) 
-       services.push(c[i].dirName);
+        services.push(c[i].dirName);
       instances = getInstanceCount(services);
       setStreamCount(instances);
     }
@@ -1034,7 +1045,6 @@ const ComponentsLayout = (props) => {
         }
       });
     } else {
-      /* if(ProjectSelectionActive != true) */
       setShowProgress(true);
       LoadCompApi.get(
         props?.projectSetup?.projectName,
@@ -1430,6 +1440,7 @@ const ComponentsLayout = (props) => {
     props.enableImportBtn &&
       props.enableImportBtn(enableImportButton, NodeSelected, streamCount);
   };
+
   return (
     <>
       {enableImportBtn()}
@@ -1574,6 +1585,12 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({
         type: ActionType.UPDATE_MAIN_OBJECT,
         value: { ...currentComponentData },
+      });
+    },
+    dispatchServices: (services) => {
+      dispatch({
+        type: ActionType.SERVICES_FOR_GENERATE,
+        services_generate_api_arr: services,
       });
     },
   };

@@ -36,7 +36,7 @@ export const initialState = {
   instance_count: 0,
   existProjects: [],
   projects: [],
-  
+  services_generateApi: [],
   componentsInitialState:  {
     data_stream_id:undefined,
     selectedIndex: undefined,

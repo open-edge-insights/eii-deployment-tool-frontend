@@ -72,7 +72,6 @@ export default function ConfigureBuildReducer(state = initialState, action) {
     case ActionType.UPDATE_MAIN_OBJECT: {
       var obj = {
         ...state,
-
         componentsInitialState: {
           ...state.componentsInitialState,
           ...action.value,
@@ -93,6 +92,12 @@ export default function ConfigureBuildReducer(state = initialState, action) {
       return {
         ...state,
         instance_count: action.payload.instance_count,
+      };
+    }
+    case ActionType.SERVICES_FOR_GENERATE: {
+      return {
+        ...state,
+        services_generateApi: action.services_generate_api_arr,
       };
     }
     default:
