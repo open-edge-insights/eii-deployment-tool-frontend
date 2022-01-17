@@ -18,20 +18,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-const ActionType = {
-
-UPDATE_PROJECT_INFO:'UPDATE_PROJECT_INFO',
-UPDATE_MAIN_OBJECT:'UPDATE_MAIN_OBJECT',
-UPDATE_MAIN_OBJECT_DROP:'UPDATE_MAIN_OBJECT_DROP',
-UPDATE_CONFIG_OBJECT:'UPDATE_CONFIG_OBJECT',
-REMOVE_ALL:"REMOVE_ALL",
-REFRESH:"REFRESH",
-ON_SELECTED_TAB:"ON_SELECTED_TAB",
-UPDATE_APP_NAME:"UPDATE_APP_NAME",
-INSTANCE_COUNT: "INSTANCE_COUNT"
-};
-
-
-export default ActionType;
-
+.openingScreenTitleDiv {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.openingScreenTitle {
+  font-size: 36px;
+  color: #0068b5;
+  font-family: "Intel One Medium";
+  margin-bottom: 0px;
+}
+.openingScreenTitleLoading {
+  color: #aeaeae;
+  font-size: 14px;
+}
+.dot1,
+.dot2,
+.dot3 {
+  width: 6px;
+  height: 6px;
+  background: #0068b5;
+  border-radius: 24px;
+}
+.threeDots {
+  display: inline-flex;
+}
+.dot2, .dot3 {
+  margin-left: 4px;
+  visibility: hidden;
+}
+.progressBarDots {
+  display: none;
+}

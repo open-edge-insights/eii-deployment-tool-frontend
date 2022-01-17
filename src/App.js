@@ -26,10 +26,8 @@ import CreateProject from './components/CreateProject';
 import {BrowserRouter as Router, Route , Switch} from 'react-router-dom';
 import Dialog from '@material-ui/core/Dialog';
 import './fonts/font.css';
-import LoginScreen from './components/configureModule/LoginScreen';
-
-
-
+import OpeningScreen from './components/OpeningScreen';
+import LoginScreen from './components/configureModule/SplashScreen';
 function App() {
   const handleClickOpen = () => {
     setOpen(true);
@@ -52,7 +50,9 @@ function App() {
    
       <Switch>
         <Route exact path="/">
-         
+        <OpeningScreen/>
+        </Route> 
+        <Route exact path="/LoginScreen">
         <Dialog
         open={open}
         onClose={handleClose}
@@ -60,10 +60,6 @@ function App() {
         aria-describedby="alert-dialog-description"
       ><SplashScreen handleClose={handleClose}/>
       </Dialog>
-
-        </Route> 
-        <Route exact path="/LoginScreen">
-          <LoginScreen />
         </Route>
         <Route exact path="/CreateProject">
         <CreateProject />

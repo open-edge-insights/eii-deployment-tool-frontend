@@ -65,6 +65,7 @@ var flowText = "";
 var gId = 0;
 const getId = () => `${gId++}`;
 var currentSelectedComp = {};
+const DT_CONFIG_KEY = "__dt_config__";
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",
@@ -104,38 +105,15 @@ const ComponentsLayout = (props) => {
   const ProjectSelectionActive = useSelector(
     (state) => state.ProjectSelectionReducer.projectSelection
   );
-  const currentTabIndex = useSelector(
-    (state) => state.ConfigureBuildReducer.projectSetup.tabCount
+  const CurrentTabIndex = useSelector(
+    (state) => state.ConfigureBuildReducer.tabCount
   );
   
   useEffect(() => {
-    StartContainers("stop")
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log("Stop containers error", error);
-      });
-  }, [currentTabIndex]);
-  useEffect(() => {
-    let WebVisualizerFlag =
-      currentComponentData.selectedComponents.showWebVisualizer;
-    let c = currentComponentData.selectedComponents.nodes;
-    let services_generate_api_arr = [];
-    if (WebVisualizerFlag) {
-      for (let i = 0; i < c.length; i++)
-        services_generate_api_arr.push(c[i].service);
-    }
-
-    props.dispatchServices(services_generate_api_arr);
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
 
   useEffect(() => {
-    dispatch({
-      type: ActionType.CAMERA_THUMBNAIL_PREVIEW_CONFIG_SCREEN,
-      cameraPreviewInConfigScreen: cameraSource,
-    });
       let imgElem = document.getElementById("cameraPreviewTN");    
       if(imgElem)
         imgElem.src = cameraSource;
@@ -306,7 +284,7 @@ const ComponentsLayout = (props) => {
               saveProject();
               setAlertConfig(true);
             } else {
-              console.log(
+              alert(
                 "Failed to update config. Reason: " +
                   data.status_info.error_detail
               );
@@ -418,7 +396,7 @@ const ComponentsLayout = (props) => {
         }
       },
       (response) => {
-        console.log("failed to get config for " + JSON.stringify(services));
+        alert("failed to get config for " + JSON.stringify(services));
       }
     );
   };
@@ -872,6 +850,7 @@ const ComponentsLayout = (props) => {
     /* Save the project */
     StoreProjectApi.store(
       props.projectSetup.projectName,
+      currentComponentData.selectedComponents.showWebVisualizer,
       (response) => {},
       (response) => {
         console.log(
@@ -908,7 +887,6 @@ const ComponentsLayout = (props) => {
     if (services == null) {
       services = [];
       var c = currentComponentData.selectedComponents.nodes;
-
       for (let i = 0; i < c.length; i++) services.push(c[i].dirName);
     }
     let builder_services = services.filter(
@@ -970,15 +948,6 @@ const ComponentsLayout = (props) => {
 
   const onLoad = (event, reactFlowInstance) => {
     setReactFlowInstance(event);
-    if (currentComponentData) {
-            let instances;
-            let services = [];
-            var c = currentComponentData.selectedComponents.nodes;
-            for (let i = 0; i < c.length; i++) 
-              services.push(c[i].dirName);
-            instances = getInstanceCount(services);
-            setStreamCount(instances);
-          }
     stopCamera({devices:[]}).then((response) => {
       if(!response?.status_info?.status) {
         console.log("Failed to stop cameras");
@@ -992,18 +961,25 @@ const ComponentsLayout = (props) => {
       StartContainers("stop").then((response) => {
         if (props?.projectSetup?.isCreateProject == false) {
           /* Load existing project */
+          currentComponentData.selectedComponents.showWebVisualizer = true;
           LoadCompApi.get(
             props?.projectSetup?.projectName,
             (response) => {
               let config = response;
               removeAllNodes();
               Object.keys(config).forEach(function (key, index) {
-                parseSelectedComponent(getComponentName(key), config);
+                if(key === DT_CONFIG_KEY) {
+                  currentComponentData.selectedComponents.showWebVisualizer =
+                    (config[key]?.show_wv == false) ? false : true;
+                } else {
+                  parseSelectedComponent(getComponentName(key), config);
+                }
               });
               let c = currentComponentData.selectedComponents.nodes;
               let services = [];
-              for (let i = 0; i < c.length; i++) 
+              for (let i = 0; i < c.length; i++) {
                 services.push(c[i].dirName);
+              }
               reloadAndRenderComponents(false, services);
               setLoading(false);
 
@@ -1060,14 +1036,16 @@ const ComponentsLayout = (props) => {
         }
       });
     } else {
+      /* if(ProjectSelectionActive != true) */
       setShowProgress(true);
-      props.projectSetup.projectName&& LoadCompApi.get(
-        props.projectSetup.projectName,
+      LoadCompApi.get(
+        props?.projectSetup?.projectName,
         (response) => {
           let config = response;
           removeAllNodes();
           Object.keys(config).forEach(function (key, index) {
-            parseSelectedComponent(getComponentName(key), config);
+            if(key != DT_CONFIG_KEY)
+              parseSelectedComponent(getComponentName(key), config);
           });
           setLoading(false);
           setShowProgress(false);
@@ -1455,7 +1433,6 @@ const ComponentsLayout = (props) => {
     props.enableImportBtn &&
       props.enableImportBtn(enableImportButton, NodeSelected, streamCount);
   };
-
   return (
     <>
       {enableImportBtn()}
@@ -1524,7 +1501,10 @@ const ComponentsLayout = (props) => {
               </button>
               <ReactFlow
                 style={{
-                  borderRight: currentTabIndex == 0 ? "1px solid gray" : "",
+                  borderRight:
+                   CurrentTabIndex == 0
+                      ? "1px solid gray"
+                      : "",
                 }}
                 elements={elements}
                 nodesConnectable={true}
@@ -1591,6 +1571,7 @@ const mapStateToProps = (state, oldProps) => {
     noOfStreams: state?.ConfigureBuildReducer?.projectSetup?.noOfStreams,
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
     cameraSource: state?.ConfigureBuildReducer?.cameraSource,
+    services_to_deply: state?.ConfigureBuildReducer?.services_to_deploy
   };
 };
 
@@ -1601,13 +1582,7 @@ const mapDispatchToProps = (dispatch) => {
         type: ActionType.UPDATE_MAIN_OBJECT,
         value: { ...currentComponentData },
       });
-    },
-    dispatchServices: (services) => {
-      dispatch({
-        type: ActionType.SERVICES_FOR_GENERATE,
-        services_generate_api_arr: services,
-      });
-    },
+    }
   };
 };
 

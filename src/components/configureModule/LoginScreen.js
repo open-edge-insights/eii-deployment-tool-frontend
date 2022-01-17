@@ -31,15 +31,19 @@ async function loginUser(credentials) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(credentials),
-  })
-    .then((data) => data.json())
-    .then(function (data) {
-      
-      cookies.set("dt_session", JSON.parse(data.data));
-      if (data !== null) {
+  }).then(data => data.json())    
+    .then(function (data) {    
+      if (data?.status_info?.status) {
+        cookies.set("dt_session", JSON.parse(data.data));
         window.location.href = "/CreateProject";
+      } else if(data?.detail?.length > 0) {
+        alert(data.detail + ". Please try again");
       } else {
+        alert("Error while interacting with backend");
       }
+    })
+    .catch((error) => {
+      alert("Error: Couldn't connect to Backend!");
     });
 }
 const LoginScreen = () => {

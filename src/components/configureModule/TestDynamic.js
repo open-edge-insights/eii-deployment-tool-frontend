@@ -62,13 +62,12 @@ export function TestDynamic(props) {
     setValue(newValue);
   };
   useEffect(() => {
+    setShowProgress(true);
     StartContainers("start")
       .then((containerStart) => {
-        let response = containerStart?.data;
-        if (response.status != "Failed") {
-        }
+        let timer = setInterval(()=> {setShowProgress(false);clearInterval(timer);}, 2000);
       })
-      .catch((error) => {});
+      .catch((error) => {setShowProgress(false);});
   }, []);
   useEffect(() => {
     if (NodeSelected) {
@@ -222,18 +221,19 @@ export function TestDynamic(props) {
       if (response?.status_info?.status) {
         StoreProjectApi.store(
           props.projectSetup.projectName,
+          props.stateComponent.selectedComponents.showWebVisualizer,
           (response) => {
             StartContainers("restart")
-              .then((response) => { setEnableRestart(true);setShowProgress(false);
+              .then((response) => {
                 let status = response?.status_info?.status;
                 if (status == false) {
                   setEnableRestart(true);
-                  setShowProgress(false);
                 }
+                let timer = setInterval(()=> {setShowProgress(false);clearInterval(timer);}, 2000);
               })
               .catch((error) => {
-              setEnableRestart(true)
-              setShowProgress(false);
+                setEnableRestart(true)
+                setShowProgress(false);
                 alert(
                   "Some error occured while restarting containers: " + error
                 );
@@ -298,13 +298,15 @@ export function TestDynamic(props) {
           propstoTestDynamic={propstoTestDynamic}
         />
       </div>
+      {!progressIndicator ? (
       <div className="pipelineSettingTitle TestTabSubTitle">
         {NodeSelected && "Pipeline settings"}
       </div>
+      ) : (<></>)}
       {progressIndicator ? (
         <div className="deploymentProgressBar" >
           <CircularProgress size={100} />
-          <p className="deploymentProgressBarText">saving</p>
+          <p className="deploymentProgressBarText">Please wait...</p>
         </div>
       ) : (
       <div className="TestProfileSettingsInTestTab col-sm-5 WebVisualizerTestSettings">
@@ -424,6 +426,7 @@ const mapStateToProps = (state) => {
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
     isOpen: state?.ConfigureBuildReducer?.getData?.isOpen,
     appName: state.ConfigureBuildReducer.getData.appName,
+    stateComponent: state.ConfigureBuildReducer.componentsInitialState
   };
 };
 

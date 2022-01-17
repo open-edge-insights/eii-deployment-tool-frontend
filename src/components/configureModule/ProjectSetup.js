@@ -32,7 +32,7 @@ import './ProjectSetup.css';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import GetStatusApi from '../api/GetStatusApi';
-import { useDispatch } from "react-redux";
+
 const useStyles = makeStyles((theme) => ({
   butOk: {
     width: 100,
@@ -59,7 +59,6 @@ const ProjectSetup = (props) => {
   const classes = useStyles();
   const [projectList, setProjectList] = useState([]);
   const [newProject, setNewProject] = useState([]);
-  const dispatch = useDispatch();
   const [error, setError] = useState({
     project_name: false,
   });
@@ -101,18 +100,12 @@ const ProjectSetup = (props) => {
 			(data) => {
 				if(data.status != "In Progress") {
 					props.updateProjectInfo({ ...state }, props.getStateVal);
-          dispatch({
-            type: "PROJECT_SELECTION_INACTIVE",
-            payload: {
-              projectSelection: false,
-            },
-          });
 				} else {
 					alert("A " + data.task + " task is already in progress.Please try again later"); 
 				}
 			},
 			(data) => {
-				console("Error: failed to get status!");
+				alert("Error: failed to get status!");
 			}
 		);
 	} else {

@@ -41,7 +41,7 @@ import ConfirmDialog from "./ConfirmDialog";
 import { CircularProgress } from "@material-ui/core";
 import BuilderApi from "./api/BuilderApi";
 import { StartContainers } from "./api/StartContainers";
-import ActionType from "../actionTypes/index";
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -102,12 +102,12 @@ const CreateProject = (props) => {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [deployProgressbar, setShowDeploymentProgress] = useState(false);
   const [deploymentStatusText, setDeploymentStatusText] = useState("");
+  const [stateComponent, setStateComponent] = useState(props.stateComponent);
   const dispatch = useDispatch();
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    props.setTabValues(newValue);
-
   };
+  
   /* Getting the buildComplete state from redux store */
   const BuildComplete = useSelector(
     (state) => state.BuildReducer.BuildComplete
@@ -127,19 +127,21 @@ const CreateProject = (props) => {
   const instance_count = useSelector(
     (state) => state.ConfigureBuildReducer.instance_count
   );
-  const services_to_deploy = useSelector(
-    (state) => state.ConfigureBuildReducer.services_generateApi
-  );
   const DeployEnv = useSelector(
     (state) => state.DeploymentReducer.DeployInDevOrProd
   );
   const handleChangeIndex = (index) => {
     setValue(index);
-    props.setTabValues(index);
   };
+
+  useEffect(() => {
+    setStateComponent(props.stateComponent);
+  }, [props.stateComponent]);
+  
   useEffect(() => {
     setValue(props.currentTabCount);
   }, [props.currentTabCount]);
+  
   useEffect(() => {
     dispatch({
       type: "PROJECT_SELECTION_ACTIVE",
@@ -162,8 +164,43 @@ const CreateProject = (props) => {
   const closeConfirmDialog = () => {
     setOpenConfirmDialog(false);
   };
+
+  function isItemFound(arr, item) {
+    let itemFound = false;
+    for(let i = 0; i < arr.length; i++) {
+        if(arr[i] === item) {
+        itemFound = true;
+        break;
+        }
+    }
+    return itemFound;
+  }
+
+  function trimDigits(s) {
+      return s.replace(/\d+$/, "");
+  }
+
+  function getServicesToDeploy() {
+    let services = [];
+    let comps = props.stateComponent.components;
+    let nodes = props.stateComponent.selectedComponents.nodes;
+    let includeWV = props.stateComponent.selectedComponents.showWebVisualizer;
+    for (let i = 0; i < nodes.length; i++) {
+      let compName = trimDigits(nodes[i].service);
+      if(isItemFound(services, compName))
+        continue;
+      for (let j = 0; j < comps.length; j++) {
+        if (compName === comps[j].dirName && (compName !== "WebVisualizer" || includeWV)) {
+          services.push(compName);
+        }
+      }
+    }
+    return services;
+  }
+  
+
   /* Builder and container restart called in sequence */
-  const showProgressBar = () => {
+  const deployLocal = () => {
     if (DeploymentInProgress == true) {
       dispatch({
         type: "DEPLOYMENT_PROGRESS",
@@ -174,13 +211,13 @@ const CreateProject = (props) => {
       setShowDeploymentProgress(true);
       setDeploymentStatusText("Deployment in progress");
       BuilderApi.builder(
-        services_to_deploy.length > 0 ?  ["VideoIngestion", "VideoAnalytics", "WebVisualizer"]: [],
+        getServicesToDeploy(),
         instance_count,
         false,
         DeployEnv == "Dev" ? true : false,
         (configresponse, statusresponse) => {
           if (statusresponse?.data?.status_info.status) {
-            StartContainers("restart").then((containerStart) => {
+            StartContainers("start").then((containerStart) => {
               let response = containerStart?.status_info?.status;
               if (response) {
                 /*TODO: call DeployRemote API here - fetch parameters from Deployment screen (new text boxes)*/
@@ -200,6 +237,7 @@ const CreateProject = (props) => {
                   "Deployment Successful"
                 );
                 setShowDeploymentProgress(false);
+                alert("Deployment to local machine successfull!");
               } else {
                 dispatch({
                   type: "DEPLOYMENT_FAILED",
@@ -224,6 +262,7 @@ const CreateProject = (props) => {
             .catch((error) => {
              console.log(error)
             });
+//            clearInterval(interval);
           } else {
             setDeploymentStatusText("Deployment failed");
             setShowDeploymentProgress(false);
@@ -234,7 +273,8 @@ const CreateProject = (props) => {
                 DeploymentError: true,
                 DeploymentErrorMessage: "Error in deploying",
               },
-            }).catch((error) => {
+            })              
+            .catch((error) => {
               setDeploymentStatusText("Deployment failed");
               setShowDeploymentProgress(false);
               dispatch({
@@ -263,7 +303,6 @@ const CreateProject = (props) => {
       alert("Please select an environment to deploy");
     }
   };
-  console.log("tabvalue",value)
   return (
     <div className={classes.root}>
         <>
@@ -279,7 +318,6 @@ const CreateProject = (props) => {
             </Typography>
             <Tabs
               value={value}
-              //onChange={handleChange}
               indicatorColor="primary"
               textColor="primary"
               variant="fullWidth"
@@ -298,7 +336,7 @@ const CreateProject = (props) => {
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={value}
-            onChangeIndex={handleChangeIndex}
+            onChangeIndex={deployLocal}
           >
             <TabPanel value={value} index={0} dir={theme.direction}>
               <Configure />
@@ -349,7 +387,7 @@ const CreateProject = (props) => {
               {value == 2 && props.projectSetup.noOfStreams !== 0 && !DeployInLocalMachineProgress && (
                 <button
                   className={!DeployEnv?" deployBtnProjectScreen nextButtonMainPageDisabled nextButtonMainPage":"nextButtonMainPage deployBtnProjectScreen"}
-                  onClick={showProgressBar}
+                  onClick={deployLocal}
                 >
                   Deploy
                 </button>
@@ -368,6 +406,7 @@ const CreateProject = (props) => {
 
 const mapStateToProps = (state) => {
   return {
+    stateComponent: state.ConfigureBuildReducer.componentsInitialState,
     componentsStateData: state?.ConfigureBuildReducer?.componentsStateData,
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
     currentTabCount: state?.ConfigureBuildReducer?.projectSetup?.tabCount,
@@ -376,7 +415,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setTabValues: (tabdata) => {
-      dispatch({ type: ActionType.ON_SELECTED_TAB, value: tabdata });
+      dispatch({ type: "ON_SELECTED_TAB", value: tabdata });
     },
   };
 };

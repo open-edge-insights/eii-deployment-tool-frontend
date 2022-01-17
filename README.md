@@ -76,3 +76,5 @@
         http://127.0.0.1:3100
         ```
         when in dev mode.
+
+        To login to the tool, use the credentials provided in the creds.json under DeploymentToolBackend repo. Please go through the README under this repo for more details.

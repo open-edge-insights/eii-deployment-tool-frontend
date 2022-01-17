@@ -35,14 +35,27 @@ import { compose } from "redux";
 import GetStatusApi from "../api/GetStatusApi";
 import { responsiveFontSizes } from "@material-ui/core";
 import { CircularProgress } from "@material-ui/core";
-
+import { StartContainers } from "../api/StartContainers";
 
 const Deploy = (props) => {
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
+  const [stopContainersInProgress, setStopContainersInProgress] = useState(false);
+  const [deployRemoteInProgress, setDeployRemoteInProgress] = useState(false);
+  const [progressIndicatorLabel, setprogressIndicatorLabel] = useState("");
   
   const DeployInLocalMachineProgress = useSelector(
     (state) => state.DeploymentReducer.DeployInLocalMachineProgress
   );
+  useEffect(()=> {
+    setStopContainersInProgress(true);
+    setprogressIndicatorLabel("Please wait...");
+    StartContainers("stop").then((response) => {
+      setStopContainersInProgress(false);
+      setprogressIndicatorLabel("");
+    })
+    .catch((error) => {console.log(error);});
+  },[]);
+
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
@@ -78,22 +91,34 @@ const Deploy = (props) => {
     setUpdationFlag(!updationFlag);
   };
 
+  function isItemFound(arr, item) {
+    let itemFound = false;
+    for(let i = 0; i < arr.length; i++) {
+        if(arr[i] === item) {
+        itemFound = true;
+        break;
+        }
+    }
+    return itemFound;
+  }
+
   function trimDigits(s) {
     return s.replace(/\d+$/, "");
   }
-
+  
   function getDockerImageList() {
     let images = [];
     let comps = props.stateComponent.components;
     let nodes = props.stateComponent.selectedComponents.nodes;
+    let includeWV = props.stateComponent.selectedComponents.showWebVisualizer;
     for (let i = 0; i < nodes.length; i++) {
       let compName = trimDigits(nodes[i].service);
       for (let j = 0; j < comps.length; j++) {
-        if (compName == comps[j].dirName) {
-          images.push(
-            "openedgeinsights/" + comps[j].containerName + ":" + 
-            process.env.REACT_APP_EII_VERSION
-          );
+        if (compName == comps[j].dirName && (compName != "WebVisualizer" || includeWV)) {
+          let image = "openedgeinsights/" + comps[j].containerName + ":" + 
+            process.env.REACT_APP_EII_VERSION;
+          if(!isItemFound(images, image))
+            images.push(image);
         }
       }
     }
@@ -106,8 +131,16 @@ const Deploy = (props) => {
   }
   /* Write the deploy to target device funcitonality inside this fun */
   const deployToTargetDeviceFunc = () => {
+    if(targetDeviceObject.ipaddress.value.trim() == "" ||
+      targetDeviceObject.username.value.trim() == "" ||
+      targetDeviceObject.password.value.trim() == "" ||
+      targetDeviceObject.directory.value.trim() == "") {
+        alert("Please enter all the fields");
+        return;
+    }
+    setDeployRemoteInProgress(true);
+    setprogressIndicatorLabel("Deploying to " + targetDeviceObject.ipaddress.value);
     let dockerImages = getDockerImageList();
-    //TODO: Add progress indicator start
     DeployRemote(
       dockerImages,
       targetDeviceObject.ipaddress.value,
@@ -121,16 +154,19 @@ const Deploy = (props) => {
             GetStatusApi.getstatus(
               (response) => {
                 if (response.status == "Success") {
+                  setDeployRemoteInProgress(false);
+                  setprogressIndicatorLabel("");
                   alert("Remote deployment successfully completed!");
-                  //TODO: Add progress indicator stop
                   clearInterval(statusTimer);
                 } else if (response.status == "Failed") {
+                  setDeployRemoteInProgress(false);
+                  setprogressIndicatorLabel("");
                   alert("Remote deployment FAILED!");
                   clearInterval(statusTimer);
                 }
               },
               (response) => {
-                console.log(
+                alert(
                   "Failed to get status! reason: " +
                     response?.data?.status_info?.error_detail
                 );
@@ -139,6 +175,8 @@ const Deploy = (props) => {
           5000
         );
       } else {
+        setDeployRemoteInProgress(false);
+        setprogressIndicatorLabel("");
         alert(
           "Remote deployent failed!: Reason: " +
             response?.status_info?.error_detail
@@ -167,10 +205,10 @@ const Deploy = (props) => {
           className="deployScreenDivider"
           style={{ width: window.screen.width }}
         />
-        {DeployInLocalMachineProgress ? (
+        {(DeployInLocalMachineProgress || stopContainersInProgress || deployRemoteInProgress) ? (
         <div className="deploymentProgressBar" >
           <CircularProgress size={100} />
-          <p className="deploymentProgressBarText">Deployment In Progress</p>
+          <p className="deploymentProgressBarText">{progressIndicatorLabel}</p>
         </div>
       ) : (
         <div class="row">

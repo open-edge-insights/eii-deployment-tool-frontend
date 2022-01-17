@@ -21,10 +21,11 @@
 import axios from 'axios';
 
 const StoreProjectApi = {
- store: function (projectName, successCallback, errorCallback) {
+ store: function (projectName, showWebVisualizer, successCallback, errorCallback) {
     axios
       .post('/eii/ui/project/store', {
-       name: projectName
+       name: projectName,
+       show_wv: showWebVisualizer
       })
       .then((response) => {
         if (response && response?.data.status_info.status) successCallback(response.data);

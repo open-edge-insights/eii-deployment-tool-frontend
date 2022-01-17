@@ -66,9 +66,6 @@ const Configure = (props) => {
     (state) => state.BuildReducer.BuildComplete
   );
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
-  const ProjectSelectionScreen = useSelector(
-    (state) => state.ProjectSelectionReducer.projectSelection
-  );
   return (
     <div style={{ padding: 0 }}>
       <p style={{ textAlign: "center" }} className="mainpageDivTitletext">
@@ -87,7 +84,7 @@ const Configure = (props) => {
             />
           </div>
           <div className="col-sm-10" style={{ padding: 0 }}>
-          {ProjectSelectionScreen &&  <AddTab isCreateProject={isCreateProject} />}
+            <AddTab isCreateProject={isCreateProject} />
 
             <DynamicTabs
               enableImportBtn={enableImportBtn}
@@ -96,7 +93,7 @@ const Configure = (props) => {
             />
           </div>
 
-          {!ProjectSelectionScreen && (
+          {props.noOfStreams > 0 && (
             <div className="col-sm-12 configBuildComponentIndex">
               <ConfigBuild />
             </div>

@@ -85,9 +85,6 @@ const ConfigBuild = (props) => {
     (state) => state.BuildReducer.BuildComplete
   );
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
-  const cameraPreviewThumbnail = useSelector(
-    (state) => state.ConfigureBuildReducer.cameraPreviewThumbnail
-  );
   let promiseResolve;
   let promiseReject;
   const dispatch = useDispatch();
@@ -199,8 +196,10 @@ const ConfigBuild = (props) => {
     );
   };
   const viewLogs = (processname) => {
-    setViewLogs(processname);
-    setViewLogsDialog(true);
+    if(BuildProgressPercentage > 5) {
+      setViewLogs(processname);
+      setViewLogsDialog(true);
+    }
   };
   const closeViewLogs = () => {
     setViewLogsDialog(false);
@@ -245,17 +244,16 @@ const ConfigBuild = (props) => {
         <div>
           <button
             type="submit"
-            disabled={isActive || !enableBuildView}
             className="viewButton"
             onClick={() => viewLogs("build")}
-            id={isActive || BuildProgressPercentage<5 ? "disableStart" : ""}
+            id={isActive || BuildProgressPercentage <= 5 ? "disableStart" : ""}
           >
             View
           </button>
         </div>
         <div>
           <span class="col-sm-5" style={{marginLeft:150}}>
-          <img id="cameraPreviewTN" src={cameraPreviewThumbnail} alt="No Preview" style={{ width:200, backgroundColor:"lightgray" }}/>
+          <img id="cameraPreviewTN" src="" alt="No Preview" style={{ width:200, backgroundColor:"lightgray" }} ></img>
           </span>
         </div>
       </div>
