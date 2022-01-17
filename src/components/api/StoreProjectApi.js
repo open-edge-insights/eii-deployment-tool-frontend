@@ -25,7 +25,7 @@ const StoreProjectApi = {
     axios
       .post('/eii/ui/project/store', {
        name: projectName,
-       show_wv: showWebVisualizer
+       include_wv: showWebVisualizer
       })
       .then((response) => {
         if (response && response?.data.status_info.status) successCallback(response.data);

@@ -91,7 +91,6 @@ const ComponentsLayout = (props) => {
   const [show, setShow] = useState(false);
   const [enableImportButton, setImportBtnActive] = useState(false);
   const [NodeSelected, setNodeSelected] = useState("");
-  const [LoadingProgress, setLoading] = useState(false);
   const [streamCount, setStreamCount] = useState(0);
   const [executeUdffunc, setexecuteUdf] = useState(false);
   const [progressIndicator, setShowProgress] = useState(false);
@@ -143,7 +142,6 @@ const ComponentsLayout = (props) => {
       GetConfigApi.getconfig(
         selectedStreamLabels,
         (e) => {
-          setLoading(true);
           var previousConfig = e && e.data;
           previousConfig && Object.assign(previousConfig[selectedNodeLabel]);
           if (props.updatedConfig) {
@@ -163,13 +161,11 @@ const ComponentsLayout = (props) => {
               { ...previousConfig },
               (respons) => {
                 setNodeSelected("");
-                setLoading(false);
                 setAlertConfigUDF(true);
                 setOpen(false);
                 saveProject();
               },
               (responsedata) => {
-                setLoading(false);
               }
             );
           }
@@ -277,6 +273,7 @@ const ComponentsLayout = (props) => {
       if (stat) {
         let config = {};
         config[service] = { config: data.config, interfaces: data.interfaces };
+        console.log(config);
         UpdateConfigApi.updateconfig(
           { ...config },
           (data) => {
@@ -289,6 +286,7 @@ const ComponentsLayout = (props) => {
                   data.status_info.error_detail
               );
             }
+            refreshComponentLabel(currentSelectedComp);
           },
           (response) => {
             stat = false;
@@ -305,7 +303,6 @@ const ComponentsLayout = (props) => {
   const handlePaneClick = (event) => {
     setOpen(false);
     setImportBtnActive(false);
-    stopCameraPreview();
     setNodeSelected("");
   };
 
@@ -360,7 +357,6 @@ const ComponentsLayout = (props) => {
     if (getComponentById(data.id) == null) {
       setNodeSelected(null);
       setImportBtnActive(false);
-      startCameraPreview(null);
       return;
     }
     setNodeSelected(data.data.name);
@@ -388,12 +384,6 @@ const ComponentsLayout = (props) => {
         refreshComponentLabel(currentSelectedComp);
         setOpen(false);
         setOpen(true);
-        if(configData.config.ingestor?.type == "opencv" &&
-          configData.config.ingestor.pipeline.startsWith("/dev/")) {
-          startCameraPreview(configData.config.ingestor?.pipeline);
-        } else if(cameraSource) {
-          stopCameraPreview();
-        }
       },
       (response) => {
         alert("failed to get config for " + JSON.stringify(services));
@@ -430,7 +420,7 @@ const ComponentsLayout = (props) => {
     currentSelectedComp.config = data.config;
     currentSelectedComp.interfaces = data.interfaces;
     let stat = updateConfigData(currentSelectedComp.data.name, data);
-    refreshComponentLabel(currentSelectedComp);
+    
     event.preventDefault();
     event.stopPropagation();
   };
@@ -767,7 +757,6 @@ const ComponentsLayout = (props) => {
     let id = getId();
     var bgcolor = null;
     var running = null;
-    var label = appName;
     var dirName = null;
     var containerName = null;
     var type = null;
@@ -791,10 +780,8 @@ const ComponentsLayout = (props) => {
         break;
       }
     }
-    if (
-      appName == "WebVisualizer" &&
-      !currentComponentData.selectedComponents.showWebVisualizer
-    ) {
+    if (appName == "WebVisualizer" && 
+        !currentComponentData.selectedComponents.showWebVisualizer) {
       isHidden = true;
     }
     if (appName == null) {
@@ -948,11 +935,6 @@ const ComponentsLayout = (props) => {
 
   const onLoad = (event, reactFlowInstance) => {
     setReactFlowInstance(event);
-    stopCamera({devices:[]}).then((response) => {
-      if(!response?.status_info?.status) {
-        console.log("Failed to stop cameras");
-      }
-    });
 
     if (ProjectSelectionActive == true) {
       setShowProgress(true);
@@ -967,13 +949,13 @@ const ComponentsLayout = (props) => {
             (response) => {
               let config = response;
               removeAllNodes();
+              if(DT_CONFIG_KEY in config) {
+                currentComponentData.selectedComponents.showWebVisualizer =
+                (config[DT_CONFIG_KEY]?.show_wv == false) ? false : true;
+                delete config[DT_CONFIG_KEY];
+              }
               Object.keys(config).forEach(function (key, index) {
-                if(key === DT_CONFIG_KEY) {
-                  currentComponentData.selectedComponents.showWebVisualizer =
-                    (config[key]?.show_wv == false) ? false : true;
-                } else {
-                  parseSelectedComponent(getComponentName(key), config);
-                }
+                parseSelectedComponent(getComponentName(key), config);
               });
               let c = currentComponentData.selectedComponents.nodes;
               let services = [];
@@ -981,7 +963,6 @@ const ComponentsLayout = (props) => {
                 services.push(c[i].dirName);
               }
               reloadAndRenderComponents(false, services);
-              setLoading(false);
 
               dispatch({
                 type: "PROJECT_SELECTION_INACTIVE",
@@ -992,13 +973,13 @@ const ComponentsLayout = (props) => {
               setShowProgress(false);
             },
             (response) => {
-              setLoading(false);
               setShowProgress(false);
             }
           );
         } else {
           /* Create new project */
           let instances = Number(props?.projectSetup?.noOfStreams);
+          currentComponentData.selectedComponents.showWebVisualizer = false;
           setStreamCount(instances);
           dispatch({
             type: "INSTANCE_COUNT",
@@ -1017,7 +998,6 @@ const ComponentsLayout = (props) => {
               Object.keys(config).forEach(function (key, index) {
                 parseSelectedComponent(getComponentName(key), config);
               });
-              setLoading(false);
               saveProject();
 
               dispatch({
@@ -1029,7 +1009,6 @@ const ComponentsLayout = (props) => {
               setShowProgress(false);
             },
             (response) => {
-              setLoading(false);
               setShowProgress(false);
             }
           );
@@ -1047,11 +1026,9 @@ const ComponentsLayout = (props) => {
             if(key != DT_CONFIG_KEY)
               parseSelectedComponent(getComponentName(key), config);
           });
-          setLoading(false);
           setShowProgress(false);
         },
         (response) => {
-          setLoading(false);
           setShowProgress(false);
         }
       );

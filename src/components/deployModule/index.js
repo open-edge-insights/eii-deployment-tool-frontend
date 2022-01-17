@@ -20,7 +20,6 @@
  */
 
 import React, { useEffect, useState } from "react";
-import DeployDynamic from "../configureModule/DeployDynamic";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -31,11 +30,8 @@ import { connect } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import { DeployRemote } from "../api/DeployRemote";
 import "./deployModule.css";
-import { compose } from "redux";
 import GetStatusApi from "../api/GetStatusApi";
-import { responsiveFontSizes } from "@material-ui/core";
 import { CircularProgress } from "@material-ui/core";
-import { StartContainers } from "../api/StartContainers";
 
 const Deploy = (props) => {
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
@@ -46,15 +42,6 @@ const Deploy = (props) => {
   const DeployInLocalMachineProgress = useSelector(
     (state) => state.DeploymentReducer.DeployInLocalMachineProgress
   );
-  useEffect(()=> {
-    setStopContainersInProgress(true);
-    setprogressIndicatorLabel("Please wait...");
-    StartContainers("stop").then((response) => {
-      setStopContainersInProgress(false);
-      setprogressIndicatorLabel("");
-    })
-    .catch((error) => {console.log(error);});
-  },[]);
 
   useEffect(() => {
     setStateComponent(props.stateComponent);
@@ -205,10 +192,10 @@ const Deploy = (props) => {
           className="deployScreenDivider"
           style={{ width: window.screen.width }}
         />
-        {(DeployInLocalMachineProgress || stopContainersInProgress || deployRemoteInProgress) ? (
+        {(DeployInLocalMachineProgress || deployRemoteInProgress) ? (
         <div className="deploymentProgressBar" >
           <CircularProgress size={100} />
-          <p className="deploymentProgressBarText">{progressIndicatorLabel}</p>
+          <p className="deploymentProgressBarText">{DeployInLocalMachineProgress?"Deploying to localhost" : progressIndicatorLabel}</p>
         </div>
       ) : (
         <div class="row">

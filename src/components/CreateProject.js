@@ -38,7 +38,6 @@ import LogoutFunc from "./api/logoutApi";
 import { useSelector, useDispatch } from "react-redux";
 import "./CreateProject.css";
 import ConfirmDialog from "./ConfirmDialog";
-import { CircularProgress } from "@material-ui/core";
 import BuilderApi from "./api/BuilderApi";
 import { StartContainers } from "./api/StartContainers";
 
@@ -217,10 +216,9 @@ const CreateProject = (props) => {
         DeployEnv == "Dev" ? true : false,
         (configresponse, statusresponse) => {
           if (statusresponse?.data?.status_info.status) {
-            StartContainers("start").then((containerStart) => {
+            StartContainers("restart").then((containerStart) => {
               let response = containerStart?.status_info?.status;
               if (response) {
-                /*TODO: call DeployRemote API here - fetch parameters from Deployment screen (new text boxes)*/
                 dispatch({
                   type: "DEPLOY_IN_LOCAL_MACHINE_PROGRESS_SUCCESSFUL",
                   payload: {

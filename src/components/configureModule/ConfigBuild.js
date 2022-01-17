@@ -99,22 +99,13 @@ const ConfigBuild = (props) => {
     let progressPercentage = 0;
     let ProcessName = "building";
     setBuildProgress(1);
-    /* Stop containers so that changes take effect when containers are started in Test screen */
-    StartContainers("stop").then((containerStart) => {
-      let response = containerStart?.status_info?.status;
-      if (response) {
-        setBuildProgress(5);
-        /* Calling the build api */
-        buildContainer().then((buildResponse) => {
-          setBuildViewFlag(true);
-          let response = buildResponse?.data;
-          response = JSON.stringify(response);
-          setStartButtonEnabledOrDisabled(true);
-          getStatus("build", promiseResolve, promiseReject);
-        });
-      } else {
-        alert("Failed stop containers: " + containerStart?.status_info?.error_detail);
-      }
+
+    buildContainer().then((buildResponse) => {
+      setBuildViewFlag(true);
+      let response = buildResponse?.data;
+      response = JSON.stringify(response);
+      setStartButtonEnabledOrDisabled(true);
+      getStatus("build", promiseResolve, promiseReject);
     })
     .catch((error) => {
       alert("Some error occured: " + error);
@@ -149,26 +140,40 @@ const ConfigBuild = (props) => {
                   },
                 });
                 clearInterval(interval);
-                setStartButtonEnabledOrDisabled(false);
-                //rej("error");
+                setStartButtonEnabledOrDisabled(true);
               } 
             } else {
               progressPercentage = progressString.progress;
-              /* Setting state value , progress bar % */
-              setBuildProgress(parseInt(progressPercentage));
+              /* Setting state value, progress bar % */
+              setBuildProgress(parseInt(progressPercentage-1));
               if (progressPercentage == 100) {
-                if (
-                  ProcessName.includes("build") &&
-                  progressString.status == "Success"
-                ) {
-                  dispatch({
-                    type: "BUILD_COMPLETE",
-                    payload: { BuildComplete: true, BuildError: false },
+                if (ProcessName.includes("build") && progressString.status == "Success") {
+                  /* Restart containers so that changes take effect after successfull build */
+                  StartContainers("restart").then((containerStart) => {
+                    let response = containerStart?.status_info?.status;
+                    if (response) {
+                      setBuildProgress(100);
+                      dispatch({
+                        type: "BUILD_COMPLETE",
+                        payload: { BuildComplete: true, BuildError: false },
+                      });
+                      setStartButtonEnabledOrDisabled(false);
+                    } else {
+                      /* displatch the build completion status*/
+                      dispatch({
+                        type: "BUILD_FAILED",
+                        payload: {
+                          BuildComplete: false,
+                          BuildError: true,
+                          BuildErrorMessage: "Error",
+                        },
+                      });
+                      setBuildProgress(0);
+                      setStartButtonEnabledOrDisabled(true);
+                    }
                   });
                 }
-                setStartButtonEnabledOrDisabled(false);
                 clearInterval(interval);
-                //res("Success");
               } else if (progressString.status == "Failed") {
                 setStartButtonEnabledOrDisabled(false);
                 if (processName.includes("build")) {
@@ -183,11 +188,9 @@ const ConfigBuild = (props) => {
                     },
                   });
                   clearInterval(interval);
-                  //rej("error");
                 }
                 clearInterval(interval);
-                setStartButtonEnabledOrDisabled(false);
-                //rej("error");
+                setStartButtonEnabledOrDisabled(true);
               }
             }
           }
@@ -253,7 +256,6 @@ const ConfigBuild = (props) => {
         </div>
         <div>
           <span class="col-sm-5" style={{marginLeft:150}}>
-          <img id="cameraPreviewTN" src="" alt="No Preview" style={{ width:200, backgroundColor:"lightgray" }} ></img>
           </span>
         </div>
       </div>

@@ -54,21 +54,15 @@ export function TestDynamic(props) {
   const [enableSaveAndRestart, setEnableRestart] = useState(false);
   const [cameraPipeline, setCameraPipeline] = useState(null);
   const [cameraConfigSettings, setCameraSettings] = useState(null);
-  const [progressIndicator, setShowProgress] = useState(false);
+  const [progressIndicator, setProgress] = useState(false);
+  const [progressIndicatorLabel, setProgressIndicatorLabel] = useState("");
   const dispatch = useDispatch();
   let udfItems = [];
   let AlgorithmsUsed = "";
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  useEffect(() => {
-    setShowProgress(true);
-    StartContainers("start")
-      .then((containerStart) => {
-        let timer = setInterval(()=> {setShowProgress(false);clearInterval(timer);}, 2000);
-      })
-      .catch((error) => {setShowProgress(false);});
-  }, []);
+  
   useEffect(() => {
     if (NodeSelected) {
       //debugger;
@@ -183,6 +177,7 @@ export function TestDynamic(props) {
               value={udfItem[itemkey]}
               variant="outlined"
               onChange={(e) => modifyUdfSettings(e, itemkey, index)}
+              disabled = {itemkey == "name" || itemkey == "type"}
             />
           </div>
         );
@@ -212,12 +207,13 @@ export function TestDynamic(props) {
   /* Saving new config and then restarting containers */
   const saveAndRestartFunc = () => {
     setEnableRestart(false);
-    setShowProgress(true);
+    setProgressIndicatorLabel("Saving and restarting...");
+    setProgress(true);
+    setNodeSelected(false);
     /* Set the updated config - calling set api */
     let config = {};
     config[NodeSelected] = udfconfigCopy;
     UpdateConfigApi.updateconfig({ ...config }, (response) => {
-      console.log(response, "set apo");
       if (response?.status_info?.status) {
         StoreProjectApi.store(
           props.projectSetup.projectName,
@@ -229,11 +225,12 @@ export function TestDynamic(props) {
                 if (status == false) {
                   setEnableRestart(true);
                 }
-                let timer = setInterval(()=> {setShowProgress(false);clearInterval(timer);}, 2000);
+
+                let timer = setInterval(()=> {setProgress(false);clearInterval(timer);setTopic("");}, 2000);
               })
               .catch((error) => {
                 setEnableRestart(true)
-                setShowProgress(false);
+                setProgress(false);
                 alert(
                   "Some error occured while restarting containers: " + error
                 );
@@ -306,7 +303,7 @@ export function TestDynamic(props) {
       {progressIndicator ? (
         <div className="deploymentProgressBar" >
           <CircularProgress size={100} />
-          <p className="deploymentProgressBarText">Please wait...</p>
+          <p className="deploymentProgressBarText">{progressIndicatorLabel}</p>
         </div>
       ) : (
       <div className="TestProfileSettingsInTestTab col-sm-5 WebVisualizerTestSettings">
@@ -407,10 +404,10 @@ export function TestDynamic(props) {
           <br />
           Topic: {TopicsRelatedToNode}
         </span>
-        {!TopicsRelatedToNode && (
-          <div className="WebVisualizerNoPreview">No Preview available</div>
+        {(!TopicsRelatedToNode || !NodeSelected) &&  (
+          <div className="WebVisualizerNoPreview">Click on a VA component for preview</div>
         )}
-        {TopicsRelatedToNode && (
+        {TopicsRelatedToNode && NodeSelected && (
           <img
             className="WebVisalizerPreviewTestImg"
             src={`/webvisualizer/${TopicsRelatedToNode}`}

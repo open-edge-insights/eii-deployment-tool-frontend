@@ -29,7 +29,7 @@ npm config set update-notifier false
 npm install
 echo "REACT_APP_"$(env | grep 'EII_VERSION') > /app/.env
 if [ "$dev_mode" != "true" ]; then
-    HTTPS=true SSL_CRT_FILE=/run/secrets/cert SSL_KEY_FILE=/run/secrets/key npm start
+    CHOKIDAR_USEPOLLING=true HTTPS=true SSL_CRT_FILE=/run/secrets/cert SSL_KEY_FILE=/run/secrets/key npm start
 else
-    npm start
+    CHOKIDAR_USEPOLLING=true npm start
 fi
