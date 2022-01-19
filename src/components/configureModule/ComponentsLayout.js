@@ -616,6 +616,7 @@ const ComponentsLayout = (props) => {
 
   const onElementsRemove = (elementsToRemove) => {
     // Check if backend is busy
+    if(props.displayConfigForm == true){
     if (
       currentComponentData.selectedComponents.activeTask &&
       currentComponentData.selectedComponents.activeTask != ""
@@ -703,6 +704,7 @@ const ComponentsLayout = (props) => {
     props.dispatchComponents(currentComponentData);
     reloadAndRenderComponents(false);
     return true;
+    }
   };
 
   function showNetworkError(show) {
@@ -882,7 +884,16 @@ const ComponentsLayout = (props) => {
     if (instances == null) {
       instances = getInstanceCount(services);
     }
-
+    if( builder_services.length == 0 ||
+      ( builder_services.length == 1 && builder_services[0] == "WebVisualizer" && !currentComponentData.selectedComponents.showWebVisualizer)) 
+      {
+        dispatch({
+            type: "START_DISABLED",
+            payload: {
+              startbuttondisabled:true,
+          },
+        })
+      }
     BuilderApi.builder(
       builder_services,
       instances,

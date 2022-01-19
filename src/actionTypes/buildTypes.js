@@ -21,3 +21,4 @@
 
 export const BUILD_COMPLETE = "BUILD_COMPLETE";
 export const BUILD_FAILED = "BUILD_FAILED";                          
+export const START_DISABLED = "START_DISABLED";

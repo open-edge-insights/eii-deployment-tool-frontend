@@ -84,6 +84,9 @@ const ConfigBuild = (props) => {
   const BuildComplete = useSelector(
     (state) => state.BuildReducer.BuildComplete
   );
+  const startbutton = useSelector(
+    (state) => state.BuildReducer.startbuttondisabled
+  );
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
   let promiseResolve;
   let promiseReject;
@@ -215,12 +218,12 @@ const ConfigBuild = (props) => {
       <p className={`${classes.texCenter} titleStyle`}>Configure & Build</p>
       <div className={`${classes.texCenter} startConfig`}>
         <button
-          disabled={disableStartButton || isActive || BuildComplete == true}
+          disabled={disableStartButton || isActive || BuildComplete == true || startbutton}
           className={"startConfigButton"}
           onClick={startBuild}
           id={
             disableStartButton ||
-            isActive ||
+            isActive || startbutton ||
             (BuildComplete == true && BuildError == false)
               ? "disableStart"
               : ""
