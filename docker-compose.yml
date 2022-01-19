@@ -47,13 +47,13 @@ services:
       AppName: "DeploymentToolFrontend"
       dev_mode: "false"
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eii_no_proxy},deployment_tool_backend,ia_web_visualizer
-      NO_PROXY: ${eii_no_proxy},deployment_tool_backend,ia_web_visualizer
+      no_proxy: ${eii_no_proxy},${HOST_IP}
+      NO_PROXY: ${eii_no_proxy},${HOST_IP}
       CertType: "zmq,pem"
       DEPLOYMENT_TOOL_BACKEND_PORT: 5100
-      DEPLOYMENT_TOOL_BACKEND_HOST: deployment_tool_backend
+      DEPLOYMENT_TOOL_BACKEND_HOST: ${HOST_IP}
       WEB_VISUALIZER_DEV_PORT: 5001
-      WEB_VISUALIZER_HOST: ia_web_visualizer
+      WEB_VISUALIZER_HOST: ${HOST_IP}
       PORT: 3100
       EII_VERSION: ${EII_VERSION}
     ports:

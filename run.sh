@@ -41,17 +41,21 @@ function create_docker_network() {
 function sourceEnv() {
     set -a
     source ../build/.env
+    if [ "$HOST_IP" == "" ];then
+        echo "HOST_IP is not set. Have you run the backend?"
+        exit
+    fi
     set +a
 }
 
 function setupHost() {
     sudo mkdir -p $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
-    sudo chown -R $EII_USER_NAME:$EII_USER_NAME $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
-    sudo chmod a+rw -R $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
+    sudo chown -R $EII_UID $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
+    sudo chmod u+rw -R $EII_INSTALL_PATH/tools_output/deployment-tool-fe && \
     create_docker_network
     if [ -d ../DeploymentToolBackend/certificates ];then
         sudo cp -rf ../DeploymentToolBackend/certificates .
-        sudo chmod -R auo+r ./certificates
+        sudo chmod -R a+r ./certificates
     else
         echo "Could not find certificates in DeploymentToolBackend directory. Please build the backend first!"
         exit
@@ -61,6 +65,7 @@ function setupHost() {
 sourceEnv
 
 if [ "$1" ==  "--build" -o "$1" == "-b" ]; then
+    docker-compose down && \
     setupHost && \
     docker-compose build $2 && \
     docker-compose up -d
