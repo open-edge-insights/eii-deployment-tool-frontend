@@ -19,13 +19,15 @@
  * SOFTWARE.
  */
 
-import { BUILD_COMPLETE, BUILD_FAILED, START_DISABLED } from "../actionTypes/buildTypes";
+import { BUILD_COMPLETE, BUILD_FAILED, START_DISABLED, IMPORT_DISABLED, BUILD_IN_PROGRESS_DISABLED_DRAG } from "../actionTypes/buildTypes";
 
 const initialState = {
   BuildComplete: false,
   BuildError: false,
   BuildErrorMessage: "",
   startbuttondisabled:false,
+  ImportButtonDisabled:false,
+  DisabledDrag:0,
 };
 
 export default function BuildReducer(state = initialState, action) {
@@ -47,6 +49,16 @@ export default function BuildReducer(state = initialState, action) {
       return {
         ...state,
         startbuttondisabled: action.payload.startbuttondisabled,
+      };
+      case IMPORT_DISABLED:
+      return {
+        ...state,
+        ImportButtonDisabled: action.payload.ImportButtonDisabled,
+      };
+      case BUILD_IN_PROGRESS_DISABLED_DRAG:
+      return {
+        ...state,
+        DisabledDrag: action.payload.DisabledDrag,
       };
     default:
       return state;

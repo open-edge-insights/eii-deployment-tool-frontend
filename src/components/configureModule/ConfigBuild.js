@@ -102,7 +102,20 @@ const ConfigBuild = (props) => {
     let progressPercentage = 0;
     let ProcessName = "building";
     setBuildProgress(1);
-
+    dispatch({
+      type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
+      payload:{
+        DisabledDrag:1,
+      },
+    });
+    if(BuildProgressPercentage ==1 || BuildProgressPercentage<100){
+        dispatch({
+          type: "IMPORT_DISABLED",
+          payload: {
+            ImportButtonDisabled: true,
+          },
+        });
+      }
     buildContainer().then((buildResponse) => {
       setBuildViewFlag(true);
       let response = buildResponse?.data;
@@ -149,6 +162,12 @@ const ConfigBuild = (props) => {
               progressPercentage = progressString.progress;
               /* Setting state value, progress bar % */
               setBuildProgress(parseInt(progressPercentage-1));
+              dispatch({
+                type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
+                payload:{
+                  DisabledDrag:(parseInt(progressPercentage-1)),
+                },
+              });
               if (progressPercentage == 100) {
                 if (ProcessName.includes("build") && progressString.status == "Success") {
                   /* Restart containers so that changes take effect after successfull build */
@@ -156,10 +175,22 @@ const ConfigBuild = (props) => {
                     let response = containerStart?.status_info?.status;
                     if (response) {
                       setBuildProgress(100);
+                       dispatch({
+                        type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
+                        payload:{
+                          DisabledDrag:100,
+                        },
+                      });
                       dispatch({
                         type: "BUILD_COMPLETE",
                         payload: { BuildComplete: true, BuildError: false },
                       });
+                      dispatch({
+                          type: "IMPORT_DISABLED",
+                          payload: {
+                            ImportButtonDisabled: false,
+                          },
+                        });
                       setStartButtonEnabledOrDisabled(false);
                     } else {
                       /* displatch the build completion status*/

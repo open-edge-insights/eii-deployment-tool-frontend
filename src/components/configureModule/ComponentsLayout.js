@@ -107,7 +107,9 @@ const ComponentsLayout = (props) => {
   const CurrentTabIndex = useSelector(
     (state) => state.ConfigureBuildReducer.tabCount
   );
-  
+  const DisabledDrag = useSelector(
+    (state) => state.BuildReducer.DisabledDrag
+  );
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
@@ -1346,6 +1348,9 @@ const ComponentsLayout = (props) => {
   };
 
   const onDrop = (event) => {
+  if(DisabledDrag > 0 && DisabledDrag < 100){
+      return;
+    }
     let services = [];
     let reset = false;
     event.preventDefault();

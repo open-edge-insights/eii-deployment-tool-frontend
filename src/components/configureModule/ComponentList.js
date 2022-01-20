@@ -29,6 +29,7 @@ import ImportCodeDialog from "./ImportCodeDialog";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import { Path } from "history";
+import { useSelector, useDispatch } from "react-redux";
 
 const ComponentList = (props) => {
   const [files, setFiles] = useState([]);
@@ -41,6 +42,10 @@ const ComponentList = (props) => {
   const [AlertMsg, setAlertMsg] = useState("");
   const [UDFConfig, setUDFConfig] = useState();
 
+const ImportButton = useSelector(
+    (state) => state.BuildReducer.ImportButtonDisabled
+    );
+    
   var Path = require("path");
   useEffect(() => {}, []);
   const onDragStart = (event, dataType, appName) => {
@@ -151,12 +156,12 @@ const ComponentList = (props) => {
         <div className="importCodeBtnDiv">
           <button
             className={
-              isActive || !props.isImportBtnActive
+              isActive || !props.isImportBtnActive ||ImportButton
                 ? "disableImportBtn"
                 : "importCodeBtn"
             }
             onClick={importCode}
-            disabled={isActive || !props.isImportBtnActive}
+            disabled={isActive || !props.isImportBtnActive|| ImportButton}
           >
             Import Code/UDF
           </button>
