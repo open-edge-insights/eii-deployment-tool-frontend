@@ -39,11 +39,11 @@ const OpeningScreen = (props) => {
         document.getElementById("dot" + prevCount).style.visibility = "visible";
         count++;
       }
-      setTimeout(() =>window.location.href = "/loginSCreen", 2000);
+      setTimeout(() =>window.location.href = "/LoginScreen", 2000);
     }, 400);
   }
   return (
-    <div>
+    <div className="OpeningSCreenMainDiv">
       <img src={intelBlackLogo} className="openingScreenImg" />
       <div className="openingScreenTitleDiv">
         <p className="openingScreenTitle">Edge Insights For Industrial</p>

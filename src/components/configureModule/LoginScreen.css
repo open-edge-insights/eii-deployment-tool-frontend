@@ -18,69 +18,68 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
- .MuiSvgIcon-root{
-    font-size: 2.5 rem !important;
+
+ .MuiSvgIcon-root {
+  font-size: 2.5 rem !important;
 }
-.loginScreen input{
-    width: 250px;
-    font-size: 14px !important;
-    border: 1px solid #C9CACE !important;
-    background: #FFFFFF 0% 0% no-repeat padding-box !important;
+.loginScreen input {
+  width: 240px;
+  font-size: 14px !important;
+  border: 1px solid #c9cace !important;
+  background: #ffffff 0% 0% no-repeat padding-box !important;
 }
-.loginScreen input:hover{
-background: #FFFFFF 0% 0% no-repeat padding-box !important;
-border: 1px solid #494B51 !important;
+.loginScreen input:hover {
+  background: #ffffff 0% 0% no-repeat padding-box !important;
+  border: 1px solid #494b51 !important;
 }
 
 .loginScreen input:focus {
-    background:#FFFFFF 0% 0% no-repeat padding-box !important;
-border: 2px solid #0068B5 !important;
-  }
-
-.loginScreen select{
-    font-size: 14px !important;
-    border: 1px solid #C9CACE !important;
-    background: #FFFFFF 0% 0% no-repeat padding-box !important;
+  background: #ffffff 0% 0% no-repeat padding-box !important;
+  border: 2px solid #0068b5 !important;
 }
-.loginScreen select:hover{
-background: #FFFFFF 0% 0% no-repeat padding-box !important;
-border: 1px solid #494B51 !important;
+
+.loginScreen select {
+  font-size: 14px !important;
+  border: 1px solid #c9cace !important;
+  background: #ffffff 0% 0% no-repeat padding-box !important;
+}
+.loginScreen select:hover {
+  background: #ffffff 0% 0% no-repeat padding-box !important;
+  border: 1px solid #494b51 !important;
 }
 
 .loginScreen select:focus {
-    background: #FFFFFF 0% 0% no-repeat padding-box !important;
-border: 2px solid #0068B5 !important;
-  }
-  .butSR{
-    width: 100px;
-    height: 50px;
-    border:1px solid #2B2C30 !important;
-        background-color: #fff !important;
-        line-height: 1;
-        border-radius: 5px !important;
+  background: #ffffff 0% 0% no-repeat padding-box !important;
+  border: 2px solid #0068b5 !important;
 }
-button.butSR:hover{
-       
-    background: #E9EAEB 0% 0% no-repeat padding-box !important;
-            border: 1px solid #2B2C30 !important;
-            opacity: 1,
+.butSR {
+  width: 100px;
+  height: 50px;
+  border: 1px solid #2b2c30 !important;
+  background-color: #fff !important;
+  line-height: 1;
+  border-radius: 5px !important;
 }
-.header{
-    color: #FFFFFF;
-    background-color: #0068B5;
-    height:64px;
-    font-weight:700;
-    padding-left:60px;
-    padding-top:14px;
-  
-    display:flex;
+button.butSR:hover {
+  background: #e9eaeb 0% 0% no-repeat padding-box !important;
+  border: 1px solid #2b2c30 !important;
+  opacity: 1;
 }
-.paddleft35{
-    padding-left:35px;
-    padding-top:10px;
-  }
-   .username,
+.header {
+  color: #ffffff;
+  background-color: #0068b5;
+  height: 64px;
+  font-weight: 700;
+  padding-left: 60px;
+  padding-top: 14px;
+
+  display: flex;
+}
+.paddleft35 {
+  padding-left: 35px;
+  padding-top: 10px;
+}
+.username,
 .password {
   margin: 0;
   font-family: inherit;
@@ -92,51 +91,53 @@ button.butSR:hover{
   background-color: #fff;
   background-image: none;
   border: 1px solid #ccc;
-  border-radius: 4px;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   margin-bottom: 0.5em;
-  height: 50px;
-  width: 100%;
+  width: 240px;
+  height: 40px;
   border-color: #d7d7d7;
   box-shadow: none;
   color: #252525;
 }
 .loginButton {
-  margin: 0;
   display: inline-block;
   margin-bottom: 0;
   font-weight: normal;
   text-align: center;
-  vertical-align: middle;
-  line-height: 1.8;
-  position: relative;
-  min-width: 96px;
-  border-radius: 2px;
-  font-size: 14px;
+  font-size: 16px;
   white-space: normal;
   color: #fff;
   background-color: #0068b5;
   border: medium solid transparent;
   -webkit-appearance: button;
   cursor: pointer;
-  border-width: 0;
-  padding: 0.3em 4em;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  width: auto;
+  min-width: 240px;
+  height: 40px;
   cursor: pointer;
 }
 .signIn {
-    color: #0068b5;
-    padding-left: 30px;
-    padding-bottom: 10px;
-    font-weight: 600;
-    margin-top: 0px;
-  }
-  .loginSpan {
-    display: flex;
-    margin: 10px 0px 50px 60px;
-  }
-  .signInLink {
-    text-decoration: none;
-  }
+  color: #262626;
+  padding-bottom: 10px;
+  margin-top: 0px;
+  font-size: 24px;
+  font-weight: 400;
+}
+.loginSpan {
+  display: flex;
+}
+.signInLink {
+  text-decoration: none;
+}
+.LoginFormLabel {
+  font-size: 14px;
+  color: #2b2c30;
+  margin-bottom: 4px;
+}
+.LoginErrortext {
+  color: #c81326;
+  font-size: 14px;
+}
+.loginButtonSpan {
+  position: relative;
+  top: 24px;
+}

@@ -22,34 +22,14 @@
 import React, { useState } from "react";
 import "./LoginScreen.css";
 import Cookies from "universal-cookie";
-
-async function loginUser(credentials) {
-  const cookies = new Cookies();
-  return fetch("/eii/ui/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  }).then(data => data.json())    
-    .then(function (data) {    
-      if (data?.status_info?.status) {
-        cookies.set("dt_session", JSON.parse(data.data));
-        window.location.href = "/CreateProject";
-      } else if(data?.detail?.length > 0) {
-        alert(data.detail + ". Please try again");
-      } else {
-        alert("Error while interacting with backend");
-      }
-    })
-    .catch((error) => {
-      alert("Error: Couldn't connect to Backend!");
-    });
-}
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 const LoginScreen = () => {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
-
+  const [errorText, setErrorText] = useState("");
+  const [loginDisabled, setLoginDisabled] = useState(false);
+  const [checkedRememberMe, setChecked] = useState(true);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await loginUser({
@@ -59,42 +39,108 @@ const LoginScreen = () => {
   };
   let DisableLogin = false;
   DisableLogin = username && password ? false : true;
-
+  async function loginUser(credentials) {
+    setLoginDisabled(true);
+    const cookies = new Cookies();
+    return fetch("/eii/ui/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    })
+      .then((data) => data.json())
+      .then(function (data) {
+        if (data?.status_info?.status) {
+          cookies.set("dt_session", JSON.parse(data.data));
+          setErrorText("");
+          window.location.href = "/CreateProject";
+        } else if (data?.detail?.length > 0) {
+          setLoginDisabled(false);
+          setErrorText(data.detail + ". Please try again");
+        } else {
+          setLoginDisabled(false);
+          setErrorText("Error while interacting with backend");
+        }
+      })
+      .catch((error) => {
+        setLoginDisabled(false);
+        setErrorText("Error: Couldn't connect to Backend!");
+      });
+  }
+  
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <h3 className="signIn">Sign In</h3>
-
         <div className="col-sm-12 loginScreen">
-          <div className="col-sm-12 row" style={{ marginBottom: 10 }}>
+          <div className="col-sm-12 row" style={{ marginBottom: 14 }}>
             <span className="col-sm-8">
+              <p className="LoginFormLabel">User name</p>
               <input
                 type="text"
                 id="username"
                 name="username"
                 className="username"
-                placeholder="Username"
-                onChange={(e) => setUserName(e.target.value)}
+                onChange={(e) => {
+                  setLoginDisabled(false);
+                  setErrorText("");
+                  setUserName(e.target.value);
+                }}
                 required
               />
             </span>
           </div>
-          <div className="col-sm-12 row" style={{ marginBottom: 10 }}>
+          <div className="col-sm-12 row">
             <span className="col-sm-8">
+              <p className="LoginFormLabel">Password</p>
               <input
                 type="password"
                 id="password"
                 className="password"
                 name="password"
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
+                autoComplete={checkedRememberMe ? "on" : "new-password"}
+                onChange={(e) => {
+                  setLoginDisabled(false);
+                  setErrorText("");
+                  setPassword(e.target.value);
+                }}
                 required
               />
             </span>
+            <span className="LoginErrortext">{errorText && errorText}</span>
           </div>
         </div>
-        <span className="col-sm-3 loginSpan">
-          <button className="loginButton" type="submit">
+        {!errorText && (
+          <span className="col-sm-12">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="checkedB"
+                  style={{
+                    color: "#0068B5",
+                  }}
+                  checked={checkedRememberMe}
+                  onChange={(e) => {
+                    let checked = e.target.checked;
+                    setChecked(checked);
+                  }}
+                />
+              }
+              label="Remember me"
+            />
+          </span>
+        )}
+        <span className="col-sm-3 loginSpan loginButtonSpan">
+          <button
+            className="loginButton"
+            type="submit"
+            disabled={loginDisabled}
+            style={{
+              backgroundColor: loginDisabled && "#ccc",
+              cursor: loginDisabled && "not-allowed",
+            }}
+          >
             Login
           </button>
         </span>

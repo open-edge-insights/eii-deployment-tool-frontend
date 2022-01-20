@@ -19,57 +19,46 @@
  * SOFTWARE.
  */
 
-import React, { useEffect,useState } from 'react';
-import './App.css';
-import SplashScreen from './components/configureModule/SplashScreen';
-import CreateProject from './components/CreateProject';
-import {BrowserRouter as Router, Route , Switch} from 'react-router-dom';
-import Dialog from '@material-ui/core/Dialog';
-import './fonts/font.css';
-import OpeningScreen from './components/OpeningScreen';
-import LoginScreen from './components/configureModule/SplashScreen';
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import CreateProject from "./components/CreateProject";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import "./fonts/font.css";
+import OpeningScreen from "./components/OpeningScreen";
+import NewLoginScreen from "./components/NewLoginScreen";
+
 function App() {
   const handleClickOpen = () => {
     setOpen(true);
   };
-  
+
   const handleClose = () => {
     setOpen(false);
   };
   const [open, setOpen] = React.useState(false);
   const [token, setToken] = useState();
   useEffect(() => {
-
-    console.log('mount it!');
+    console.log("mount it!");
     handleClickOpen();
   }, []);
-  
-   return (
+
+  return (
     <Router>
-    <div className="App">
-   
-      <Switch>
-        <Route exact path="/">
-        <OpeningScreen/>
-        </Route> 
-        <Route exact path="/LoginScreen">
-        <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      ><SplashScreen handleClose={handleClose}/>
-      </Dialog>
-        </Route>
-        <Route exact path="/CreateProject">
-        <CreateProject />
-        </Route>
-        <Route exact path="/DynamicTabs">
-        </Route>
-      </Switch>
+      <div className="App">
+        <Switch>
+          <Route exact path="/">
+            <OpeningScreen />
+          </Route>
+          <Route exact path="/LoginScreen">
+            <NewLoginScreen />
+          </Route>
+          <Route exact path="/CreateProject">
+            <CreateProject />
+          </Route>
+          <Route exact path="/DynamicTabs"></Route>
+        </Switch>
       </div>
     </Router>
   );
 }
 export default App;
-

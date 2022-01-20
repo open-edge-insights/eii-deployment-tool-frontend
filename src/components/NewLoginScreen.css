@@ -18,42 +18,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-.openingScreenTitleDiv {
-  height: 80vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+.NewLoginScreenMainDiv {
+  background-color: #0068b5;
+  height: 100vh;
+  min-height: 100vh;
 }
-.openingScreenTitle {
-  font-size: 36px;
-  color: #0068b5;
-  font-family: "Intel One Medium";
+.NewLoginDiv {
+  display: flex;
+}
+.NewLoginScreenTitle,
+.NewLoginScreenWelcomeText,
+.NewLoginScreenStepTitle,
+.NewLoginScreenStep1 {
+  color: #ffffff;
+  font-size: 40px;
+  padding: 161px 0px 0px 124px;
+  display: flex;
   margin-bottom: 0px;
 }
-.openingScreenTitleLoading {
-  color: #aeaeae;
-  font-size: 14px;
+.NewLoginScreenWelcomeText {
+  font-size: 16px;
+  width: 577px;
+  padding-top: 64px;
 }
-.dot1,
-.dot2,
-.dot3 {
-  width: 6px;
-  height: 6px;
-  background: #0068b5;
-  border-radius: 24px;
+.NewLoginScreenStepTitle {
+  font-size: 16px;
+  padding-top: 80px;
 }
-.threeDots {
-  display: inline-flex;
+.NewLoginScreenStep1 {
+  font-size: 16px;
+  padding-top: 16px;
+  padding-left: 165px;
 }
-.dot2, .dot3 {
-  margin-left: 4px;
-  visibility: hidden;
+.NewLoginScreenStep2 {
+  padding-top: 10px;
 }
-.progressBarDots {
-  display: none;
+.LoginFormDiv {
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  left: 200px;
+  padding: 141px 90px 10px 90px;
+  background: #f9f9f9;
+  height: 579px;
+  width: 417px;
+  top: 11.2em;
 }
-.OpeningSCreenMainDiv {
-  background-color: #F9F9F9;
-  height: 100vh;
+.NewLoginScreenIntelWhiteFontLogoDiv {
+  position: absolute;
+  left: 74.8em;
+  top: 4.4em;
+}
+.NewLoginScreenIntelWhiteFontLogo {
+  width: 108px;
+  height: 108px;
+  position: relative;
+  right: 1px;
+  top: 1px;
 }
