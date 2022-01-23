@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 Intel Corporation.
+/* Copyright (c) 2022 Intel Corporation.
 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,25 +18,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import axios from 'axios';
-
-const GetStatusApi={
-    getstatus:function(successCallback, errorCallback){    
-      axios.get("/eii/ui/status")
-      .then((response) =>{
-        if(response?.data?.status_info?.status) {
-          let data = JSON.parse(response?.data?.data);
-          successCallback(data);
-        } else {
-          errorCallback(response);
-        }
-      })
-      .catch((error)=>{
-          errorCallback(error);
-          console.log(error);
-      });
+export async function CreateProject(project_name) {
+  return fetch("/eii/ui/project/create", {
+    credentials: "include",
+    method: "POST",
+    headers: {
+      "Access-Control-Allow-Credentials": true,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST",
+      "Access-Control-Allow-Headers": "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      "name": project_name,
+      "replace": false
+    })
+  })
+  .then(function (response) {
+    if(response.ok) {
+      return response.json();
+    } else {
+      alert('CreateProject API: Error while communicating with backend');
+      return null;
     }
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 }
-
-export default GetStatusApi;
-

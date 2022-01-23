@@ -617,109 +617,102 @@ const ComponentsLayout = (props) => {
   }
 
   const onElementsRemove = (elementsToRemove) => {
-   if (getInstanceCount() == 2) {
-    }
-    else{
-      if (
-        window.confirm(
-          "Do you want to delete the componet"
-        ) == false
-      ) {
-        return false;
-      }  
-  }
-  if(BuildProgress >0 && BuildProgress <100){
-      return;
-    }
-    // Check if backend is busy
-    if(props.displayConfigForm == true){
-    if (
-      currentComponentData.selectedComponents.activeTask &&
-      currentComponentData.selectedComponents.activeTask != ""
-    ) {
-      alert(
-        "Failed to remove elements. Reason: An active " +
-          currentComponentData.selectedComponents.activeTask +
-          " task is already in progress.\nPlease wait."
-      );
+    if (BuildProgress > 0 && BuildProgress < 100) {
+      alert("Sorry, you can't delete component when a build is in progress.");
       return false;
     }
-    // Check if switching to single instance
-    if (getInstanceCount() == 2) {
-      var comps = currentComponentData.selectedComponents.nodes;
-      for (let i = 0; i < elementsToRemove.length; i++) {
-        for (let j = 0; j < comps.length; j++) {
-          if (comps[j].id === elementsToRemove[i].id) {
-            if (
-              comps[j].dirName.startsWith("VideoIngestion") ||
-              comps[j].dirName.startsWith("VideoAnalytics")
-            ) {
+    if (!window.confirm("Are you sure you want to delete this component?")) {
+      return false;
+    }
+    // Check if backend is busy
+    if (props.displayConfigForm == true) {
+      if (
+        currentComponentData.selectedComponents.activeTask &&
+        currentComponentData.selectedComponents.activeTask != ""
+      ) {
+        alert(
+          "Failed to remove elements. Reason: An active " +
+          currentComponentData.selectedComponents.activeTask +
+          " task is already in progress.\nPlease wait."
+        );
+        return false;
+      }
+      // Check if switching to single instance
+      if (getInstanceCount() == 2) {
+        var comps = currentComponentData.selectedComponents.nodes;
+        for (let i = 0; i < elementsToRemove.length; i++) {
+          for (let j = 0; j < comps.length; j++) {
+            if (comps[j].id === elementsToRemove[i].id) {
               if (
-                window.confirm(
-                  "Switching to single instance.\nComponents will be reset and " +
-                    "all settings applied to them will be lost.\n\nDo you want to continue?"
-                ) == false
+                comps[j].dirName.startsWith("VideoIngestion") ||
+                comps[j].dirName.startsWith("VideoAnalytics")
               ) {
-                return false;
+                if (
+                  window.confirm(
+                    "Switching to single instance.\nComponents will be reset and " +
+                    "all settings applied to them will be lost.\n\nDo you want to continue?"
+                  ) == false
+                ) {
+                  return false;
+                }
               }
             }
           }
         }
       }
-    }
 
-    setOpen(false);
-    var nodeRemoved = false;
-    var comps = currentComponentData.selectedComponents.nodes;
-    for (let i = 0; i < elementsToRemove.length; i++) {
-      for (let j = 0; j < comps.length; j++) {
-        if (comps[j].id === elementsToRemove[i].id) {
-          if (comps[j].dirName.startsWith("WebVisualizer")) {
-            comps[j].isHidden = true;
-            currentComponentData.selectedComponents.showWebVisualizer = false;
+      setOpen(false);
+      var nodeRemoved = false;
+      var comps = currentComponentData.selectedComponents.nodes;
+      for (let i = 0; i < elementsToRemove.length; i++) {
+        for (let j = 0; j < comps.length; j++) {
+          if (comps[j].id === elementsToRemove[i].id) {
+            if (comps[j].dirName.startsWith("WebVisualizer")) {
+              comps[j].isHidden = true;
+              currentComponentData.selectedComponents.showWebVisualizer = false;
+              break;
+            }
+            checkAndRemoveInterfaces(comps[j]);
+            comps.splice(j, 1);
+            nodeRemoved = true;
+
+            // If VI/VA remove the VI/VA instance pair
+            let name = elementsToRemove[i].data.name;
+            let instance = getDigits(elementsToRemove[i].data.name);
+            let pairName = "";
+            if (name.startsWith("VideoIngestion"))
+              pairName = "VideoAnalytics" + instance;
+            else if (name.startsWith("VideoAnalytics"))
+              pairName = "VideoIngestion" + instance;
+            else continue;
+            for (let j = 0; j < comps.length; j++) {
+              if (comps[j].data.name === pairName) {
+                checkAndRemoveInterfaces(comps[j]);
+                comps.splice(j, 1);
+              }
+            }
+
             break;
           }
-          checkAndRemoveInterfaces(comps[j]);
-          comps.splice(j, 1);
-          nodeRemoved = true;
-
-          // If VI/VA remove the VI/VA instance pair
-          let name = elementsToRemove[i].data.name;
-          let instance = getDigits(elementsToRemove[i].data.name);
-          let pairName = "";
-          if (name.startsWith("VideoIngestion"))
-            pairName = "VideoAnalytics" + instance;
-          else if (name.startsWith("VideoAnalytics"))
-            pairName = "VideoIngestion" + instance;
-          else continue;
-          for (let j = 0; j < comps.length; j++) {
-            if (comps[j].data.name === pairName) {
-              checkAndRemoveInterfaces(comps[j]);
-              comps.splice(j, 1);
-            }
+        }
+      }
+      if (!nodeRemoved) {
+        for (let i = 0; i < elementsToRemove.length; i++) {
+          if (elementsToRemove[i].id[0] === "e") {
+            let src = getComponentById(elementsToRemove[i].source);
+            let trg = getComponentById(elementsToRemove[i].target);
+            checkAndRemoveEdgeInterfaces(src, trg);
           }
-
-          break;
         }
       }
-    }
-    if (!nodeRemoved) {
-      for (let i = 0; i < elementsToRemove.length; i++) {
-        if (elementsToRemove[i].id[0] === "e") {
-          let src = getComponentById(elementsToRemove[i].source);
-          let trg = getComponentById(elementsToRemove[i].target);
-          checkAndRemoveEdgeInterfaces(src, trg);
-        }
-      }
-    }
-    setElements((els) => removeElements(elementsToRemove, els));
-    makeNodeConnections();
-    currentComponentData.selectedComponents.needReProvision = true;
+      setElements((els) => removeElements(elementsToRemove, els));
+      makeNodeConnections();
+      currentComponentData.selectedComponents.needReProvision = true;
 
-    updateOutputState();
-    props.dispatchComponents(currentComponentData);
-    reloadAndRenderComponents(false);
-    return true;
+      updateOutputState();
+      props.dispatchComponents(currentComponentData);
+      reloadAndRenderComponents(false);
+      return true;
     }
   };
 

@@ -32,6 +32,7 @@ import './ProjectSetup.css';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import GetStatusApi from '../api/GetStatusApi';
+import { CreateProject } from '../api/CreateProject';
 
 const useStyles = makeStyles((theme) => ({
   butOk: {
@@ -94,50 +95,76 @@ const ProjectSetup = (props) => {
     setState(currentState);
   };
 
-	const projectSetupSubmit = () => {
-	if (state.projectName.trim() != '' || state.openProjectName) {
-		GetStatusApi.getstatus(
-			(data) => {
-				if(data.status != "In Progress") {
-					props.updateProjectInfo({ ...state }, props.getStateVal);
-				} else {
-					alert("A " + data.task + " task is already in progress.Please try again later"); 
-				}
-			},
-			(data) => {
-				alert("Error: failed to get status!");
-			}
-		);
-	} else {
-		setError({
-			...error,
-			project_name: true,
-		});
-
-	}
-};
+  const projectSetupSubmit = () => {
+    if (state.projectName.trim() != '' || state.openProjectName) {
+      GetStatusApi.getstatus(
+        (data) => {
+          if (data.status != "In Progress") {
+            if (state.isCreateProject) {
+              CreateProject(state.projectName.trim()).then((response) => {
+                if (response) {
+                  if (!response?.status_info?.status) {
+                    if (response.status_info.error_detail == 'AlreadyExist') {
+                      let choice = window.confirm("A project with the same name already exists. Do you want to replace it?");
+                      if (choice == true) {
+                        props.updateProjectInfo({
+                          ...state
+                        }, props.getStateVal);
+                        return true;
+                      }
+                    } else {
+                      alert("An eror occurred while creating project: " + response.status_info.error_detail);
+                    }
+                  } else {
+                    props.updateProjectInfo({
+                      ...state
+                    }, props.getStateVal);
+                    return true;
+                  }
+                }
+              });
+            } else {
+              props.updateProjectInfo({
+                ...state
+              }, props.getStateVal);
+            }
+          } else {
+            alert("A " + data.task + " task is already in progress.Please try again later");
+          }
+        },
+        (error) => {
+          if(error?.message?.includes("status code 403") && 
+            window.confirm("Invalid session. Please re-login")) {
+            window.location.href = "/LoginScreen";
+          }
+        }
+      );
+    } else {
+      setError({
+        ...error,
+        project_name: true,
+      });
+    }
+  };
 
   const getProjectList = (event) => {
-    axios.get('/eii/ui/project/list')
-   
-      .then((e) => {
-      
+    axios.get('/eii/ui/project/list').then((e) => {
         var data = [];
         if (e?.data?.data) {
           data = JSON.parse(e?.data?.data);
-          
+
         }
         setProjectList(data || []);
       })
       .catch((e) => {
         console.log(e);
-        if(JSON.stringify(e).includes("403")){
-          window.confirm("Invalid session. Please re-login.")
-        window.location.href = "/LoginScreen";
-      }
+        if (e?.message?.includes("status code 403") &&
+          window.confirm("Invalid session. Please re-login")) {
+          window.location.href = "/LoginScreen";
+        }
       });
-    
   };
+
   const sendProjectNamedetails = (value) => {
     axios
       .post('eii/ui/project/load', { name: value })

@@ -35,7 +35,7 @@ Object.size = function (obj) {
   }
   return size;
 };
-  
+
 export var ConfigForm = (props) => {
   const { DB, main_title, onConfigOK } = props;
   var [data, setData] = useState({});
