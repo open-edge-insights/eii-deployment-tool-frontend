@@ -369,6 +369,16 @@ const CreateProject = (props) => {
                     Back
                   </button>
                 )}
+                {value == 0 &&
+                props.projectSetup.noOfStreams !== 0 &&
+                DeploymentComplete == false && (
+                  <button
+                    onClick={() => window.location.href = "/CreateProject"}
+                    className="backButtonMainPage"
+                  >
+                    Back
+                  </button>
+                )}
               {value < 2 && props.projectSetup.noOfStreams !== 0 && (
                 <button
                   className={

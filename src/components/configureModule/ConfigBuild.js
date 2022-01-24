@@ -105,7 +105,7 @@ const ConfigBuild = (props) => {
     dispatch({
       type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
       payload:{
-        DisabledDrag:1,
+        BuildProgress:1,
       },
     });
     if(BuildProgressPercentage ==1 || BuildProgressPercentage<100){
@@ -113,6 +113,12 @@ const ConfigBuild = (props) => {
           type: "IMPORT_DISABLED",
           payload: {
             ImportButtonDisabled: true,
+          },
+        });
+        dispatch({
+          type: "DISABLED_SAVE",
+          payload: {
+            Disabledsave:true,
           },
         });
       }
@@ -165,7 +171,7 @@ const ConfigBuild = (props) => {
               dispatch({
                 type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
                 payload:{
-                  DisabledDrag:(parseInt(progressPercentage-1)),
+                  BuildProgress:(parseInt(progressPercentage-1)),
                 },
               });
               if (progressPercentage == 100) {
@@ -178,7 +184,7 @@ const ConfigBuild = (props) => {
                        dispatch({
                         type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
                         payload:{
-                          DisabledDrag:100,
+                          BuildProgress:100,
                         },
                       });
                       dispatch({
@@ -189,6 +195,12 @@ const ConfigBuild = (props) => {
                           type: "IMPORT_DISABLED",
                           payload: {
                             ImportButtonDisabled: false,
+                          },
+                        });
+                      dispatch({
+                          type: "DISABLED_SAVE",
+                          payload: {
+                            Disabledsave:false,
                           },
                         });
                       setStartButtonEnabledOrDisabled(false);

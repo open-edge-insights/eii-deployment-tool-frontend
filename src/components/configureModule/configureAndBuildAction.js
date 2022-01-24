@@ -46,7 +46,7 @@ export async function buildContainer() {
     },
     body: JSON.stringify({
       services: ["*"],
-      sequential: false,
+      sequential: true,
       no_cache: false,
     }),
   })

@@ -131,6 +131,10 @@ const ProjectSetup = (props) => {
       })
       .catch((e) => {
         console.log(e);
+        if(JSON.stringify(e).includes("403")){
+          window.confirm("Invalid session. Please re-login.")
+        window.location.href = "/LoginScreen";
+      }
       });
     
   };

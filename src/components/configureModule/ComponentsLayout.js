@@ -107,8 +107,8 @@ const ComponentsLayout = (props) => {
   const CurrentTabIndex = useSelector(
     (state) => state.ConfigureBuildReducer.tabCount
   );
-  const DisabledDrag = useSelector(
-    (state) => state.BuildReducer.DisabledDrag
+  const BuildProgress = useSelector(
+    (state) => state.BuildReducer.BuildProgress
   );
   useEffect(() => {
     setStateComponent(props.stateComponent);
@@ -617,6 +617,20 @@ const ComponentsLayout = (props) => {
   }
 
   const onElementsRemove = (elementsToRemove) => {
+   if (getInstanceCount() == 2) {
+    }
+    else{
+      if (
+        window.confirm(
+          "Do you want to delete the componet"
+        ) == false
+      ) {
+        return false;
+      }  
+  }
+  if(BuildProgress >0 && BuildProgress <100){
+      return;
+    }
     // Check if backend is busy
     if(props.displayConfigForm == true){
     if (
@@ -1348,9 +1362,15 @@ const ComponentsLayout = (props) => {
   };
 
   const onDrop = (event) => {
-  if(DisabledDrag > 0 && DisabledDrag < 100){
+  if(BuildProgress > 0 && BuildProgress < 100){
       return;
     }
+    dispatch({
+      type: "START_DISABLED",
+      payload: {
+        startbuttondisabled:false,
+    },
+  })
     let services = [];
     let reset = false;
     event.preventDefault();

@@ -25,6 +25,7 @@ import _ from "lodash";
 import { JsonEditor as Editor } from "jsoneditor-react";
 import "jsoneditor-react/es/editor.min.css";
 import Button from "@material-ui/core/Button";
+import { useSelector, useDispatch } from "react-redux";
 
 Object.size = function (obj) {
   var size = 0,
@@ -34,7 +35,7 @@ Object.size = function (obj) {
   }
   return size;
 };
-
+  
 export var ConfigForm = (props) => {
   const { DB, main_title, onConfigOK } = props;
   var [data, setData] = useState({});
@@ -47,6 +48,9 @@ export var ConfigForm = (props) => {
   const handleJSONChange = (e) => {
     setJSONdata(e);
   };
+  const Disabledsave = useSelector(
+    (state) => state.BuildReducer.Disabledsave
+  );
   return (
     <div className="sideBare">
       <div
@@ -59,7 +63,7 @@ export var ConfigForm = (props) => {
         <div className="configBarSideBarTitle">
           <h5>{main_title} Configuration</h5>
           <Button
-            disabled={Object.keys(jsonEditeddata).length == 0}
+            disabled={Object.keys(jsonEditeddata).length == 0 || Disabledsave ?"disabledsavebtn":""}
             onClick={(e) =>
               onConfigOK(e, {
                 config: jsonEditeddata.config,

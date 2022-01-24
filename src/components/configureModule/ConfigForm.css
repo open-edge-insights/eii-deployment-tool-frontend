@@ -117,3 +117,8 @@
 .configFormJSONeditor {
   width: 325px;
 }
+.disabledsavebtn{
+  cursor: not-allowed !important;
+  background-color: #ccc !important;
+  color: black !important;
+}
