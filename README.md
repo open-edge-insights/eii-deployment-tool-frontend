@@ -3,12 +3,13 @@
 # Running Deployment tool front end
 
 ## Prerequisites
-    
-   Please ensure that all the pre-requisites needed for EII are installed. Please refer to [EII README](https://github.com/open-edge-insights/eii-core/blob/master/README.md) for more details.
+
+> - Please ensure that all the pre-requisites needed for EII are installed. Please refer to [EII README](https://github.com/open-edge-insights/eii-core/blob/master/README.md) for more details.
+> - Please follow [pre-requisites for video accelerators](https://github.com/open-edge-insights/eii-core#using-video-accelerators-in-ingestionanalytics-containers) and [pre-requisities for cameras](https://github.com/open-edge-insights/video-ingestion#camera-configuration) before trying to change the config through the deployment tool front end
 
 ## Configuration
 
-  * The frontend server will run on the port defined at the env variable PORT in docker-compose.yml. 
+  * The frontend server will run on the port defined at the env variable PORT in docker-compose.yml.
   * The frontend server will run in dev mode (http/insecure) or prod mode (https/secure) depending on the env variable 'dev_mode' in docker-compose.yml.
     By default prod mode is enabled.
 
@@ -38,7 +39,7 @@
 
       To build & run with --no-cache or to provide any other build argument, just append the same after the above commands.
 
-      for e.g. 
+      for e.g.
 
       ```shell
       $ ./run.sh --build --no-cache
