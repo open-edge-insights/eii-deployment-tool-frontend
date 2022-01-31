@@ -353,9 +353,9 @@ const CreateProject = (props) => {
                 <span className="cancelButtonMainPageSpan">
                   <button
                     className="cancelButtonMainPage"
-                    onClick={openConfirmDialogFunc}
+                    onClick={() => window.location.href = "/CreateProject"}
                   >
-                    Close
+                    Cancel
                   </button>
                 </span>
               )}
@@ -364,16 +364,6 @@ const CreateProject = (props) => {
                 DeploymentComplete == false && (
                   <button
                     onClick={() => handleChangeIndex(value - 1)}
-                    className="backButtonMainPage"
-                  >
-                    Back
-                  </button>
-                )}
-                {value == 0 &&
-                props.projectSetup.noOfStreams !== 0 &&
-                DeploymentComplete == false && (
-                  <button
-                    onClick={() => window.location.href = "/CreateProject"}
                     className="backButtonMainPage"
                   >
                     Back

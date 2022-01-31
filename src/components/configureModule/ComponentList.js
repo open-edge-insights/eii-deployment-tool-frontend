@@ -70,11 +70,16 @@ const ImportButton = useSelector(
     setFileName("");
     let path = _path;
     listFiles(path).then((fileResponse) => {
+    if(fileResponse.status_info.status){
       let data = fileResponse?.data && JSON.parse(fileResponse.data);
       setFiles([...data.files]);
       if (path == basePath) setDirectories([...data.dirs]);
       else setDirectories([...data.dirs, ".."]);
       setDialogOpen(true);
+      }
+      else{
+        alert("Invalid path");
+      }
     });
   };
   const closeDialog = () => {
