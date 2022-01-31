@@ -19,38 +19,44 @@
  * SOFTWARE.
  */
 
- .MuiSvgIcon-root {
+.MuiSvgIcon-root {
   font-size: 2.5 rem !important;
 }
 .loginScreen input {
   width: 240px;
   font-size: 14px !important;
-  border: 1px solid #c9cace !important;
+  border: 1px solid #c9cace;
   background: #ffffff 0% 0% no-repeat padding-box !important;
 }
-.loginScreen input:hover {
-  background: #ffffff 0% 0% no-repeat padding-box !important;
-  border: 1px solid #494b51 !important;
+.errorTextBorder  {
+  border: 1px solid #C81326 !important;
 }
-
+.loginScreen input:focus-visible {
+  background: #ffffff 0% 0% no-repeat padding-box !important;
+  border: 1px solid #0068b5 !important;
+  outline: none;
+}
+.loginScreen {
+  padding-bottom: 2px;
+}
 .loginScreen input:focus {
   background: #ffffff 0% 0% no-repeat padding-box !important;
-  border: 2px solid #0068b5 !important;
+  border: 1px solid #0068b5 !important;
 }
 
 .loginScreen select {
   font-size: 14px !important;
-  border: 1px solid #c9cace !important;
+  border: 1px solid #0068b5 !important;
   background: #ffffff 0% 0% no-repeat padding-box !important;
 }
 .loginScreen select:hover {
   background: #ffffff 0% 0% no-repeat padding-box !important;
-  border: 1px solid #494b51 !important;
+  border: 1px solid #0068b5 !important;
 }
 
 .loginScreen select:focus {
   background: #ffffff 0% 0% no-repeat padding-box !important;
-  border: 2px solid #0068b5 !important;
+  border: 1px solid #0068b5 !important;
 }
 .butSR {
   width: 100px;
@@ -117,11 +123,12 @@ button.butSR:hover {
 }
 .signIn {
   color: #262626;
-  padding-bottom: 10px;
   margin-top: 0px;
   font-size: 24px;
   font-weight: 400;
+  margin-bottom: 0px;
 }
+
 .loginSpan {
   display: flex;
 }
@@ -140,4 +147,26 @@ button.butSR:hover {
 .loginButtonSpan {
   position: relative;
   top: 24px;
+}
+@media screen and (min-width: 1366px) {
+  .signIn {
+    color: #262626;
+    margin-top: 0px;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 32px;
+  }
+  .loginButtonSpan {
+    position: relative;
+    top: 12px;
+  }
+}
+.loginScreenPasswordField {
+  color: #6a6d75;
+  font-size: 16px;
+  font-style: italic;
+  position: absolute;
+  margin-top: -40px;
+  margin-left: 184px;
+  cursor: pointer;
 }

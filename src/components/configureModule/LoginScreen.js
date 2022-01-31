@@ -25,11 +25,12 @@ import Cookies from "universal-cookie";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 const LoginScreen = () => {
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
   const [loginDisabled, setLoginDisabled] = useState(false);
   const [checkedRememberMe, setChecked] = useState(true);
+  const [showPassWordToggle, setPasswordToggle] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await loginUser({
@@ -57,7 +58,7 @@ const LoginScreen = () => {
           window.location.href = "/CreateProject";
         } else if (data?.detail?.length > 0) {
           setLoginDisabled(false);
-          setErrorText(data.detail + ". Please try again");
+          setErrorText(data.detail);
         } else {
           setLoginDisabled(false);
           setErrorText("Error while interacting with backend");
@@ -68,11 +69,17 @@ const LoginScreen = () => {
         setErrorText("Error: Couldn't connect to Backend!");
       });
   }
-  
+  const togglePasswordHide = () => {
+    setPasswordToggle(!showPassWordToggle);
+  };
+  console.log(username == "" && password == "", "de");
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <h3 className="signIn">Sign In</h3>
+        <h3 className="signIn" style={{ marginBottom: errorText && "0px" }}>
+          Sign In
+        </h3>
+        <span className="LoginErrortext">{errorText && errorText}</span>
         <div className="col-sm-12 loginScreen">
           <div className="col-sm-12 row" style={{ marginBottom: 14 }}>
             <span className="col-sm-8">
@@ -81,7 +88,7 @@ const LoginScreen = () => {
                 type="text"
                 id="username"
                 name="username"
-                className="username"
+                className={errorText ? "username errorTextBorder" : "username"}
                 onChange={(e) => {
                   setLoginDisabled(false);
                   setErrorText("");
@@ -91,13 +98,14 @@ const LoginScreen = () => {
               />
             </span>
           </div>
+
           <div className="col-sm-12 row">
             <span className="col-sm-8">
               <p className="LoginFormLabel">Password</p>
               <input
-                type="password"
+                type={showPassWordToggle ? "text" : "password"}
                 id="password"
-                className="password"
+                className={errorText ? "password errorTextBorder" : "password"}
                 name="password"
                 autoComplete={checkedRememberMe ? "on" : "new-password"}
                 onChange={(e) => {
@@ -107,8 +115,14 @@ const LoginScreen = () => {
                 }}
                 required
               />
+              <span
+                style={{ display: password ? "inline" : "none" }}
+                className=" loginScreenPasswordField"
+                onClick={togglePasswordHide}
+              >
+                {showPassWordToggle ? "hide" : "show"}
+              </span>
             </span>
-            <span className="LoginErrortext">{errorText && errorText}</span>
           </div>
         </div>
         {!errorText && (
@@ -135,13 +149,14 @@ const LoginScreen = () => {
           <button
             className="loginButton"
             type="submit"
-            disabled={loginDisabled}
+            disabled={loginDisabled || (username == "" && password == "")}
             style={{
-              backgroundColor: loginDisabled && "#ccc",
+              backgroundColor:
+                loginDisabled || (username == "" && password == "" && "#ccc"),
               cursor: loginDisabled && "not-allowed",
             }}
           >
-            Login
+            Sign in
           </button>
         </span>
       </form>

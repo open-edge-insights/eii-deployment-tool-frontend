@@ -53,26 +53,149 @@
 .NewLoginScreenStep2 {
   padding-top: 10px;
 }
-.LoginFormDiv {
-  display: flex;
-  justify-content: flex-end;
-  position: relative;
-  left: 200px;
-  padding: 141px 90px 10px 90px;
-  background: #f9f9f9;
-  height: 579px;
-  width: 417px;
-  top: 11.2em;
+
+@media screen and (min-width: 1366px) {
+  .NewLoginScreenMainDiv {
+    height: 768px;
+    min-height: 768px;
+  }
+  .NewLoginScreenTitle,
+  .NewLoginScreenWelcomeText {
+    color: #ffffff;
+    font-size: 40px;
+    padding: 156px 0px 0px 112px;
+    display: flex;
+    margin-bottom: 0px;
+  }
+  .NewLoginScreenWelcomeText {
+    font-size: 16px;
+    width: 577px;
+    padding-top: 64px;
+  }
+  .NewLoginScreenStepTitle {
+    padding-left: 112px;
+  }
+  .LoginFormDiv {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    left: 165px;
+    padding: 72px 90px 10px 80px;
+    background: #f9f9f9;
+    height: 436px;
+    width: 400px;
+    top: 10.8em;
+  }
+  .NewLoginScreenIntelWhiteFontLogo {
+    width: 108px;
+    height: 108px;
+    position: relative;
+    top: -5px;
+    left: 1142px;
+  }
+  .NewLoginScreenIntelWhiteFontLogoDiv {
+    position: absolute;
+    top: 4.4em;
+  }
 }
-.NewLoginScreenIntelWhiteFontLogoDiv {
-  position: absolute;
-  left: 74.8em;
-  top: 4.4em;
+@media screen and (min-width: 1440px) {
+  .NewLoginScreenMainDiv {
+    height: 900px;
+    min-height: 900px;
+  }
+  .NewLoginDiv {
+    display: flex;
+  }
+  .NewLoginScreenTitle,
+  .NewLoginScreenWelcomeText,
+  .NewLoginScreenStepTitle,
+  .NewLoginScreenStep1 {
+    color: #ffffff;
+    font-size: 40px;
+    padding: 161px 0px 0px 124px;
+    display: flex;
+    margin-bottom: 0px;
+  }
+  .NewLoginScreenWelcomeText {
+    font-size: 16px;
+    width: 577px;
+    padding-top: 64px;
+  }
+  .NewLoginScreenStepTitle {
+    font-size: 16px;
+    padding-top: 80px;
+  }
+  .NewLoginScreenStep1 {
+    font-size: 16px;
+    padding-top: 16px;
+    padding-left: 165px;
+  }
+  .NewLoginScreenStep2 {
+    padding-top: 10px;
+  }
+  .LoginFormDiv {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    left: 165px;
+    padding: 80px 88px 80px 88px;
+    background: #f9f9f9;
+    height: 452px;
+    width: 417px;
+    top: 11.2em;
+  }
+  .NewLoginScreenIntelWhiteFontLogoDiv {
+    position: absolute;
+    left: 19px;
+    top: 76px;
+  }
+  .NewLoginScreenIntelWhiteFontLogo {
+    width: 108px;
+    height: 108px;
+    position: relative;
+  }
 }
-.NewLoginScreenIntelWhiteFontLogo {
-  width: 108px;
-  height: 108px;
-  position: relative;
-  right: 1px;
-  top: 1px;
+@media screen and (min-width: 1920px) {
+  .NewLoginScreenMainDiv {
+    height: 1080px;
+    min-height: 1080px;
+  }
+  .NewLoginScreenTitle,
+  .NewLoginScreenWelcomeText {
+    color: #ffffff;
+    font-size: 40px;
+    padding: 212px 0px 0px 160px;
+    display: flex;
+    margin-bottom: 0px;
+  }
+  .NewLoginScreenWelcomeText {
+    font-size: 16px;
+    width: 1050px;
+    padding-top: 64px;
+  }
+  .NewLoginScreenStepTitle {
+    padding-left: 160px;
+  }
+  .LoginFormDiv {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    left: 165px;
+    padding: 72px 90px 10px 80px;
+    background: #f9f9f9;
+    width: 416px;
+    height: 452px;
+    top: 230px;
+  }
+  .NewLoginScreenIntelWhiteFontLogo {
+    width: 108px;
+    height: 108px;
+    position: relative;
+    top: 52px;
+    left: 1612px;
+  }
+  .NewLoginScreenIntelWhiteFontLogoDiv {
+    position: absolute;
+    top: 4.4em;
+  }
 }
