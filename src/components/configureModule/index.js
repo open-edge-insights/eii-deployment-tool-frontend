@@ -28,6 +28,7 @@ import DynamicTabs from "./DynamicTabs";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { useSelector } from "react-redux";
+import cssClasses from "./index.module.css"
 const styles = {
   Paper: {
     marginTop: 10,
@@ -46,7 +47,7 @@ const Configure = (props) => {
   const [updateconfig, setUpdatedConfig] = useState();
   const [streamCount, setStreamCount] = useState(0);
   const [selectedIds, setId] = useState([0]);
-  const [updatedUDFFunc, setUDFFunc] = useState(function () {});
+  const [updatedUDFFunc, setUDFFunc] = useState(function () { });
   const handleClickOpen = () => setOpen(true);
   const { isCreateProject } = props;
   const setTabValues = () => {
@@ -68,37 +69,40 @@ const Configure = (props) => {
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
   return (
     <div style={{ padding: 0 }}>
-      <p style={{ textAlign: "center" }} className="mainpageDivTitletext">
-        Create or select a project, import your code, then configure your data
-        streams.
-      </p>
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-sm-2" style={{ padding: 0 }}>
-            <ComponentList
-              setName={setName}
-              isImportBtnActive={ImportBtnActive}
-              streamCount={streamCount}
-              NodeSelected={NodeSelected}
-              udfConfig={udfConfig}
-            />
+      <div className={cssClasses.root}>
+        {props.noOfStreams === 0 && (
+          <div>
+            <div>
+              <AddTab isCreateProject={isCreateProject} />
+            </div>
           </div>
-          <div className="col-sm-10" style={{ padding: 0 }}>
-            <AddTab isCreateProject={isCreateProject} />
+        )}
+        {props.noOfStreams > 0 && (
+          <div className={`${"row"} ${cssClasses.configurationWrapper}`}>
+            <div className={cssClasses.configureTtile}>Configure</div>
+            <div className="col-sm-2" style={{ paddingLeft: 20 }}>
+              <ComponentList
+                setName={setName}
+                isImportBtnActive={ImportBtnActive}
+                streamCount={streamCount}
+                NodeSelected={NodeSelected}
+                udfConfig={udfConfig}
+              />
+            </div>
 
-            <DynamicTabs
-              enableImportBtn={enableImportBtn}
-              udfConfig={updateconfig}
-              streamIds={selectedIds}
-            />
-          </div>
-
-          {props.noOfStreams > 0 && (
-            <div className="col-sm-12 configBuildComponentIndex">
+            <div className="col-sm-10">
+              <DynamicTabs
+                enableImportBtn={enableImportBtn}
+                udfConfig={updateconfig}
+                streamIds={selectedIds}
+              />
+            </div>
+            <div className="col-sm-12">
+              <hr style={{ marginBottom: 24, width: "100%" }} />
               <ConfigBuild />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

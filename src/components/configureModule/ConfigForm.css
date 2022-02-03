@@ -102,20 +102,15 @@
   border-top: none;
 }
 .sideBare {
-  position: absolute;
   top: 0px;
   background: rgb(255, 255, 255);
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
   border-radius: 2px;
   font-size: 12px;
-  left: 871px;
 }
 .configBarSideBarTitle {
   padding-bottom: 30px;
-}
-.configFormJSONeditor {
-  width: 325px;
 }
 .disabledsavebtn{
   cursor: not-allowed !important;

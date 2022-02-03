@@ -71,18 +71,18 @@ export default function ImportCodeDialog(props) {
               Scount == 1 && StreamIdsSelected.includes(i.toString())
                 ? true
                 : props.NodeSelected[props.NodeSelected.length - 1] == i
-                ? true
-                : StreamIdsSelected.includes(i.toString())
-                ? true
-                : false
+                  ? true
+                  : StreamIdsSelected.includes(i.toString())
+                    ? true
+                    : false
             }
           />
           <label for={"Data Stream" + i} className="dataStreamLabel">
             {props.streamCount > 1
               ? props.NodeSelected.replace(/\d+$/, "") + i
               : props.streamCount == 1
-              ? props.NodeSelected
-              : ""}
+                ? props.NodeSelected
+                : ""}
           </label>
         </div>
       );
@@ -98,67 +98,65 @@ export default function ImportCodeDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         {props &&
-        ((props.files && props.files.length > 0) ||
-          (props.dirs && props.dirs.length > 0)) ? (
+          ((props.files && props.files.length > 0) ||
+            (props.dirs && props.dirs.length > 0)) ? (
           <span>
             <div className="dialogBody">
-              <div>
-                <div className="dialogTitleImportCode">Import UDF</div>
-                <div className="addressBar">{props.addressBar}</div>
-                <div className="dialogContent">
-                  <div className="files">
-                    {/* Show only python files */}
-                    {props.files &&
-                      props.files.map((fileItems) => {
-                        let epos = fileItems.lastIndexOf(".");
-                        if (
-                          fileItems &&
-                          epos > 0 &&
-                          fileItems.substring(epos) == ".py"
-                        ) {
-                          return (
-                            <div
-                              className="FileItems"
-                              onClick={() => props.selectFile(fileItems)}
-                            >
-                              <FileIcon
-                                className="ImportCodeIcon FileIcon"
-                                id={
-                                  fileItems == props.selectedFile
-                                    ? "SelectedFileIcon"
-                                    : "filesIconId"
-                                }
-                              />
-                              <span
-                                id={
-                                  fileItems == props.selectedFile
-                                    ? "SelectedFileName"
-                                    : "filesDirsID"
-                                }
-                                className="filesDirs"
-                              >
-                                {fileItems}
-                              </span>
-                            </div>
-                          );
-                        }
-                      })}
-                  </div>
-                  <div className="directories">
-                    {/* <div className="DirsTitle">Directories</div> */}
-                    {props.dirs &&
-                      props.dirs.map((dirsItem) => {
+              <div className="dialogTitleImportCode">Import UDF</div>
+              <div className="addressBar">{props.addressBar}</div>
+              <div className="browserContent">
+                <div className="files">
+                  {/* Show only python files */}
+                  {props.files &&
+                    props.files.map((fileItems) => {
+                      let epos = fileItems.lastIndexOf(".");
+                      if (
+                        fileItems &&
+                        epos > 0 &&
+                        fileItems.substring(epos) == ".py"
+                      ) {
                         return (
                           <div
-                            className="DirsItems"
-                            onClick={() => props && props.getFiles(dirsItem)}
+                            className="FileItems"
+                            onClick={() => props.selectFile(fileItems)}
                           >
-                            <FolderIcon className="ImportCodeIcon DirsIcon" />
-                            <span className="filesDirs">{dirsItem}</span>
+                            <FileIcon
+                              className="ImportCodeIcon FileIcon"
+                              id={
+                                fileItems == props.selectedFile
+                                  ? "SelectedFileIcon"
+                                  : "filesIconId"
+                              }
+                            />
+                            <span
+                              id={
+                                fileItems == props.selectedFile
+                                  ? "SelectedFileName"
+                                  : "filesDirsID"
+                              }
+                              className="filesDirs"
+                            >
+                              {fileItems}
+                            </span>
                           </div>
                         );
-                      })}
-                  </div>
+                      }
+                    })}
+                </div>
+                <div className="directories">
+                  {/* <div className="DirsTitle">Directories</div> */}
+                  {props.dirs &&
+                    props.dirs.map((dirsItem) => {
+                      return (
+                        <div
+                          className="DirsItems"
+                          onClick={() => props && props.getFiles(dirsItem)}
+                        >
+                          <FolderIcon className="ImportCodeIcon DirsIcon" />
+                          <span className="filesDirs">{dirsItem}</span>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </div>
@@ -196,7 +194,7 @@ export default function ImportCodeDialog(props) {
               </button>
               <button
                 className="closeDialogBtn selectFileIcon"
-                onClick={()=>props.generateUDFConfigFunc(StreamIdsSelected)}
+                onClick={() => props.generateUDFConfigFunc(StreamIdsSelected)}
               >
                 Select
               </button>

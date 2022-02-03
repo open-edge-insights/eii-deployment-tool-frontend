@@ -1,4 +1,4 @@
-.description{
+.description {
     margin-bottom: 30px !important;
     margin-left: 10px !important;
     margin-right: 10px !important;
@@ -8,54 +8,78 @@
     background-color: #0041d0 !important;
     text-align: left !important;
 }
-.dndnode{
+
+.dndnode {
     cursor: grab !important;
     background-color: #0041d0 !important;
     text-align: center !important;
 }
-.fontSize14{
+
+.fontSize14 {
     font-size: 14px;
 }
-.positionrel{
+
+.positionrel {
     position: relative !important;
-    left:0px !important;
-    padding:10px !important;
+    left: 0px !important;
     border-radius: 2px !important;
 
 }
-.border1px{
-    border:1px solid #707070;
-    border-right: none !important;
+
+.border1px {
+    border: 1px solid #707070;
 }
-.positionisActive{
-    position:absolute;
-    top:0px;
-    bottom:0;
-    left:0px;
-    right:0;
-    background:rgba(0,0,0,0.1) !important;
-    cursor:not-allowed !important;
+
+.positionisActive {
+    position: absolute;
+    top: 0px;
+    bottom: 0;
+    left: 0px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.1) !important;
+    cursor: not-allowed !important;
     border-radius: 2px !important;
 }
-.coldrag{
+
+.coldrag {
     color: #0068B5 !important;
 }
-.fontweight400{
+
+.fontweight400 {
     font-weight: 400;
 }
-.overflowclip{
-    height: 240px !important;
-     /* overflow-x: clip !important;
-      overflow-y: scroll !important; */
+
+.overflowclip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.drapval{
-    width: 8rem;
-    height: 2rem;
-     display: inline-flex;
-     background-color: white !important;
-     color: black; 
+.drapval {
+    width: 144px;
+    height: 32.03px;
+    background: #FFFFFF !important;
+    border: 1px solid #B2B3B9 !important;
+    box-sizing: border-box;
+    font-size: 16px !important;
+    line-height: 18px !important;
+    color: #262626 !important;
+    box-shadow: none !important;
 }
+
 .ComponentListMainDiv {
     border-right: none;
+}
+
+.componentListHeader {
+    font-size: 20px;
+    line-height: 18px;
+    color: #262626;
+    margin-bottom: 8px;
+}
+
+.componentListHelpText {
+    font-size: 16px;
+    line-height: 18px;
+    color: #8B8E97 !important;
 }

@@ -32,7 +32,7 @@ import { DeployRemote } from "../api/DeployRemote";
 import "./deployModule.css";
 import GetStatusApi from "../api/GetStatusApi";
 import { CircularProgress } from "@material-ui/core";
-
+import cssClasses from "../configureModule/index.module.css"
 const Deploy = (props) => {
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
   const [stopContainersInProgress, setStopContainersInProgress] = useState(false);
@@ -42,7 +42,9 @@ const Deploy = (props) => {
   const DeployInLocalMachineProgress = useSelector(
     (state) => state.DeploymentReducer.DeployInLocalMachineProgress
   );
-
+  const DeployInRemoteMachine = useSelector(
+    (state) => state.DeploymentReducer.DeployInRemoteMachine
+  );
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
@@ -118,6 +120,12 @@ const Deploy = (props) => {
   }
   /* Write the deploy to target device funcitonality inside this fun */
   const deployToTargetDeviceFunc = () => {
+  dispatch({
+      type: "DEPLOY_IN_REMOTE_MACHINE",
+      payload: {
+        DeployInRemoteMachine: true,
+      },
+    });
     if(targetDeviceObject.ipaddress.value.trim() == "" ||
       targetDeviceObject.username.value.trim() == "" ||
       targetDeviceObject.password.value.trim() == "" ||
@@ -144,10 +152,22 @@ const Deploy = (props) => {
                   setDeployRemoteInProgress(false);
                   setprogressIndicatorLabel("");
                   alert("Remote deployment successfully completed!");
+                  dispatch({
+                    type: "DEPLOY_IN_REMOTE_MACHINE",
+                    payload: {
+                      DeployInRemoteMachine: false,
+                    },
+                  });
                   clearInterval(statusTimer);
                 } else if (response.status == "Failed") {
                   setDeployRemoteInProgress(false);
                   setprogressIndicatorLabel("");
+                  dispatch({
+                    type: "DEPLOY_IN_REMOTE_MACHINE",
+                    payload: {
+                      DeployInRemoteMachine: false,
+                    },
+                  });
                   alert("Remote deployment FAILED!");
                   clearInterval(statusTimer);
                 }
@@ -164,6 +184,12 @@ const Deploy = (props) => {
       } else {
         setDeployRemoteInProgress(false);
         setprogressIndicatorLabel("");
+        dispatch({
+                    type: "DEPLOY_IN_REMOTE_MACHINE",
+                    payload: {
+                      DeployInRemoteMachine: false,
+                    },
+                  });
         alert(
           "Remote deployent failed!: Reason: " +
             response?.status_info?.error_detail
@@ -173,8 +199,8 @@ const Deploy = (props) => {
   };
 
   return (
-    <div>
-      <div class="container fluid" style={{ paddingBottom: "360px" }}>
+    <div className={cssClasses.root}>
+      <div class="row createProjectWrapper">
         <div className="tabpan">
           <p className="textAlignCenter TestTabSubTitle">
             Data Streams & Components
@@ -189,10 +215,9 @@ const Deploy = (props) => {
           />
         </div>
         <hr
-          className="deployScreenDivider"
-          style={{ width: window.screen.width }}
+          className="deployScreenDivider"          
         />
-        {(DeployInLocalMachineProgress || deployRemoteInProgress) ? (
+        {(DeployInLocalMachineProgress || deployRemoteInProgress || DeployInRemoteMachine) ? (
         <div className="deploymentProgressBar" >
           <CircularProgress size={100} />
           <p className="deploymentProgressBarText">{DeployInLocalMachineProgress?"Deploying to localhost" : progressIndicatorLabel}</p>

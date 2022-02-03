@@ -34,6 +34,7 @@ import { useDispatch } from "react-redux";
 import Slider from "@material-ui/core/Slider";
 import { CircularProgress } from "@material-ui/core";
 import { getCameraConfig, setCameraConfig } from "../api/CameraConfigApi";
+import cssClasses from "./index.module.css"
 
 // import { MdReplay } from "react-icons/md";
 const useStyles = makeStyles((theme) => ({
@@ -62,7 +63,7 @@ export function TestDynamic(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  
+
   useEffect(() => {
     if (NodeSelected) {
       //debugger;
@@ -103,14 +104,14 @@ export function TestDynamic(props) {
                     setCameraPipeline(null);
                   }
                 },
-                (response) => {}
-              ).catch((error) => {});
+                (response) => { }
+              ).catch((error) => { });
             } else {
               alert("Internal error: No publisher found!");
             }
           }
         },
-        (response) => {}
+        (response) => { }
       );
     }
   }, [NodeSelected]);
@@ -177,7 +178,7 @@ export function TestDynamic(props) {
               value={udfItem[itemkey]}
               variant="outlined"
               onChange={(e) => modifyUdfSettings(e, itemkey, index)}
-              disabled = {itemkey == "name" || itemkey == "type"}
+              disabled={itemkey == "name" || itemkey == "type"}
             />
           </div>
         );
@@ -186,7 +187,7 @@ export function TestDynamic(props) {
     return udfItems;
   };
   const modifyUdfSettings = (event, itemkey, modifiedudfindex) => {
-  setEnableRestart(true);
+    setEnableRestart(true);
     if (udfconfigCopy?.config?.udfs) {
       let udfKey = itemkey;
       let modifiedvalue = event.target.value;
@@ -226,7 +227,7 @@ export function TestDynamic(props) {
                   setEnableRestart(true);
                 }
 
-                let timer = setInterval(()=> {setProgress(false);clearInterval(timer);setTopic("");}, 2000);
+                let timer = setInterval(() => { setProgress(false); clearInterval(timer); setTopic(""); }, 2000);
               })
               .catch((error) => {
                 setEnableRestart(true)
@@ -276,145 +277,147 @@ export function TestDynamic(props) {
     let tf = document.getElementById(key);
     tf.value = value;
 
-    setCameraConfig(cameraConfig).then((cameraSetResponse) => {});
+    setCameraConfig(cameraConfig).then((cameraSetResponse) => { });
   };
 
   return (
-    <div className="row col-sm-12  ">
-      <div className="TestTabTitle">{props.projectSetup.projectName}</div>
-      <div className="tabpan">
-        <p className="textAlignCenter TestTabSubTitle">
-          Data Streams & Components
-        </p>
-        <ComponentsLayout
-          name={props.appName}
-          updatedConfig={undefined}
-          streamIds={undefined}
-          displayConfigForm={false}
-          enableImportBtn={reactFlowchartProps}
-          propstoTestDynamic={propstoTestDynamic}
-        />
-      </div>
-      {!progressIndicator ? (
-      <div className="pipelineSettingTitle TestTabSubTitle">
-        {NodeSelected && "Pipeline settings"}
-      </div>
-      ) : (<></>)}
-      {progressIndicator ? (
-        <div className="deploymentProgressBar" >
-          <CircularProgress size={100} />
-          <p className="deploymentProgressBarText">{progressIndicatorLabel}</p>
+    <div className={cssClasses.root}>
+      <div className="row createProjectWrapper">
+        <div className="TestTabTitle">{props.projectSetup.projectName}</div>
+        <div className="tabpan">
+          <p className="textAlignCenter TestTabSubTitle">
+            Data Streams & Components
+          </p>
+          <ComponentsLayout
+            name={props.appName}
+            updatedConfig={undefined}
+            streamIds={undefined}
+            displayConfigForm={false}
+            enableImportBtn={reactFlowchartProps}
+            propstoTestDynamic={propstoTestDynamic}
+          />
         </div>
-      ) : (
-      <div className="TestProfileSettingsInTestTab col-sm-5 WebVisualizerTestSettings">
-        {/* <TestProfileSettings /> this space is for test profile settings tab - !important */}
-        {NodeSelected && udfTextBox()}
-        <div className="cameraConfigSettings">
-            {cameraPipeline &&
-              cameraConfigSettings &&
-              Object.keys(cameraConfigSettings).map((item) => {
-                return (
-                  <div className="targetDeviceDeploytextFieldDiv">
-                    <span className=" targetDeviceDeploytextFieldLabel col-sm-5">
-                      {item}
-                    </span>
-                    <span>
-                      <TextField
-                        variant="outlined"
-                        type="text"
-                        className="cameraConfigVal"
-                        id={item}
-                        value={cameraConfigSettings[item]["value"]}
-                        disabled = {cameraConfigSettings[item]["flags"]=="inactive"}
-                      />
-                    </span>
-                    <span
-                      className="col-sm-4"
-                      style={{ paddingLeft: 15, paddingRight: 0, margin: 0 }}
-                    >
-                      <input
-                        type="range"
-                        defaultValue={cameraConfigSettings[item]["value"]}
-                        aria-label="Camera config settings"
-                        valueLabelDisplay="auto"
-                        step={cameraConfigSettings[item]["step"]}
-                        min={cameraConfigSettings[item]["min"]}
-                        max={cameraConfigSettings[item]["max"]}
-                        onChange={(e) => {
-                          handleSliderChange(item, e.target.value);
-                        }}
-                        disabled = {cameraConfigSettings[item]["flags"]=="inactive"}
-                      />
-                    </span>
-                    <span className="TestTabSliderResetBtn">
-                      <input
-                        id={item}
-                        type="button"
-                        className="cameraConfigReset"
-                        value="<"
-                        onClick={(e) => {
-                          resetCameraSettings(e, item);
-                        }}
-                        disabled = {cameraConfigSettings[item]["flags"]=="inactive"}
-                      />
-                    </span>
-                  </div>
-                );
-              })}
-          <span>
-          {cameraPipeline && cameraConfigSettings &&  <input
-              type="button"
-              className="cameraConfigResetAll col-sm-4"
-              value="Reset all"
-              onClick={resetCameraSettings}
-            ></input>}
-          </span>
-        </div>
-      </div>
-      )}
-      {progressIndicator ? (
-        <div className="deploymentProgressBar" >
-        </div>
-      ) : (
-      <div className="WebVisualizerSaveRestartBtnDiv col-sm-1">
-        <button
-          className="nextButtonMainPage WebVisualizerSaveRestartBtn"
-          onClick={saveAndRestartFunc}
-          disabled={!enableSaveAndRestart}
-          id={enableSaveAndRestart ? "" : "disableSaveRestart"}
-        >
-          Save & Restart
-        </button>
-        {/* <button
+        {!progressIndicator ? (
+          <div className="pipelineSettingTitle TestTabSubTitle">
+            {NodeSelected && "Pipeline settings"}
+          </div>
+        ) : (<></>)}
+        {progressIndicator ? (
+          <div className="deploymentProgressBar" >
+            <CircularProgress size={100} style={{color:"#000"}} />
+            <p className="deploymentProgressBarText">{progressIndicatorLabel}</p>
+          </div>
+        ) : (
+          <div className="TestProfileSettingsInTestTab col-sm-5 WebVisualizerTestSettings">
+            {/* <TestProfileSettings /> this space is for test profile settings tab - !important */}
+            {NodeSelected && udfTextBox()}
+            <div className="cameraConfigSettings">
+              {cameraPipeline &&
+                cameraConfigSettings &&
+                Object.keys(cameraConfigSettings).map((item) => {
+                  return (
+                    <div className="targetDeviceDeploytextFieldDiv">
+                      <span className=" targetDeviceDeploytextFieldLabel col-sm-5">
+                        {item}
+                      </span>
+                      <span>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          className="cameraConfigVal"
+                          id={item}
+                          value={cameraConfigSettings[item]["value"]}
+                          disabled={cameraConfigSettings[item]["flags"] == "inactive"}
+                        />
+                      </span>
+                      <span
+                        className="col-sm-4"
+                        style={{ paddingLeft: 15, paddingRight: 0, margin: 0 }}
+                      >
+                        <input
+                          type="range"
+                          defaultValue={cameraConfigSettings[item]["value"]}
+                          aria-label="Camera config settings"
+                          valueLabelDisplay="auto"
+                          step={cameraConfigSettings[item]["step"]}
+                          min={cameraConfigSettings[item]["min"]}
+                          max={cameraConfigSettings[item]["max"]}
+                          onChange={(e) => {
+                            handleSliderChange(item, e.target.value);
+                          }}
+                          disabled={cameraConfigSettings[item]["flags"] == "inactive"}
+                        />
+                      </span>
+                      <span className="TestTabSliderResetBtn">
+                        <input
+                          id={item}
+                          type="button"
+                          className="cameraConfigReset"
+                          value="<"
+                          onClick={(e) => {
+                            resetCameraSettings(e, item);
+                          }}
+                          disabled={cameraConfigSettings[item]["flags"] == "inactive"}
+                        />
+                      </span>
+                    </div>
+                  );
+                })}
+              <span>
+                {cameraPipeline && cameraConfigSettings && <input
+                  type="button"
+                  className="cameraConfigResetAll col-sm-4"
+                  value="Reset all"
+                  onClick={resetCameraSettings}
+                ></input>}
+              </span>
+            </div>
+          </div>
+        )}
+        {progressIndicator ? (
+          <div className="deploymentProgressBar" >
+          </div>
+        ) : (
+          <div className="WebVisualizerSaveRestartBtnDiv col-sm-1">
+            <button
+              className="nextButtonMainPage WebVisualizerSaveRestartBtn"
+              onClick={saveAndRestartFunc}
+              disabled={!enableSaveAndRestart}
+              id={enableSaveAndRestart ? "" : "disableSaveRestart"}
+            >
+              Save & Restart
+            </button>
+            {/* <button
           className="nextButtonMainPage deployScreenApplyBtn"
           // onClick={saveAndRestartFunc}
           // disabled={!enableSaveAndRestart}
         >
           Apply
         </button> */}
-      </div>
-      )}
-      {progressIndicator ? (
-        <div className="deploymentProgressBar" >
-        </div>
-      ) : (
-      <div className="WebVisalizerPreviewTestDiv col-sm-4">
-        <span className="WebVisalizerPrevie]wTestTitle">
-          Algorithm : {AlgorithmsUsed}
-          <br />
-          Topic: {TopicsRelatedToNode}
-        </span>
-        {(!TopicsRelatedToNode || !NodeSelected) &&  (
-          <div className="WebVisualizerNoPreview">Click on a VA component for preview</div>
+          </div>
         )}
-        {TopicsRelatedToNode && NodeSelected && (
-          <img
-            className="WebVisalizerPreviewTestImg"
-            src={`/webvisualizer/${TopicsRelatedToNode}`}
-          />
+        {progressIndicator ? (
+          <div className="deploymentProgressBar" >
+          </div>
+        ) : (
+          <div className="WebVisalizerPreviewTestDiv col-sm-4">
+            <span className="WebVisalizerPrevie]wTestTitle">
+              Algorithm : {AlgorithmsUsed}
+              <br />
+              Topic: {TopicsRelatedToNode}
+            </span>
+            {(!TopicsRelatedToNode || !NodeSelected) && (
+              <div className="WebVisualizerNoPreview">Click on a VA component for preview</div>
+            )}
+            {TopicsRelatedToNode && NodeSelected && (
+              <img
+                className="WebVisalizerPreviewTestImg"
+                src={`/webvisualizer/${TopicsRelatedToNode}`}
+              />
+            )}
+          </div>
         )}
       </div>
-      )}
     </div>
   );
 }

@@ -4,10 +4,12 @@
   display: inline-flex;
   background-color: grey;
 }
+
 .positionSet {
   margin-top: 35px;
   position: relative;
 }
+
 .root {
   padding: 5px;
   font-size: 13px;
@@ -15,15 +17,18 @@
   border-radius: 2px;
   position: relative;
 }
+
 .root1 {
-  padding: 15px;
   font-size: 14px;
   border-radius: 2px;
 }
+
 .startConfig {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-top: 48px;
 }
+
 .startConfigButton {
   display: inline-block;
   text-align: center;
@@ -39,10 +44,13 @@
   cursor: pointer;
   border-width: 0;
   padding: 5px 40px 5px 40px;
+  height: 40px;
 }
+
 .progressBarConfig {
   background-color: #0068b5 !important;
 }
+
 .viewButton {
   display: inline-block;
   text-align: center;
@@ -60,19 +68,23 @@
   border-width: 0;
   height: 25px;
 }
+
 .titleStyle {
-  font-weight: bold;
-  font-size: 14px;
+  font-size: 24px;
+  line-height: 18px;
 }
+
 #disableStart {
   cursor: not-allowed;
   background-color: #ccc;
   color: black;
 }
+
 .ErrorTextBuild {
   font-size: 12px;
   color: red;
 }
+
 .buildCompleteTextRoot1 {
   position: absolute;
   font-weight: bold;
@@ -80,6 +92,7 @@
   font-size: 50px;
   padding-top: 50px;
 }
+
 .buildCompleteCustom {
   opacity: 0.5;
   background: darkgray;

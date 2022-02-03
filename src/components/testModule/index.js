@@ -24,7 +24,7 @@ import TestDynamic from '../configureModule/TestDynamic';
 const TestModule = () => {
     return (
         <div>
-            <div class='container fluid'>
+            <div>
                 <div class='row'>
                     <div class='col-sm-12' style={{ padding: 0 }}>
                         <TestDynamic />

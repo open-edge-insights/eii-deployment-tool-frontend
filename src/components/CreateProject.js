@@ -28,6 +28,10 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
+import { Link } from "@material-ui/core";
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
 import Configure from "./configureModule";
 import Test from "../components/testModule";
 import Deploy from "../components/deployModule";
@@ -77,7 +81,9 @@ function a11yProps(index) {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: "#E5E5E5",
+    minHeight: "100vh",
+    overflow: "hidden",
   },
   header: {
     color: "#FFFFFF",
@@ -87,10 +93,16 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 60,
     paddingTop: 14,
     display: "flex",
+    paddingRight: 60,
+    justifyContent: "space-between"
+
   },
   paddleft35: {
     paddingLeft: 35,
     paddingTop: 10,
+    fontSize: "16px",
+    lineHeight: "20px",
+    fontWeight: "normal"
   },
 }));
 
@@ -102,17 +114,22 @@ const CreateProject = (props) => {
   const [deployProgressbar, setShowDeploymentProgress] = useState(false);
   const [deploymentStatusText, setDeploymentStatusText] = useState("");
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [completed, setCompleted] = React.useState({});
   const dispatch = useDispatch();
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  
+
   /* Getting the buildComplete state from redux store */
   const BuildComplete = useSelector(
     (state) => state.BuildReducer.BuildComplete
   );
   const DeployInLocalMachineProgress = useSelector(
     (state) => state.DeploymentReducer.DeployInLocalMachineProgress
+  );
+  const DeployInRemoteMachine = useSelector(
+    (state) => state.DeploymentReducer.DeployInRemoteMachine
   );
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
 
@@ -129,18 +146,24 @@ const CreateProject = (props) => {
   const DeployEnv = useSelector(
     (state) => state.DeploymentReducer.DeployInDevOrProd
   );
-  const handleChangeIndex = (index) => {
+  const handleChangeIndex = (index, btnType) => {
     setValue(index);
+    if (btnType === "Next") {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
+
   };
 
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
-  
+
   useEffect(() => {
     setValue(props.currentTabCount);
   }, [props.currentTabCount]);
-  
+
   useEffect(() => {
     dispatch({
       type: "PROJECT_SELECTION_ACTIVE",
@@ -154,7 +177,7 @@ const CreateProject = (props) => {
       (e) => {
         window.location.href = "/";
       },
-      (response) => {}
+      (response) => { }
     );
   };
   const openConfirmDialogFunc = () => {
@@ -166,17 +189,17 @@ const CreateProject = (props) => {
 
   function isItemFound(arr, item) {
     let itemFound = false;
-    for(let i = 0; i < arr.length; i++) {
-        if(arr[i] === item) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === item) {
         itemFound = true;
         break;
-        }
+      }
     }
     return itemFound;
   }
 
   function trimDigits(s) {
-      return s.replace(/\d+$/, "");
+    return s.replace(/\d+$/, "");
   }
 
   function getServicesToDeploy() {
@@ -186,7 +209,7 @@ const CreateProject = (props) => {
     let includeWV = props.stateComponent.selectedComponents.showWebVisualizer;
     for (let i = 0; i < nodes.length; i++) {
       let compName = trimDigits(nodes[i].service);
-      if(isItemFound(services, compName))
+      if (isItemFound(services, compName))
         continue;
       for (let j = 0; j < comps.length; j++) {
         if (compName === comps[j].dirName && (compName !== "WebVisualizer" || includeWV)) {
@@ -196,7 +219,18 @@ const CreateProject = (props) => {
     }
     return services;
   }
-  
+
+  function getStepContent(step) {
+    switch (step) {
+      case 0:
+        return <Configure />
+      case 1:
+        return <Test />
+      case 2:
+        return <Deploy />
+    }
+  }
+
 
   /* Builder and container restart called in sequence */
   const deployLocal = () => {
@@ -257,10 +291,10 @@ const CreateProject = (props) => {
                 setShowDeploymentProgress(false);
               }
             })
-            .catch((error) => {
-             console.log(error)
-            });
-//            clearInterval(interval);
+              .catch((error) => {
+                console.log(error)
+              });
+            //            clearInterval(interval);
           } else {
             setDeploymentStatusText("Deployment failed");
             setShowDeploymentProgress(false);
@@ -271,18 +305,18 @@ const CreateProject = (props) => {
                 DeploymentError: true,
                 DeploymentErrorMessage: "Error in deploying",
               },
-            })              
-            .catch((error) => {
-              setDeploymentStatusText("Deployment failed");
-              setShowDeploymentProgress(false);
-              dispatch({
-                type: "DEPLOYMENT_FAILED",
-                payload: {
-                  DeploymentError: true,
-                  DeploymentErrorMessage: "Error in deploying",
-                },
+            })
+              .catch((error) => {
+                setDeploymentStatusText("Deployment failed");
+                setShowDeploymentProgress(false);
+                dispatch({
+                  type: "DEPLOYMENT_FAILED",
+                  payload: {
+                    DeploymentError: true,
+                    DeploymentErrorMessage: "Error in deploying",
+                  },
+                });
               });
-            });
           }
         },
         (response) => {
@@ -301,103 +335,119 @@ const CreateProject = (props) => {
       alert("Please select an environment to deploy");
     }
   };
+  const steps = ["Configure & Build", "Test", "Deploy"];
   return (
     <div className={classes.root}>
-        <>
-          {props.popup === true && <SplashScreen />}
-          <AppBar position="static" color="default">
-            <Typography className={classes.header}>
+      <>
+        {props.popup === true && <SplashScreen />}
+        <AppBar position="static" color="default">
+          <Typography className={classes.header}>
+            <div style={{ display: "flex" }}>
               <div style={{ width: 80, height: 48 }}>
                 <img src={companyLogo} width="75" alt="Intel logo" />
               </div>
               <div style={{ width: 194 }}>
                 <div className={classes.paddleft35}>EII Deployment Tool</div>
               </div>
-            </Typography>
-            <Tabs
-              value={value}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
-              aria-label="full width tabs example"
-              defaultTab={props.selectedTab}
-            >
-              <Tab label="Configure and Build" {...a11yProps(0)} />
-              <Tab
-                label="Test"
-                {...a11yProps(1)}
-                // disabled={!BuildComplete}
-              />
-              <Tab label="Deploy" {...a11yProps(2)} />
-            </Tabs>
-          </AppBar>
-          <SwipeableViews
-            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-            index={value}
-            onChangeIndex={deployLocal}
-          >
-            <TabPanel value={value} index={0} dir={theme.direction}>
-              <Configure />
-            </TabPanel>
-            <TabPanel value={value} index={1} dir={theme.direction}>
-              <Test />
-            </TabPanel>
-            <TabPanel value={value} index={2} dir={theme.direction}>
-              <Deploy />
-            </TabPanel>
-          </SwipeableViews>
-          <div className="row" style={{ marginTop: 20 }}>
-            <div className="col-sm-9"></div>
-            <div className="col-sm-3 createProjectNextCancelBtnDiv">
-              {props.projectSetup.noOfStreams !== 0 && (
-                <span className="cancelButtonMainPageSpan">
+            </div>
+            <div className={classes.paddleft35} style={{ cursor: "pointer" }} onClick={openConfirmDialogFunc}>
+              Sign out
+            </div>
+          </Typography>
+        </AppBar>
+        {props.projectSetup.projectName ? (
+          <>
+            <div className="projectNameHeader">
+              <div style={{ padding: "32px 0" }}>{props.projectSetup.projectName}</div>
+              <Stepper activeStep={activeStep} style={{ backgroundColor: "transparent", padding: "0px 0px 32px" }}>
+                {steps.map((label, index) => {
+                  const stepProps = {};
+                  const labelProps = {};
+                  return (
+                    <Step key={label} {...stepProps}>
+                      <StepLabel {...labelProps}>{label}</StepLabel>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+            </div>
+            <div>
+              {activeStep === steps.length ? (
+                <div>
+                  <Typography className={classes.instructions}>
+                    All steps completed - you&apos;re finished
+                  </Typography>
+                </div>
+              ) : (
+                <div>
+                  <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+                </div>
+              )}
+            </div>
+            <div className="row" style={{ margin:0, marginTop: 20 }}>
+              <div className="createProjectNextCancelBtnDiv">
+                {props.projectSetup.noOfStreams !== 0 && (
                   <button
-                    className="cancelButtonMainPage"
+                    className="cancelBtn"
                     onClick={() => window.location.href = "/CreateProject"}
                   >
                     Cancel
                   </button>
-                </span>
-              )}
-              {value > 0 &&
-                props.projectSetup.noOfStreams !== 0 &&
-                DeploymentComplete == false && (
-                  <button
-                    onClick={() => handleChangeIndex(value - 1)}
-                    className="backButtonMainPage"
-                  >
-                    Back
-                  </button>
                 )}
-              {value < 2 && props.projectSetup.noOfStreams !== 0 && (
-                <button
-                  className={
-                    !BuildComplete
-                      ? "nextButtonMainPage nextButtonMainPageDisabled"
-                      : "nextButtonMainPage"
-                  }
-                  onClick={() => handleChangeIndex(value + 1)}
-                  disabled={!BuildComplete}
-                >
-                  Next
-                </button>
-              )}
-              {value == 2 && props.projectSetup.noOfStreams !== 0 && !DeployInLocalMachineProgress && (
-                <button
-                  className={!DeployEnv?" deployBtnProjectScreen nextButtonMainPageDisabled nextButtonMainPage":"nextButtonMainPage deployBtnProjectScreen"}
-                  onClick={deployLocal}
-                >
-                  Deploy
-                </button>
-              )}
+                {value > 0 &&
+                  props.projectSetup.noOfStreams !== 0 &&
+                  DeploymentComplete == false && (
+                    <button
+                      onClick={() => handleChangeIndex(value - 1, "Back")}
+                      className="cancelBtn"
+                    >
+                      Back
+                    </button>
+                  )}
+                {value == 0 &&
+                  props.projectSetup.noOfStreams !== 0 &&
+                  DeploymentComplete == false && (
+                    <button
+                      className="nextButtonMainPageDisabled startConfigButton cancelBtn"
+                    >
+                      Back
+                    </button>
+                  )}
+                <div style={{ marginLeft: 10 }}>
+                  {value < 2 && props.projectSetup.noOfStreams !== 0 && (
+                    <button
+                      className={
+                        !BuildComplete
+                          ? "startConfigButton nextButtonMainPageDisabled"
+                          : "startConfigButton"
+                      }
+                      onClick={() => handleChangeIndex(value + 1, "Next")}
+                      disabled={!BuildComplete}
+                    >
+                      Next
+                    </button>
+                  )}
+                  {value == 2 && props.projectSetup.noOfStreams !== 0 && !DeployInLocalMachineProgress && !DeployInRemoteMachine &&(
+                    <button
+                      className={!DeployEnv ? " deployBtnProjectScreen nextButtonMainPageDisabled nextButtonMainPage" : "startConfigButton"}
+                      onClick={deployLocal}
+                      disabled={!DeployEnv }
+                    >
+                      Deploy
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-          <ConfirmDialog
-            open={openConfirmDialog}
-            handleCloseDialog={closeConfirmDialog}
-            logout={logoutFunc}
-          />
-        </>
+          </>
+        ) :
+          <Configure />}
+        <ConfirmDialog
+          open={openConfirmDialog}
+          handleCloseDialog={closeConfirmDialog}
+          logout={logoutFunc}
+        />
+      </>
     </div>
   );
 };

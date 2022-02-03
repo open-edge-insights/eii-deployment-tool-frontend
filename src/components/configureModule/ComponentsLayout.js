@@ -619,9 +619,11 @@ const ComponentsLayout = (props) => {
   const onElementsRemove = (elementsToRemove) => {
     if (BuildProgress > 0 && BuildProgress < 100) {
       alert("Sorry, you can't delete component when a build is in progress.");
+      handlePaneClick();     
       return false;
     }
     if (!window.confirm("Are you sure you want to delete this component?")) {
+      handlePaneClick();     
       return false;
     }
     // Check if backend is busy
@@ -635,6 +637,7 @@ const ComponentsLayout = (props) => {
           currentComponentData.selectedComponents.activeTask +
           " task is already in progress.\nPlease wait."
         );
+        handlePaneClick();     
         return false;
       }
       // Check if switching to single instance
@@ -653,6 +656,7 @@ const ComponentsLayout = (props) => {
                     "all settings applied to them will be lost.\n\nDo you want to continue?"
                   ) == false
                 ) {
+                  handlePaneClick();     
                   return false;
                 }
               }
@@ -712,6 +716,7 @@ const ComponentsLayout = (props) => {
       updateOutputState();
       props.dispatchComponents(currentComponentData);
       reloadAndRenderComponents(false);
+      handlePaneClick();     
       return true;
     }
   };
@@ -1443,7 +1448,7 @@ const ComponentsLayout = (props) => {
     <>
       {enableImportBtn()}
 
-      <div className="dndflow layoutflow layout1">
+      <div className="dndflow layoutflow col-sm-8">
         <Snackbar
           className="width100"
           open={alertConfig}
@@ -1478,12 +1483,31 @@ const ComponentsLayout = (props) => {
           </Alert>
         </Snackbar>
         <div id="component" className="zoompanflow" style={{ width: "100%" }}>
+          <div>
+          <p className="componentListHeader">Data Stream</p>
+          <p className="componentListHelpText">
+          Click on a datastream to enable and change the settings 
+          </p>
+          </div>
+          
+      {progressIndicator ? (
+        <div className="progressIndicator">
+          <CircularProgress
+            color="primary"
+            thickness="2.5"
+            size={100}
+            className="progressIndicator"
+          />
+        </div>
+      ) : (
+        ""
+      )}
           <ReactFlowProvider key="ws">
             <div
               className={
                 !props.displayConfigForm
                   ? "reactflow-wrapper"
-                  : "reactflow-wrapper reactflow-wrapperPaddingRight"
+                  : "reactflow-wrapper"
               }
               id="reactflow"
               ref={reactFlowWrapper}
@@ -1505,13 +1529,7 @@ const ComponentsLayout = (props) => {
               >
                 <img src={horizontal} alt="horizontal logo" />
               </button>
-              <ReactFlow
-                style={{
-                  borderRight:
-                   CurrentTabIndex == 0
-                      ? "1px solid gray"
-                      : "",
-                }}
+              <ReactFlow                
                 elements={elements}
                 nodesConnectable={true}
                 selectNodesOnDrag={false}
@@ -1553,18 +1571,6 @@ const ComponentsLayout = (props) => {
         ""
       )}
 
-      {progressIndicator ? (
-        <div className="progressIndicator">
-          <CircularProgress
-            color="primary"
-            thickness="2.5"
-            size={100}
-            className="progressIndicator"
-          />
-        </div>
-      ) : (
-        ""
-      )}
     </>
   );
 };

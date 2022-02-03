@@ -17,41 +17,84 @@
   border-width: 0;
   height: 30px;
 }
+
 .createProjectNextCancelBtnDiv {
   padding-bottom: 10px;
-  text-align: right;
-  padding-right: 40px;
+  display: flex;
+  justify-content: end;
+  padding-right: 122px !important;
 }
+
 .nextButtonMainPage,
 .backButtonMainPage {
   margin-right: 10px;
 }
+
 .cancelButtonMainPageSpan {
   margin-right: 10px;
 }
+
 .nextButtonMainPageDisabled {
   cursor: not-allowed !important;
   background-color: #ccc !important;
   color: black !important;
+  border: 1px solid#ccc !important;
 }
+
 .configBuildComponentIndex {
   display: flex;
-  justify-content: center;
 }
+
 .mainpageDivTitletext {
   font-size: 16px;
 }
+
 .deploymentProgressBar {
   padding: 200px 0px 100px 650px;
 }
+
 .deploymentProgressBarText {
   font-size: 18px;
   font-weight: bold;
   padding-left: 10px;
   padding-top: 10px;
 }
+
 .deployBtnProjectScreen {
   position: absolute;
   right: 77em;
   bottom: 37em;
+  top:90em;
+}
+
+.projectNameHeader {
+  font-size: 32px;
+  line-height: 18px;
+}
+
+@media screen and (min-width:1366px) {
+  .projectNameHeader {
+    margin: 0px 152px;
+  }
+  .createProjectNextCancelBtnDiv {
+    padding-right: 120px !important;
+  }
+}
+
+@media screen and (min-width:1440px) {
+  .projectNameHeader {
+    margin: 0px 123px;
+  }
+  .createProjectNextCancelBtnDiv {
+    padding-right: 136px !important;
+  }
+}
+
+@media screen and (min-width:1920px) {
+  .projectNameHeader {
+    margin: 0px 122px;
+  }
+  .createProjectNextCancelBtnDiv {
+    padding-right: 144px !important;
+  }
 }

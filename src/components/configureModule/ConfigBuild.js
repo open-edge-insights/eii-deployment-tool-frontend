@@ -62,13 +62,16 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   nameFloat: {
-    float: "left",
-    width: 126,
+    width:"auto",
+    marginRight: 24,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-end"
   },
   progressFloaat: {
-    width: 160,
+    width: "100%",
     padding: 0,
-    marginTop: "10px",
+    marginBottom: "7px",
   },
 }));
 
@@ -103,25 +106,25 @@ const ConfigBuild = (props) => {
     let ProcessName = "building";
     setBuildProgress(1);
     dispatch({
-      type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
-      payload:{
-        BuildProgress:1,
+      type: "BUILD_IN_PROGRESS_DISABLED_DRAG",
+      payload: {
+        BuildProgress: 1,
       },
     });
-    if(BuildProgressPercentage ==1 || BuildProgressPercentage<100){
-        dispatch({
-          type: "IMPORT_DISABLED",
-          payload: {
-            ImportButtonDisabled: true,
-          },
-        });
-        dispatch({
-          type: "DISABLED_SAVE",
-          payload: {
-            Disabledsave:true,
-          },
-        });
-      }
+    if (BuildProgressPercentage == 1 || BuildProgressPercentage < 100) {
+      dispatch({
+        type: "IMPORT_DISABLED",
+        payload: {
+          ImportButtonDisabled: true,
+        },
+      });
+      dispatch({
+        type: "DISABLED_SAVE",
+        payload: {
+          Disabledsave: true,
+        },
+      });
+    }
     buildContainer().then((buildResponse) => {
       setBuildViewFlag(true);
       let response = buildResponse?.data;
@@ -129,10 +132,10 @@ const ConfigBuild = (props) => {
       setStartButtonEnabledOrDisabled(true);
       getStatus("build", promiseResolve, promiseReject);
     })
-    .catch((error) => {
-      alert("Some error occured: " + error);
-    });      
-    
+      .catch((error) => {
+        alert("Some error occured: " + error);
+      });
+
     return false;
   };
   /* To get the update of progress percent call status api every 5 seconds */
@@ -163,15 +166,15 @@ const ConfigBuild = (props) => {
                 });
                 clearInterval(interval);
                 setStartButtonEnabledOrDisabled(true);
-              } 
+              }
             } else {
               progressPercentage = progressString.progress;
               /* Setting state value, progress bar % */
-              setBuildProgress(parseInt(progressPercentage-1));
+              setBuildProgress(parseInt(progressPercentage - 1));
               dispatch({
-                type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
-                payload:{
-                  BuildProgress:(parseInt(progressPercentage-1)),
+                type: "BUILD_IN_PROGRESS_DISABLED_DRAG",
+                payload: {
+                  BuildProgress: (parseInt(progressPercentage - 1)),
                 },
               });
               if (progressPercentage == 100) {
@@ -181,10 +184,10 @@ const ConfigBuild = (props) => {
                     let response = containerStart?.status_info?.status;
                     if (response) {
                       setBuildProgress(100);
-                       dispatch({
-                        type:"BUILD_IN_PROGRESS_DISABLED_DRAG",
-                        payload:{
-                          BuildProgress:100,
+                      dispatch({
+                        type: "BUILD_IN_PROGRESS_DISABLED_DRAG",
+                        payload: {
+                          BuildProgress: 100,
                         },
                       });
                       dispatch({
@@ -192,17 +195,17 @@ const ConfigBuild = (props) => {
                         payload: { BuildComplete: true, BuildError: false },
                       });
                       dispatch({
-                          type: "IMPORT_DISABLED",
-                          payload: {
-                            ImportButtonDisabled: false,
-                          },
-                        });
+                        type: "IMPORT_DISABLED",
+                        payload: {
+                          ImportButtonDisabled: false,
+                        },
+                      });
                       dispatch({
-                          type: "DISABLED_SAVE",
-                          payload: {
-                            Disabledsave:false,
-                          },
-                        });
+                        type: "DISABLED_SAVE",
+                        payload: {
+                          Disabledsave: false,
+                        },
+                      });
                       setStartButtonEnabledOrDisabled(false);
                     } else {
                       /* displatch the build completion status*/
@@ -245,7 +248,7 @@ const ConfigBuild = (props) => {
     );
   };
   const viewLogs = (processname) => {
-    if(BuildProgressPercentage > 5) {
+    if (BuildProgressPercentage > 5) {
       setViewLogs(processname);
       setViewLogsDialog(true);
     }
@@ -258,51 +261,62 @@ const ConfigBuild = (props) => {
   return (
     <div className={`${isActive ? "root" : "root1"}`}>
       {isActive && <div className={classes.divPos}></div>}
-      <p className={`${classes.texCenter} titleStyle`}>Configure & Build</p>
-      <div className={`${classes.texCenter} startConfig`}>
-        <button
-          disabled={disableStartButton || isActive || BuildComplete == true || startbutton}
-          className={"startConfigButton"}
-          onClick={startBuild}
-          id={
-            disableStartButton ||
-            isActive || startbutton ||
-            (BuildComplete == true && BuildError == false)
-              ? "disableStart"
-              : ""
-          }
-        >
-          Start
-        </button>
-      </div>
+      <p className={`titleStyle`}>Build</p>
+      <p className="componentListHelpText" style={{marginBottom:42}}>
+        click on start to build containers
+      </p>
+
       <div className={classes.divSpec}>
         <div className={classes.nameFloat}>
-          <p>Build Containers</p>
+          <p style={{marginBottom: 0}}>Containers:</p>
         </div>
         <div className={classes.progressFloaat}>
-          <LinearWithValueLabel
-            className="progressBarConfig"
-            value={BuildProgressPercentage}
-          />
-          <span className={BuildStatusText == "Error" ? "ErrorTextBuild" : ""}>
+        <p className={BuildStatusText == "Error" ? "ErrorTextBuild" : ""} style={{textAlign:"center", marginBottom: 0}}>
             {BuildStatusText == "Error"
               ? BuildStatusText
               : BuildProgressPercentage + "%"}
-          </span>
+          </p>
+          <LinearWithValueLabel
+            className="progressBarConfig"
+            value={BuildProgressPercentage}
+          />          
+        </div>        
+      </div>
+      <div className={`${classes.texCenter} startConfig`}>
+        <div>
+          <button
+            disabled={disableStartButton || isActive || BuildComplete == true || startbutton}
+            className={"startConfigButton"}
+            onClick={startBuild}
+            id={
+              disableStartButton ||
+                isActive || startbutton ||
+                (BuildComplete == true && BuildError == false)
+                ? "disableStart"
+                : ""
+            }
+          >
+            Start
+          </button>
         </div>
         <div>
           <button
             type="submit"
-            className="viewButton"
+            className="cancelBtn"
             onClick={() => viewLogs("build")}
             id={isActive || BuildProgressPercentage <= 5 ? "disableStart" : ""}
           >
-            View
+            View Logs
           </button>
         </div>
         <div>
-          <span class="col-sm-5" style={{marginLeft:150}}>
-          </span>
+          <button
+            type="submit"
+            className="cancelBtn"
+            id="disableStart"          
+          >
+            Cancel
+          </button>
         </div>
       </div>
       {thumb}

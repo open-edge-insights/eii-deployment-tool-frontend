@@ -52,12 +52,13 @@ export var ConfigForm = (props) => {
     (state) => state.BuildReducer.Disabledsave
   );
   return (
-    <div className="sideBare">
+    <div className="sideBare col-sm-4">
       <div
         style={{
           justifyContent: "center",
           alignContent: "space-around",
           paddingLeft: 0,
+          paddingRight:5
         }}
       >
         <div className="configBarSideBarTitle">

@@ -1,0 +1,44 @@
+.configureTtile {
+    font-size: 24px;
+line-height: 18px;
+padding-bottom: 48px;
+}
+
+.configurationWrapper{
+    margin: 0px !important;
+    padding: 24px;
+}
+
+@media screen and (min-width:1366px) {
+    .root {
+        margin:0px 120px 16px;
+        background-color: #fff;
+    }
+    .configurationWrapper{
+        margin: 0px !important;
+        padding: 24px;
+    }
+}
+
+@media screen and (min-width:1440px) {
+    .root {
+        margin:0px 136px 16px;
+        background-color: #fff;
+    }
+    .configurationWrapper{
+        margin: 0px !important;
+        padding: 24px;
+    }
+}
+
+@media screen and (min-width:1920px) {
+    .root {
+        margin:0px 144px 24px;
+        background-color: #fff;
+    }
+    .configurationWrapper{
+        margin: 0px !important;
+        padding: 32px;
+        padding-bottom: 24px;
+    }
+}

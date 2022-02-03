@@ -131,12 +131,13 @@ const ImportButton = useSelector(
   return (
     !isActive && (
       <div>
-        <div className="positionrel fontSize14 border1px ComponentListMainDiv">
+        <div className="positionrel fontSize14">
           {isActive && <div className="positionisActive"></div>}
-          <p className="coldrag">
+          
+          <p className="componentListHeader">Components List</p>
+          <p className="componentListHelpText">
             Drag a component to add it to the components Layout.
           </p>
-          <p className="fontweight400 ">Components List</p>
           <div className="overflowclip">
             {props.componentsdata &&
               props.componentsdata.map((data) => {
@@ -168,7 +169,7 @@ const ImportButton = useSelector(
             onClick={importCode}
             disabled={isActive || !props.isImportBtnActive|| ImportButton}
           >
-            Import Code/UDF
+            Import Code
           </button>
         </div>
         <ImportCodeDialog

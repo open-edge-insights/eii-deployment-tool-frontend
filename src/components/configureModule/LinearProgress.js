@@ -29,12 +29,12 @@ import { update } from "lodash";
 import { useState, useRef, useEffect } from "react";
 
 function LinearProgressWithLabel(props) {
+  const classes = useStyles();
   return (
     <Box display="flex" alignItems="center">
-      <Box width="100%" mr={1}>
-        <LinearProgress variant="determinate" value={0} {...props} />
-      </Box>
-      <Box minWidth={35}></Box>
+      <Box width="100%" mr={1}>     
+        <LinearProgress variant="determinate" value={0} {...props} className={classes.root} />
+      </Box>      
     </Box>
   );
 }
@@ -50,6 +50,7 @@ LinearProgressWithLabel.propTypes = {
 const useStyles = makeStyles({
   root: {
     width: "100%",
+    padding: 0
   },
 });
 

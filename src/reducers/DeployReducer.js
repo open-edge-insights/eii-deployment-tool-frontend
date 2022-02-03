@@ -27,7 +27,8 @@ const initialState = {
   DeploymentErrorMessage: "",
   DeploymentInProgress: false,
   DeployInDevOrProd: "",
-  DeployInLocalMachineProgress:false
+  DeployInLocalMachineProgress:false,
+  DeployInRemoteMachine:false,
 };
 
 export default function DeploymentReducer(state = initialState, action) {
@@ -67,6 +68,11 @@ export default function DeploymentReducer(state = initialState, action) {
           return{
             ...state,
             DeployInLocalMachineProgress:false
+          };
+         case DeployTypes.DEPLOY_IN_REMOTE_MACHINE:
+          return{
+            ...state,
+            DeployInRemoteMachine:action.payload.DeployInRemoteMachine
           };
     default:
       return state;

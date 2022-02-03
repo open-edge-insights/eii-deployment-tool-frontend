@@ -49,7 +49,7 @@
   border: 1px solid black;
 }
 .tabpan {
-  border: 1px solid grey !important;
+  /* border: 1px solid grey !important; */
   overflow: hidden !important;
 }
 .TestTabSubTitle {

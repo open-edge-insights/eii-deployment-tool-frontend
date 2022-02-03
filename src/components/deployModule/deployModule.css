@@ -8,7 +8,6 @@
 .deployScreenDivider {
     border: 1px solid rgba(134, 121, 121, 0.877);
     position: relative;
-    right: 200px;
 }
 .targetDeviceDeploytextFieldLabel {
     text-transform: capitalize;
