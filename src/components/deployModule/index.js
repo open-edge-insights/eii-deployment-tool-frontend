@@ -120,12 +120,6 @@ const Deploy = (props) => {
   }
   /* Write the deploy to target device funcitonality inside this fun */
   const deployToTargetDeviceFunc = () => {
-  dispatch({
-      type: "DEPLOY_IN_REMOTE_MACHINE",
-      payload: {
-        DeployInRemoteMachine: true,
-      },
-    });
     if(targetDeviceObject.ipaddress.value.trim() == "" ||
       targetDeviceObject.username.value.trim() == "" ||
       targetDeviceObject.password.value.trim() == "" ||
@@ -134,6 +128,12 @@ const Deploy = (props) => {
         return;
     }
     setDeployRemoteInProgress(true);
+    dispatch({
+      type: "DEPLOY_IN_REMOTE_MACHINE",
+      payload: {
+        DeployInRemoteMachine: true,
+      },
+    });
     setprogressIndicatorLabel("Deploying to " + targetDeviceObject.ipaddress.value);
     let dockerImages = getDockerImageList();
     DeployRemote(
@@ -158,6 +158,12 @@ const Deploy = (props) => {
                       DeployInRemoteMachine: false,
                     },
                   });
+                  dispatch({
+                    type: "DEPLOYMENT_PROGRESS",
+                    payload: {
+                      DeployInLocalMachineProgress: false,
+                    },
+                  });  
                   clearInterval(statusTimer);
                 } else if (response.status == "Failed") {
                   setDeployRemoteInProgress(false);
@@ -166,6 +172,12 @@ const Deploy = (props) => {
                     type: "DEPLOY_IN_REMOTE_MACHINE",
                     payload: {
                       DeployInRemoteMachine: false,
+                    },
+                  });
+                  dispatch({
+                    type: "DEPLOYMENT_PROGRESS",
+                    payload: {
+                      DeployInLocalMachineProgress: false,
                     },
                   });
                   alert("Remote deployment FAILED!");
@@ -266,8 +278,12 @@ const Deploy = (props) => {
                 );
               })}
               <button
-                className="nextButtonMainPage WebVisualizerSaveRestartBtn deployToTargetDeviceBtn"
+                className={(targetDeviceObject.ipaddress.value.trim() == "" ||
+                targetDeviceObject.username.value.trim() == "" ||
+                targetDeviceObject.password.value.trim() == "" ||
+                targetDeviceObject.directory.value.trim() == "")?"nextButtonMainPageDisabled nextButtonMainPage deployToTargetDeviceBtn ":" nextButtonMainPage deployToTargetDeviceBtn"}
                 onClick={deployToTargetDeviceFunc}
+                
               >
                 Deploy to target device
               </button>
