@@ -1359,6 +1359,24 @@ const ComponentsLayout = (props) => {
     makeNodeConnections();
   };
 
+  function isServiceAdded(service) {
+    let c = currentComponentData.selectedComponents.nodes;
+    for (let i = 0; i < c.length; i++)
+      if (c[i].data.name == service)
+        return true;
+    return false;
+  }
+
+  function isNonMIServiceAdded() {
+    let c = currentComponentData.selectedComponents.nodes;
+    for (let i = 0; i < c.length; i++) {
+      let componentObj = getComponentObject(c[i].data.name);
+      if (!componentObj.supportMultiInstance)
+        return true;
+    }
+    return false;
+  }
+
   const onDrop = (event) => {
   if(BuildProgress > 0 && BuildProgress < 100){
       return;
@@ -1387,38 +1405,32 @@ const ComponentsLayout = (props) => {
         );
         return;
       }
-      if (
-        nInstances == 1 &&
-        (props.name == "VideoIngestion" || props.name == "VideoAnalytics")
-      ) {
-        let c = currentComponentData.selectedComponents.nodes;
-        for (let i = 0; i < c.length; i++) {
-          if (
-            c[i].data.name == "OpcuaExport" ||
-            c[i].data.name == "ImageStore"
-          ) {
+      if (nInstances == 1 && isServiceAdded(props.name)) {
+        let selComponentObj = getComponentObject(props.name);
+        if (!selComponentObj.supportMultiInstance) {
+          alert(
+            "Sorry, multi-instance configuration with " +
+              props.name +
+              " is not currently supported!"
+          );
+          return;
+        } else if(selComponentObj.supportMultiInstance) {
+          if (isNonMIServiceAdded()) {
             alert(
-              "Sorry, multi-instance configuration with " +
-                c[i].data.name +
-                " is not currently supported!"
+              "Sorry, some of the already added components do not support multi-instance"
             );
-            return;
+            return;  
+          } else {
+            if(window.confirm(
+              "Switching to multi-instance.\n" +
+                "Components will be reset and all settings applied to them " +
+                "will be lost.\n\nAre you sure you want to contnue?"
+              ) == false) {
+                return;
+            }
+            reset = true;
           }
         }
-        let warn = false;
-        for (let i = 0; i < c.length; i++)
-          if (c[i].data.name == props.name) warn = true;
-        if (
-          warn &&
-          window.confirm(
-            "Switching to multi-instance.\n" +
-              "Components will be reset and all settings applied to them " +
-              "will be lost.\n\nAre you sure you want to contnue?"
-          ) == false
-        ) {
-          return;
-        }
-        reset = true;
       }
       services.push(props.name);
     }

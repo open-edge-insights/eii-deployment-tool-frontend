@@ -56,6 +56,7 @@ export const initialState = {
             appName:"VideoIngestion",
             dirName: "VideoIngestion",
             hasVideoUdf: true,
+            supportMultiInstance: true,
             containerName: "ia_video_ingestion"
         },
         {
@@ -64,6 +65,7 @@ export const initialState = {
             appName:"VideoAnalytics",
             dirName:"VideoAnalytics",
             hasVideoUdf: true,
+            supportMultiInstance: true,
             containerName: "ia_video_analytics"
         },
         {
@@ -71,6 +73,7 @@ export const initialState = {
             appName:"WebVisualizer",
             dirName:"WebVisualizer",
             hasVideoUdf: false,
+            supportMultiInstance: true,
             containerName: "ia_web_visualizer"
         },
         {
@@ -78,15 +81,17 @@ export const initialState = {
             appName:"ImageStore",
             dirName:"ImageStore",
             hasVideoUdf: false,
+            supportMultiInstance: false,
             containerName: "ia_imagestore"
         },
-	{
-	    type:'output',
+	    {
+	        type:'output',
             appName:"OpcuaExport",
             dirName:"OpcuaExport",
             hasVideoUdf: false,
+            supportMultiInstance: false,
             containerName: "ia_opcua_export"
-	},
+	    },
     ],   
   },
 
