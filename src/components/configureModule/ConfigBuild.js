@@ -32,6 +32,8 @@ import {
 import ViewLogs from "./ViewLogs";
 import { useSelector, useDispatch } from "react-redux";
 import { StartContainers } from "../api/StartContainers";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
 const useStyles = makeStyles((theme) => ({
   divPos: {
     position: "absolute",
@@ -83,6 +85,10 @@ const ConfigBuild = (props) => {
   const [enableBuildView, setBuildViewFlag] = useState(false);
   const [ViewProcessLogs, setViewLogs] = useState("");
   const [openViewLogDialog, setViewLogsDialog] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleClose = (event, reason) => {
+    setOpen(false);
+  };
   /* Getting the buildComplete state from redux store */
   const BuildComplete = useSelector(
     (state) => state.BuildReducer.BuildComplete
@@ -243,7 +249,10 @@ const ConfigBuild = (props) => {
               }
             }
           }
-        }),
+        })
+         .catch((error) => {
+         setOpen(true);
+       }),
       5000
     );
   };
@@ -319,6 +328,15 @@ const ConfigBuild = (props) => {
           </button>
         </div>
       </div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} style={{color:"white", backgroundColor:"#0068B5"}} anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}>
+        <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }} style={{color:"white", backgroundColor:"#0068B5"}}>
+          <h5>Connection Lost</h5>
+          <p>Connection with the back-end server lost. Try again later.</p>
+        </Alert>
+      </Snackbar>
       {thumb}
       <ViewLogs
         processname={ViewProcessLogs}

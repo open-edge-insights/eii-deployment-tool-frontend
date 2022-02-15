@@ -37,7 +37,7 @@ export async function viewLogs(processname) {
         alert("Some Error occured");
       }
     })
-    .catch((error) => {
-      alert(error);
+    .catch((data) => {
+       console.log(data.status_info.status);
     });
 }

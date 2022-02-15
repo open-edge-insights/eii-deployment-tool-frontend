@@ -34,8 +34,8 @@ export async function getStatusPercentage() {
         alert("Some Error occured");
       }
     })
-    .catch((error) => {
-      alert(error);
+    .catch((data) => {
+      console.log(data.status_info.status);
     });
 }
 export async function buildContainer() {

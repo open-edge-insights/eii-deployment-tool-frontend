@@ -32,13 +32,20 @@ import { DeployRemote } from "../api/DeployRemote";
 import "./deployModule.css";
 import GetStatusApi from "../api/GetStatusApi";
 import { CircularProgress } from "@material-ui/core";
-import cssClasses from "../configureModule/index.module.css"
+import cssClasses from "../configureModule/index.module.css";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+
 const Deploy = (props) => {
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
   const [stopContainersInProgress, setStopContainersInProgress] = useState(false);
   const [deployRemoteInProgress, setDeployRemoteInProgress] = useState(false);
   const [progressIndicatorLabel, setprogressIndicatorLabel] = useState("");
+  const [open, setOpen] = useState(false);
   
+  const handleClose = (event, reason) => {
+    setOpen(false);
+  };
   const DeployInLocalMachineProgress = useSelector(
     (state) => state.DeploymentReducer.DeployInLocalMachineProgress
   );
@@ -185,10 +192,15 @@ const Deploy = (props) => {
                 }
               },
               (response) => {
+              if(response?.message?.includes("status code 504")){
+                  setOpen(true);
+                  }
+                  else{
                 alert(
                   "Failed to get status! reason: " +
                     response?.data?.status_info?.error_detail
                 );
+                }
               }
             ),
           5000
@@ -291,6 +303,15 @@ const Deploy = (props) => {
           </div>
         </div>
       )}
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} style={{color:"white", backgroundColor:"#0068B5"}} anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}>
+        <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }} style={{color:"white", backgroundColor:"#0068B5"}}>
+          <h8>Connection Lost</h8>
+          <p>Connection with the back-end server lost. Try again later.</p>
+        </Alert>
+      </Snackbar>
       </div>
     </div>
   );

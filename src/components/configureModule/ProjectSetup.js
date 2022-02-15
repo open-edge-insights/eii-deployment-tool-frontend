@@ -36,6 +36,8 @@ import LogoutFunc from "../api/logoutApi";
 import { CreateProject } from '../api/CreateProject';
 import ConfirmDialog from "../ConfirmDialog";
 import Modal from "../common/modal";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   butOk: {
@@ -70,6 +72,8 @@ const ProjectSetup = (props) => {
   const [modalTitle, setModalTitle] = useState("Create a New Project");
   const [button1Text, setButton1Text] = useState("No");
   const [button2Text, setButton2Text] = useState("Yes");
+  const [open, setOpen] = useState(false);
+  
   const [error, setError] = useState({
     project_name: false,
   });
@@ -82,7 +86,9 @@ const ProjectSetup = (props) => {
     existingProjectLocation: '',
     openProjectName: '',
   });
-
+  const handleClose = (event, reason) => {
+    setOpen(false);
+  };
   const onChangeHandle = (e, type) => {
     let currentState = { ...state },
       value = '';
@@ -142,6 +148,9 @@ const ProjectSetup = (props) => {
           if (error?.message?.includes("status code 403") &&
             window.confirm("Invalid session. Please re-login")) {
             window.location.href = "/LoginScreen";
+          }
+          else if(error?.message?.includes("status code 504")){
+            setOpen(true);
           }
         }
       );
@@ -357,6 +366,15 @@ const ProjectSetup = (props) => {
           </div>
 
         </div>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} style={{color:"white", backgroundColor:"#0068B5"}} anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}>
+        <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }} style={{color:"white", backgroundColor:"#0068B5"}}>
+          <h8>Connection Lost</h8>
+          <p>Connection with the back-end server lost. Try again later.</p>
+        </Alert>
+      </Snackbar>
       </FormControl>
       <ConfirmDialog
         open={openConfirmDialog}

@@ -23,6 +23,7 @@ import React, { useEffect, useState } from "react";
 import Dialog from "@material-ui/core/Dialog";
 import { viewLogs } from "./viewLogsApi";
 import "./ViewLogs.css";
+
 export default function ViewLogs(props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [logs, setLogs] = useState("");
@@ -33,7 +34,10 @@ export default function ViewLogs(props) {
       viewLogs(props?.processname).then((response) => {
         let logs = JSON.parse(response?.data);
         setLogs(props?.processname && logs[props.processname]);
-      });
+      })
+      .catch((error) => {
+        console.log(error);
+      })
  
   }, [props.processname, props.open]);
   
