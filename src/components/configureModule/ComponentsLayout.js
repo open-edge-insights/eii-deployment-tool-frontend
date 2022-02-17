@@ -979,6 +979,12 @@ const ComponentsLayout = (props) => {
 
     if (ProjectSelectionActive == true) {
       setShowProgress(true);
+      dispatch({
+        type: "START_DISABLED",
+        payload: {
+          startbuttondisabled:true,
+      },
+    })
       // Stop all EII docker containers running on host
       // New provision flow requirement
       StartContainers("stop").then((response) => {
@@ -1012,6 +1018,12 @@ const ComponentsLayout = (props) => {
                 },
               });
               setShowProgress(false);
+              dispatch({
+                type: "START_DISABLED",
+                payload: {
+                  startbuttondisabled:false,
+              },
+            })
             },
             (response) => {
               setShowProgress(false);
@@ -1048,6 +1060,12 @@ const ComponentsLayout = (props) => {
                 },
               });
               setShowProgress(false);
+              dispatch({
+                type: "START_DISABLED",
+                payload: {
+                  startbuttondisabled:false,
+              },
+            })
             },
             (response) => {
               setShowProgress(false);

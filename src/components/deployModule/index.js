@@ -125,15 +125,21 @@ const Deploy = (props) => {
     images.push("ia_configmgr_agent:" + process.env.REACT_APP_EII_VERSION);
     return images;
   }
+  function ValidateIPaddress(ipaddress) {
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress))    {
+      return true;
+    }
+    return false;
+  }
+  function onDeployToTargetDevice() {
+    if(!ValidateIPaddress(targetDeviceObject.ipaddress.value.trim())) {
+      alert("Please enter a valid IP address");
+      return;
+    }
+    deployToTargetDeviceFunc();
+  }
   /* Write the deploy to target device funcitonality inside this fun */
   const deployToTargetDeviceFunc = () => {
-    if(targetDeviceObject.ipaddress.value.trim() == "" ||
-      targetDeviceObject.username.value.trim() == "" ||
-      targetDeviceObject.password.value.trim() == "" ||
-      targetDeviceObject.directory.value.trim() == "") {
-        alert("Please enter all the fields");
-        return;
-    }
     setDeployRemoteInProgress(true);
     dispatch({
       type: "DEPLOY_IN_REMOTE_MACHINE",
@@ -294,7 +300,11 @@ const Deploy = (props) => {
                 targetDeviceObject.username.value.trim() == "" ||
                 targetDeviceObject.password.value.trim() == "" ||
                 targetDeviceObject.directory.value.trim() == "")?"nextButtonMainPageDisabled nextButtonMainPage deployToTargetDeviceBtn ":" nextButtonMainPage deployToTargetDeviceBtn"}
-                onClick={deployToTargetDeviceFunc}
+                onClick={onDeployToTargetDevice}
+                disabled={(targetDeviceObject.ipaddress.value.trim() == "" ||
+                targetDeviceObject.username.value.trim() == "" ||
+                targetDeviceObject.password.value.trim() == "" ||
+                targetDeviceObject.directory.value.trim() == "")}
                 
               >
                 Deploy to target device
