@@ -4,8 +4,6 @@
 }
 
 .browserContent {
-  position: absolute;
-  width: 96%;
   height: 45%;
   display: flex;
   border-width: 2;

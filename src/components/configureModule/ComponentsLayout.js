@@ -54,7 +54,11 @@ import horizontal from "../../images/horizontal.png";
 import vertical from "../../images/vertical.png";
 import LoadCompApi from "../api/LoadCompApi";
 import { useDispatch, useSelector } from "react-redux";
-import {getCameraStatus, startCamera, stopCamera } from "../api/CameraStreamApi";
+import {
+  getCameraStatus,
+  startCamera,
+  stopCamera,
+} from "../api/CameraStreamApi";
 import { PROJECT_SELECTION_ACTIVE } from "../../actionTypes/projectSelection";
 var timer = null;
 const initialElements = [];
@@ -115,16 +119,16 @@ const ComponentsLayout = (props) => {
   }, [props.stateComponent]);
 
   useEffect(() => {
-      let imgElem = document.getElementById("cameraPreviewTN");    
-      if(imgElem)
-        imgElem.src = cameraSource;
+    let imgElem = document.getElementById("cameraPreviewTN");
+    if (imgElem) imgElem.src = cameraSource;
   }, [cameraSource]);
   /* Modifying the configeration as soon as we get the updated config */
   useEffect(() => {
     let selectedStreamId = props.streamIds;
     let selectedNodeLabel;
     let selectedStreamLabels = [];
-
+    let duplicateUdfFlag = false;
+    let selectedUdfName = props.updatedConfig && props.updatedConfig.name;
     /*putting the selected nodes together in an array using its id eg: [videingestion1 , videoingestion2] */
     for (let i in selectedStreamId) {
       selectedNodeLabel = "";
@@ -147,6 +151,19 @@ const ComponentsLayout = (props) => {
           var previousConfig = e && e.data;
           previousConfig && Object.assign(previousConfig[selectedNodeLabel]);
           if (props.updatedConfig) {
+            for (let key in previousConfig) {
+              let udfsExisting = previousConfig[key].config.udfs;
+              for (let itemKey in udfsExisting) {
+                /* Check of the user is trying to import already exisiting udf */
+                if (udfsExisting[itemKey].name == selectedUdfName) {
+                  alert("Duplicate udf cannot be added");
+                  duplicateUdfFlag = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (props.updatedConfig && !duplicateUdfFlag) {
             /* Update the exisiting config by appending the seelcted config to the selected node */
             for (let key in previousConfig) {
               previousConfig[key].config.udfs.push(props.updatedConfig);
@@ -167,8 +184,7 @@ const ComponentsLayout = (props) => {
                 setOpen(false);
                 saveProject();
               },
-              (responsedata) => {
-              }
+              (responsedata) => {}
             );
           }
         },
@@ -309,50 +325,43 @@ const ComponentsLayout = (props) => {
   };
 
   function startCameraPreview(pipeline) {
-    if(pipeline.length <= 1) {
-      alert("Unsupported camera device id:" + pipeline)
+    if (pipeline.length <= 1) {
+      alert("Unsupported camera device id:" + pipeline);
       return;
     }
-    let config = {devices: [], width: 200};
+    let config = { devices: [], width: 200 };
     config.devices.push(pipeline);
-    getCameraStatus(config).then(
-      (response) => {
-        let data = JSON.parse(response.data);
-        if(data[pipeline].status == "Not Running") {
-          startCamera(config).then(
-            (response) => {
-              if(response?.status_info?.status) {
-                let sdata = JSON.parse(response.data)
-                if(sdata[pipeline].status == "Running") {
-                  let stream_id = sdata[pipeline].stream_id
-                  setCameraSource("/eii/ui/camera/stream/" + stream_id);
-                } else {
-                  console.log("Camera ", pipeline, "Not running!");
-                }
-              } else {
-                console.log("Camera Start API failed")
-              }
+    getCameraStatus(config).then((response) => {
+      let data = JSON.parse(response.data);
+      if (data[pipeline].status == "Not Running") {
+        startCamera(config).then((response) => {
+          if (response?.status_info?.status) {
+            let sdata = JSON.parse(response.data);
+            if (sdata[pipeline].status == "Running") {
+              let stream_id = sdata[pipeline].stream_id;
+              setCameraSource("/eii/ui/camera/stream/" + stream_id);
+            } else {
+              console.log("Camera ", pipeline, "Not running!");
             }
-          )
-        } else if(data[pipeline].status == "Running") {
-          let stream_id = data[pipeline].stream_id
-          setCameraSource("/eii/ui/camera/stream/" + stream_id);
-        }
+          } else {
+            console.log("Camera Start API failed");
+          }
+        });
+      } else if (data[pipeline].status == "Running") {
+        let stream_id = data[pipeline].stream_id;
+        setCameraSource("/eii/ui/camera/stream/" + stream_id);
       }
-    )
+    });
   }
   function stopCameraPreview() {
     let imageElem = document.getElementById("cameraPreviewTN");
-    let config = {devices: []};
-    stopCamera(config).then(
-      (response) => {
-        if(response.status_info.status) {
-          setCameraSource("");
-          if(imageElem)
-            imageElem.src = "";
-        }
+    let config = { devices: [] };
+    stopCamera(config).then((response) => {
+      if (response.status_info.status) {
+        setCameraSource("");
+        if (imageElem) imageElem.src = "";
       }
-    );
+    });
   }
 
   const handleElementClick = (event, data) => {
@@ -422,7 +431,7 @@ const ComponentsLayout = (props) => {
     currentSelectedComp.config = data.config;
     currentSelectedComp.interfaces = data.interfaces;
     let stat = updateConfigData(currentSelectedComp.data.name, data);
-    
+
     event.preventDefault();
     event.stopPropagation();
   };
@@ -619,11 +628,11 @@ const ComponentsLayout = (props) => {
   const onElementsRemove = (elementsToRemove) => {
     if (BuildProgress > 0 && BuildProgress < 100) {
       alert("Sorry, you can't delete component when a build is in progress.");
-      handlePaneClick();     
+      handlePaneClick();
       return false;
     }
     if (!window.confirm("Are you sure you want to delete this component?")) {
-      handlePaneClick();     
+      handlePaneClick();
       return false;
     }
     // Check if backend is busy
@@ -634,10 +643,10 @@ const ComponentsLayout = (props) => {
       ) {
         alert(
           "Failed to remove elements. Reason: An active " +
-          currentComponentData.selectedComponents.activeTask +
-          " task is already in progress.\nPlease wait."
+            currentComponentData.selectedComponents.activeTask +
+            " task is already in progress.\nPlease wait."
         );
-        handlePaneClick();     
+        handlePaneClick();
         return false;
       }
       // Check if switching to single instance
@@ -653,10 +662,10 @@ const ComponentsLayout = (props) => {
                 if (
                   window.confirm(
                     "Switching to single instance.\nComponents will be reset and " +
-                    "all settings applied to them will be lost.\n\nDo you want to continue?"
+                      "all settings applied to them will be lost.\n\nDo you want to continue?"
                   ) == false
                 ) {
-                  handlePaneClick();     
+                  handlePaneClick();
                   return false;
                 }
               }
@@ -716,7 +725,7 @@ const ComponentsLayout = (props) => {
       updateOutputState();
       props.dispatchComponents(currentComponentData);
       reloadAndRenderComponents(false);
-      handlePaneClick();     
+      handlePaneClick();
       return true;
     }
   };
@@ -748,10 +757,12 @@ const ComponentsLayout = (props) => {
       let udfList = "";
       if (comp.config.udfs) {
         for (let j = 0; j < comp.config.udfs.length; j++) {
-          udfList += comp.config.udfs[j].name + "\n";
+          udfList +=
+            comp.config.udfs[j].name +
+            `${j < comp.config.udfs.length - 1 ? " || " : ""}`;
         }
         // Remove trailing '|'
-        if (udfList != "") udfList = udfList.slice(0, -1);
+        // if (udfList != "") udfList = udfList.slice(0, -1);
       } else {
         udfList = null;
       }
@@ -796,8 +807,10 @@ const ComponentsLayout = (props) => {
         break;
       }
     }
-    if (appName == "WebVisualizer" && 
-        !currentComponentData.selectedComponents.showWebVisualizer) {
+    if (
+      appName == "WebVisualizer" &&
+      !currentComponentData.selectedComponents.showWebVisualizer
+    ) {
       isHidden = true;
     }
     if (appName == null) {
@@ -898,16 +911,19 @@ const ComponentsLayout = (props) => {
     if (instances == null) {
       instances = getInstanceCount(services);
     }
-    if( builder_services.length == 0 ||
-      ( builder_services.length == 1 && builder_services[0] == "WebVisualizer" && !currentComponentData.selectedComponents.showWebVisualizer)) 
-      {
-        dispatch({
-            type: "START_DISABLED",
-            payload: {
-              startbuttondisabled:true,
-          },
-        })
-      }
+    if (
+      builder_services.length == 0 ||
+      (builder_services.length == 1 &&
+        builder_services[0] == "WebVisualizer" &&
+        !currentComponentData.selectedComponents.showWebVisualizer)
+    ) {
+      dispatch({
+        type: "START_DISABLED",
+        payload: {
+          startbuttondisabled: true,
+        },
+      });
+    }
     BuilderApi.builder(
       builder_services,
       instances,
@@ -974,9 +990,9 @@ const ComponentsLayout = (props) => {
             (response) => {
               let config = response;
               removeAllNodes();
-              if(DT_CONFIG_KEY in config) {
+              if (DT_CONFIG_KEY in config) {
                 currentComponentData.selectedComponents.showWebVisualizer =
-                (config[DT_CONFIG_KEY]?.show_wv == false) ? false : true;
+                  config[DT_CONFIG_KEY]?.show_wv == false ? false : true;
                 delete config[DT_CONFIG_KEY];
               }
               Object.keys(config).forEach(function (key, index) {
@@ -1048,7 +1064,7 @@ const ComponentsLayout = (props) => {
           let config = response;
           removeAllNodes();
           Object.keys(config).forEach(function (key, index) {
-            if(key != DT_CONFIG_KEY)
+            if (key != DT_CONFIG_KEY)
               parseSelectedComponent(getComponentName(key), config);
           });
           setShowProgress(false);
@@ -1362,8 +1378,7 @@ const ComponentsLayout = (props) => {
   function isServiceAdded(service) {
     let c = currentComponentData.selectedComponents.nodes;
     for (let i = 0; i < c.length; i++)
-      if (c[i].data.name == service)
-        return true;
+      if (c[i].data.name == service) return true;
     return false;
   }
 
@@ -1371,22 +1386,21 @@ const ComponentsLayout = (props) => {
     let c = currentComponentData.selectedComponents.nodes;
     for (let i = 0; i < c.length; i++) {
       let componentObj = getComponentObject(c[i].data.name);
-      if (!componentObj.supportMultiInstance)
-        return true;
+      if (!componentObj.supportMultiInstance) return true;
     }
     return false;
   }
 
   const onDrop = (event) => {
-  if(BuildProgress > 0 && BuildProgress < 100){
+    if (BuildProgress > 0 && BuildProgress < 100) {
       return;
     }
     dispatch({
       type: "START_DISABLED",
       payload: {
-        startbuttondisabled:false,
-    },
-  })
+        startbuttondisabled: false,
+      },
+    });
     let services = [];
     let reset = false;
     event.preventDefault();
@@ -1414,19 +1428,21 @@ const ComponentsLayout = (props) => {
               " is not currently supported!"
           );
           return;
-        } else if(selComponentObj.supportMultiInstance) {
+        } else if (selComponentObj.supportMultiInstance) {
           if (isNonMIServiceAdded()) {
             alert(
               "Sorry, some of the already added components do not support multi-instance"
             );
-            return;  
+            return;
           } else {
-            if(window.confirm(
-              "Switching to multi-instance.\n" +
-                "Components will be reset and all settings applied to them " +
-                "will be lost.\n\nAre you sure you want to contnue?"
-              ) == false) {
-                return;
+            if (
+              window.confirm(
+                "Switching to multi-instance.\n" +
+                  "Components will be reset and all settings applied to them " +
+                  "will be lost.\n\nAre you sure you want to contnue?"
+              ) == false
+            ) {
+              return;
             }
             reset = true;
           }
@@ -1496,24 +1512,24 @@ const ComponentsLayout = (props) => {
         </Snackbar>
         <div id="component" className="zoompanflow" style={{ width: "100%" }}>
           <div>
-          <p className="componentListHeader">Data Stream</p>
-          <p className="componentListHelpText">
-          Click on a datastream to enable and change the settings 
-          </p>
+            <p className="componentListHeader">Data Stream</p>
+            <p className="componentListHelpText">
+              Click on a datastream to enable and change the settings
+            </p>
           </div>
-          
-      {progressIndicator ? (
-        <div className="progressIndicator">
-          <CircularProgress
-            color="primary"
-            thickness="2.5"
-            size={100}
-            className="progressIndicator"
-          />
-        </div>
-      ) : (
-        ""
-      )}
+
+          {progressIndicator ? (
+            <div className="progressIndicator">
+              <CircularProgress
+                color="primary"
+                thickness="2.5"
+                size={100}
+                className="progressIndicator"
+              />
+            </div>
+          ) : (
+            ""
+          )}
           <ReactFlowProvider key="ws">
             <div
               className={
@@ -1541,7 +1557,7 @@ const ComponentsLayout = (props) => {
               >
                 <img src={horizontal} alt="horizontal logo" />
               </button>
-              <ReactFlow                
+              <ReactFlow
                 elements={elements}
                 nodesConnectable={true}
                 selectNodesOnDrag={false}
@@ -1582,7 +1598,6 @@ const ComponentsLayout = (props) => {
       ) : (
         ""
       )}
-
     </>
   );
 };
@@ -1595,7 +1610,7 @@ const mapStateToProps = (state, oldProps) => {
     noOfStreams: state?.ConfigureBuildReducer?.projectSetup?.noOfStreams,
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
     cameraSource: state?.ConfigureBuildReducer?.cameraSource,
-    services_to_deply: state?.ConfigureBuildReducer?.services_to_deploy
+    services_to_deply: state?.ConfigureBuildReducer?.services_to_deploy,
   };
 };
 
@@ -1606,7 +1621,7 @@ const mapDispatchToProps = (dispatch) => {
         type: ActionType.UPDATE_MAIN_OBJECT,
         value: { ...currentComponentData },
       });
-    }
+    },
   };
 };
 
