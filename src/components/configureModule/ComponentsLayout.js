@@ -108,9 +108,6 @@ const ComponentsLayout = (props) => {
   const ProjectSelectionActive = useSelector(
     (state) => state.ProjectSelectionReducer.projectSelection
   );
-  const CurrentTabIndex = useSelector(
-    (state) => state.ConfigureBuildReducer.tabCount
-  );
   const BuildProgress = useSelector(
     (state) => state.BuildReducer.BuildProgress
   );
@@ -224,6 +221,7 @@ const ComponentsLayout = (props) => {
   function getDigits(s) {
     let digits = s.match(/\d+$/);
     if (digits) {
+      setStreamCount(digits[0]);
       return digits[0];
     }
     return "";
@@ -949,7 +947,7 @@ const ComponentsLayout = (props) => {
         }
 
         saveProject();
-        setStreamCount(instances);
+
         dispatch({
           type: "INSTANCE_COUNT",
           payload: {
@@ -982,9 +980,9 @@ const ComponentsLayout = (props) => {
       dispatch({
         type: "START_DISABLED",
         payload: {
-          startbuttondisabled:true,
-      },
-    })
+          startbuttondisabled: true,
+        },
+      });
       // Stop all EII docker containers running on host
       // New provision flow requirement
       StartContainers("stop").then((response) => {
@@ -1021,9 +1019,9 @@ const ComponentsLayout = (props) => {
               dispatch({
                 type: "START_DISABLED",
                 payload: {
-                  startbuttondisabled:false,
-              },
-            })
+                  startbuttondisabled: false,
+                },
+              });
             },
             (response) => {
               setShowProgress(false);
@@ -1063,9 +1061,9 @@ const ComponentsLayout = (props) => {
               dispatch({
                 type: "START_DISABLED",
                 payload: {
-                  startbuttondisabled:false,
-              },
-            })
+                  startbuttondisabled: false,
+                },
+              });
             },
             (response) => {
               setShowProgress(false);
@@ -1529,12 +1527,14 @@ const ComponentsLayout = (props) => {
           </Alert>
         </Snackbar>
         <div id="component" className="zoompanflow" style={{ width: "100%" }}>
-          <div>
-            <p className="componentListHeader">Data Stream</p>
-            <p className="componentListHelpText">
-              Click on a datastream to enable and change the settings
-            </p>
-          </div>
+          {!props.inTestScreen && (
+            <div>
+              <p className="componentListHeader">Data Stream</p>
+              <p className="componentListHelpText">
+                Click on a datastream to enable and change the settings
+              </p>
+            </div>
+          )}
 
           {progressIndicator ? (
             <div className="progressIndicator">
@@ -1620,7 +1620,7 @@ const ComponentsLayout = (props) => {
               justifyContent: "center",
               alignContent: "space-around",
               paddingLeft: 0,
-              paddingRight:5
+              paddingRight: 5,
             }}
           ></div>
           <div className="configBarSideBarTitle">

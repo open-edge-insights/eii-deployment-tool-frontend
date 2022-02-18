@@ -42,10 +42,10 @@ const ComponentList = (props) => {
   const [AlertMsg, setAlertMsg] = useState("");
   const [UDFConfig, setUDFConfig] = useState();
 
-const ImportButton = useSelector(
+  const ImportButton = useSelector(
     (state) => state.BuildReducer.ImportButtonDisabled
-    );
-    
+  );
+
   var Path = require("path");
   useEffect(() => {}, []);
   const onDragStart = (event, dataType, appName) => {
@@ -70,14 +70,13 @@ const ImportButton = useSelector(
     setFileName("");
     let path = _path;
     listFiles(path).then((fileResponse) => {
-    if(fileResponse.status_info.status){
-      let data = fileResponse?.data && JSON.parse(fileResponse.data);
-      setFiles([...data.files]);
-      if (path == basePath) setDirectories([...data.dirs]);
-      else setDirectories([...data.dirs, ".."]);
-      setDialogOpen(true);
-      }
-      else{
+      if (fileResponse.status_info.status) {
+        let data = fileResponse?.data && JSON.parse(fileResponse.data);
+        setFiles([...data.files]);
+        if (path == basePath) setDirectories([...data.dirs]);
+        else setDirectories([...data.dirs, ".."]);
+        setDialogOpen(true);
+      } else {
         alert("Invalid path");
       }
     });
@@ -133,7 +132,7 @@ const ImportButton = useSelector(
       <div>
         <div className="positionrel fontSize14">
           {isActive && <div className="positionisActive"></div>}
-          
+
           <p className="componentListHeader">Components List</p>
           <p className="componentListHelpText">
             Drag a component to add it to the components Layout.
@@ -162,7 +161,7 @@ const ImportButton = useSelector(
         <div className="importCodeBtnDiv">
           <button
             className={
-              isActive || !props.isImportBtnActive ||ImportButton
+              isActive || !props.isImportBtnActive || ImportButton
                 ? "disableImportBtn"
                 : "importCodeBtn"
             }

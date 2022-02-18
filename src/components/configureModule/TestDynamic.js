@@ -34,7 +34,7 @@ import { useDispatch } from "react-redux";
 import Slider from "@material-ui/core/Slider";
 import { CircularProgress } from "@material-ui/core";
 import { getCameraConfig, setCameraConfig } from "../api/CameraConfigApi";
-import cssClasses from "./index.module.css"
+import cssClasses from "./index.module.css";
 
 // import { MdReplay } from "react-icons/md";
 const useStyles = makeStyles((theme) => ({
@@ -104,14 +104,14 @@ export function TestDynamic(props) {
                     setCameraPipeline(null);
                   }
                 },
-                (response) => { }
-              ).catch((error) => { });
+                (response) => {}
+              ).catch((error) => {});
             } else {
               alert("Internal error: No publisher found!");
             }
           }
         },
-        (response) => { }
+        (response) => {}
       );
     }
   }, [NodeSelected]);
@@ -227,10 +227,14 @@ export function TestDynamic(props) {
                   setEnableRestart(true);
                 }
 
-                let timer = setInterval(() => { setProgress(false); clearInterval(timer); setTopic(""); }, 2000);
+                let timer = setInterval(() => {
+                  setProgress(false);
+                  clearInterval(timer);
+                  setTopic("");
+                }, 2000);
               })
               .catch((error) => {
-                setEnableRestart(true)
+                setEnableRestart(true);
                 setProgress(false);
                 alert(
                   "Some error occured while restarting containers: " + error
@@ -255,10 +259,12 @@ export function TestDynamic(props) {
     cameraConfig.configs[cameraPipeline] = {};
 
     if (item) {
-      cameraConfig.configs[cameraPipeline][item] = cameraConfigSettings[item].default
+      cameraConfig.configs[cameraPipeline][item] =
+        cameraConfigSettings[item].default;
     } else {
       for (let i in cameraConfigSettings) {
-        cameraConfig.configs[cameraPipeline][i] = cameraConfigSettings[i].default
+        cameraConfig.configs[cameraPipeline][i] =
+          cameraConfigSettings[i].default;
       }
     }
 
@@ -277,7 +283,7 @@ export function TestDynamic(props) {
     let tf = document.getElementById(key);
     tf.value = value;
 
-    setCameraConfig(cameraConfig).then((cameraSetResponse) => { });
+    setCameraConfig(cameraConfig).then((cameraSetResponse) => {});
   };
 
   return (
@@ -295,17 +301,22 @@ export function TestDynamic(props) {
             displayConfigForm={false}
             enableImportBtn={reactFlowchartProps}
             propstoTestDynamic={propstoTestDynamic}
+            inTestScreen={true}
           />
         </div>
         {!progressIndicator ? (
           <div className="pipelineSettingTitle TestTabSubTitle">
             {NodeSelected && "Pipeline settings"}
           </div>
-        ) : (<></>)}
+        ) : (
+          <></>
+        )}
         {progressIndicator ? (
-          <div className="deploymentProgressBar" >
-            <CircularProgress size={100} style={{color:"#000"}} />
-            <p className="deploymentProgressBarText">{progressIndicatorLabel}</p>
+          <div className="deploymentProgressBar">
+            <CircularProgress size={100} style={{ color: "#000" }} />
+            <p className="deploymentProgressBarText">
+              {progressIndicatorLabel}
+            </p>
           </div>
         ) : (
           <div className="TestProfileSettingsInTestTab col-sm-5 WebVisualizerTestSettings">
@@ -327,7 +338,9 @@ export function TestDynamic(props) {
                           className="cameraConfigVal"
                           id={item}
                           value={cameraConfigSettings[item]["value"]}
-                          disabled={cameraConfigSettings[item]["flags"] == "inactive"}
+                          disabled={
+                            cameraConfigSettings[item]["flags"] == "inactive"
+                          }
                         />
                       </span>
                       <span
@@ -345,7 +358,9 @@ export function TestDynamic(props) {
                           onChange={(e) => {
                             handleSliderChange(item, e.target.value);
                           }}
-                          disabled={cameraConfigSettings[item]["flags"] == "inactive"}
+                          disabled={
+                            cameraConfigSettings[item]["flags"] == "inactive"
+                          }
                         />
                       </span>
                       <span className="TestTabSliderResetBtn">
@@ -357,26 +372,29 @@ export function TestDynamic(props) {
                           onClick={(e) => {
                             resetCameraSettings(e, item);
                           }}
-                          disabled={cameraConfigSettings[item]["flags"] == "inactive"}
+                          disabled={
+                            cameraConfigSettings[item]["flags"] == "inactive"
+                          }
                         />
                       </span>
                     </div>
                   );
                 })}
               <span>
-                {cameraPipeline && cameraConfigSettings && <input
-                  type="button"
-                  className="cameraConfigResetAll col-sm-4"
-                  value="Reset all"
-                  onClick={resetCameraSettings}
-                ></input>}
+                {cameraPipeline && cameraConfigSettings && (
+                  <input
+                    type="button"
+                    className="cameraConfigResetAll col-sm-4"
+                    value="Reset all"
+                    onClick={resetCameraSettings}
+                  ></input>
+                )}
               </span>
             </div>
           </div>
         )}
         {progressIndicator ? (
-          <div className="deploymentProgressBar" >
-          </div>
+          <div className="deploymentProgressBar"></div>
         ) : (
           <div className="WebVisualizerSaveRestartBtnDiv col-sm-1">
             <button
@@ -397,8 +415,7 @@ export function TestDynamic(props) {
           </div>
         )}
         {progressIndicator ? (
-          <div className="deploymentProgressBar" >
-          </div>
+          <div className="deploymentProgressBar"></div>
         ) : (
           <div className="WebVisalizerPreviewTestDiv col-sm-4">
             <span className="WebVisalizerPrevie]wTestTitle">
@@ -407,7 +424,9 @@ export function TestDynamic(props) {
               Topic: {TopicsRelatedToNode}
             </span>
             {(!TopicsRelatedToNode || !NodeSelected) && (
-              <div className="WebVisualizerNoPreview">Click on a VA component for preview</div>
+              <div className="WebVisualizerNoPreview">
+                Click on a VA component for preview
+              </div>
             )}
             {TopicsRelatedToNode && NodeSelected && (
               <img
@@ -426,7 +445,7 @@ const mapStateToProps = (state) => {
     projectSetup: state?.ConfigureBuildReducer?.projectSetup,
     isOpen: state?.ConfigureBuildReducer?.getData?.isOpen,
     appName: state.ConfigureBuildReducer.getData.appName,
-    stateComponent: state.ConfigureBuildReducer.componentsInitialState
+    stateComponent: state.ConfigureBuildReducer.componentsInitialState,
   };
 };
 

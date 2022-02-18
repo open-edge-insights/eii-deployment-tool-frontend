@@ -24,7 +24,6 @@ import Dialog from "@material-ui/core/Dialog";
 import FileIcon from "@material-ui/icons/Description";
 import FolderIcon from "@material-ui/icons/Folder";
 import "./ImportCode.css";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 export default function ImportCodeDialog(props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [StreamIdsSelected, setStreamId] = useState([]);
@@ -32,18 +31,21 @@ export default function ImportCodeDialog(props) {
     setOpenDialog(props?.open);
   }, [props]);
   useEffect(() => {
-    if (props.streamCount == 1 && props.NodeSelected != "") {
+    if (props.streamCount != undefined && props.NodeSelected != "" && props.streamCount < 1) {
       setStreamId(["1"]);
-    } else if (props.streamCount > 1 && props.NodeSelected != "" && props.NodeSelected) {
+    } else if (
+      props.streamCount != undefined &&
+      props.NodeSelected != "" &&
+      props.NodeSelected
+    ) {
       let selectedNodeId = props.NodeSelected[props.NodeSelected.length - 1];
       let arr = [];
       arr.push(selectedNodeId);
       setStreamId(arr);
+    } else {
+      setStreamId([]);
     }
-    else {
-      setStreamId([])
-    }
-  }, [props.streamCount, props.NodeSelected]);
+  }, [props.NodeSelected]);
   /* Storing the Ids of selected checkboxes */
   const selectedStreamIds = (data) => {
     let elementId = data.target.id.toString();
@@ -56,7 +58,7 @@ export default function ImportCodeDialog(props) {
     setStreamId(arrOfIds);
   };
   const numberOfStreams = (count) => {
-    let Scount = count;
+    let Scount = count > 0 ? count : 1;
     let DataStreamCheckboxes = [];
     for (let i = 1; i <= Scount; i++) {
       DataStreamCheckboxes.push(
@@ -70,19 +72,22 @@ export default function ImportCodeDialog(props) {
             checked={
               Scount == 1 && StreamIdsSelected.includes(i.toString())
                 ? true
-                : props.NodeSelected[props.NodeSelected.length - 1] == i
-                  ? true
-                  : StreamIdsSelected.includes(i.toString())
-                    ? true
-                    : false
+                : (isNaN(props.NodeSelected[props.NodeSelected.length - 1]) &&
+                  Scount == 1
+                    ? 1
+                    : 0) == i
+                ? true
+                : StreamIdsSelected.includes(i.toString())
+                ? true
+                : false
             }
           />
           <label for={"Data Stream" + i} className="dataStreamLabel">
-            {props.streamCount > 1
+            {Scount > 1
               ? props.NodeSelected.replace(/\d+$/, "") + i
-              : props.streamCount == 1
-                ? props.NodeSelected
-                : ""}
+              : Scount == 1
+              ? props.NodeSelected
+              : ""}
           </label>
         </div>
       );
@@ -98,8 +103,8 @@ export default function ImportCodeDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         {props &&
-          ((props.files && props.files.length > 0) ||
-            (props.dirs && props.dirs.length > 0)) ? (
+        ((props.files && props.files.length > 0) ||
+          (props.dirs && props.dirs.length > 0)) ? (
           <span>
             <div className="dialogBody">
               <div className="dialogTitleImportCode">Import UDF</div>
@@ -181,7 +186,7 @@ export default function ImportCodeDialog(props) {
               )}
             </div>
             <div className="streamCountDiv">
-              {props.streamCount && props.streamCount > 0
+              {props.streamCount != undefined
                 ? numberOfStreams(props.streamCount)
                 : ""}
             </div>
