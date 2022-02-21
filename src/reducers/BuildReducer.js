@@ -19,16 +19,25 @@
  * SOFTWARE.
  */
 
-import { BUILD_COMPLETE, BUILD_FAILED, START_DISABLED, IMPORT_DISABLED, BUILD_IN_PROGRESS_DISABLED_DRAG, DISABLED_SAVE } from "../actionTypes/buildTypes";
+import {
+  BUILD_COMPLETE,
+  BUILD_FAILED,
+  START_DISABLED,
+  IMPORT_DISABLED,
+  BUILD_IN_PROGRESS_DISABLED_DRAG,
+  DISABLED_SAVE,
+  SHOW_BUILD_ALERT
+} from "../actionTypes/buildTypes";
 
 const initialState = {
   BuildComplete: false,
   BuildError: false,
   BuildErrorMessage: "",
-  startbuttondisabled:false,
-  ImportButtonDisabled:false,
-  BuildProgress:0,
-  Disabledsave:false,
+  startbuttondisabled: false,
+  ImportButtonDisabled: false,
+  BuildProgress: 0,
+  Disabledsave: false,
+  showBuildAlert: false,
 };
 
 export default function BuildReducer(state = initialState, action) {
@@ -51,21 +60,26 @@ export default function BuildReducer(state = initialState, action) {
         ...state,
         startbuttondisabled: action.payload.startbuttondisabled,
       };
-      case IMPORT_DISABLED:
+    case IMPORT_DISABLED:
       return {
         ...state,
         ImportButtonDisabled: action.payload.ImportButtonDisabled,
       };
-      case BUILD_IN_PROGRESS_DISABLED_DRAG:
+    case BUILD_IN_PROGRESS_DISABLED_DRAG:
       return {
         ...state,
         BuildProgress: action.payload.BuildProgress,
       };
-      case DISABLED_SAVE:
-        return {
-          ...state,
-          Disabledsave: action.payload.Disabledsave,
-        };
+    case DISABLED_SAVE:
+      return {
+        ...state,
+        Disabledsave: action.payload.Disabledsave,
+      };
+    case SHOW_BUILD_ALERT:
+      return {
+        ...state,
+        showBuildAlert: action.payload.showBuildAlert,
+      };
     default:
       return state;
   }

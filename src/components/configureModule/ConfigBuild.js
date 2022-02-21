@@ -25,10 +25,7 @@ import { connect } from "react-redux";
 import "./ConfigBuild.css";
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
-import {
-  getStatusPercentage,
-  buildContainer,
-} from "./configureAndBuildAction";
+import { getStatusPercentage, buildContainer } from "./configureAndBuildAction";
 import ViewLogs from "./ViewLogs";
 import { useSelector, useDispatch } from "react-redux";
 import { StartContainers } from "../api/StartContainers";
@@ -64,11 +61,11 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   nameFloat: {
-    width:"auto",
+    width: "auto",
     marginRight: 24,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
   },
   progressFloaat: {
     width: "100%",
@@ -100,9 +97,12 @@ const ConfigBuild = (props) => {
   let promiseResolve;
   let promiseReject;
   const dispatch = useDispatch();
-  useEffect((props) => {
-    setBuildProgress(BuildComplete ? 100 : 0);
-  }, [BuildComplete]);
+  useEffect(
+    (props) => {
+      setBuildProgress(BuildComplete ? 100 : 0);
+    },
+    [BuildComplete]
+  );
   /* Starting the build process */
   const startBuild = (e) => {
     e.preventDefault();
@@ -131,13 +131,14 @@ const ConfigBuild = (props) => {
         },
       });
     }
-    buildContainer().then((buildResponse) => {
-      setBuildViewFlag(true);
-      let response = buildResponse?.data;
-      response = JSON.stringify(response);
-      setStartButtonEnabledOrDisabled(true);
-      getStatus("build", promiseResolve, promiseReject);
-    })
+    buildContainer()
+      .then((buildResponse) => {
+        setBuildViewFlag(true);
+        let response = buildResponse?.data;
+        response = JSON.stringify(response);
+        setStartButtonEnabledOrDisabled(true);
+        getStatus("build", promiseResolve, promiseReject);
+      })
       .catch((error) => {
         alert("Some error occured: " + error);
       });
@@ -161,6 +162,18 @@ const ConfigBuild = (props) => {
             ) {
               if (processName.includes("build")) {
                 setBuildStatusText("Error");
+                dispatch({
+                  type: "IMPORT_DISABLED",
+                  payload: {
+                    ImportButtonDisabled: false,
+                  },
+                });
+                dispatch({
+                  type: "DISABLED_SAVE",
+                  payload: {
+                    Disabledsave: false,
+                  },
+                });
                 /* displatch the build completion status*/
                 dispatch({
                   type: "BUILD_FAILED",
@@ -170,8 +183,9 @@ const ConfigBuild = (props) => {
                     BuildErrorMessage: "Error",
                   },
                 });
+                setBuildProgress(49);
+                setStartButtonEnabledOrDisabled(false);
                 clearInterval(interval);
-                setStartButtonEnabledOrDisabled(true);
               }
             } else {
               progressPercentage = progressString.progress;
@@ -185,6 +199,13 @@ const ConfigBuild = (props) => {
               });
               if (progressPercentage == 100) {
                 if (ProcessName.includes("build") && progressString.status == "Success") {
+		  dispatch({
+                    type: "SHOW_BUILD_ALERT",
+                    payload: {
+                      showBuildAlert: true,
+                    },
+                  });
+
                   /* Restart containers so that changes take effect after successfull build */
                   StartContainers("restart").then((containerStart) => {
                     let response = containerStart?.status_info?.status;
@@ -231,21 +252,6 @@ const ConfigBuild = (props) => {
                 clearInterval(interval);
               } else if (progressString.status == "Failed") {
                 setStartButtonEnabledOrDisabled(false);
-                if (processName.includes("build")) {
-                  setBuildStatusText("Error");
-                  /* displatch the build completion status*/
-                  dispatch({
-                    type: "BUILD_FAILED",
-                    payload: {
-                      BuildComplete: false,
-                      BuildError: true,
-                      BuildErrorMessage: "Error",
-                    },
-                  });
-                  clearInterval(interval);
-                }
-                clearInterval(interval);
-                setStartButtonEnabledOrDisabled(true);
               }
             }
           }
@@ -271,16 +277,19 @@ const ConfigBuild = (props) => {
     <div className={`${isActive ? "root" : "root1"}`}>
       {isActive && <div className={classes.divPos}></div>}
       <p className={`titleStyle`}>Build</p>
-      <p className="componentListHelpText" style={{marginBottom:42}}>
+      <p className="componentListHelpText" style={{ marginBottom: 24 }}>
         click on start to build containers
       </p>
 
       <div className={classes.divSpec}>
         <div className={classes.nameFloat}>
-          <p style={{marginBottom: 0}}>Containers:</p>
+          <p style={{ marginBottom: 0 }}>Containers:</p>
         </div>
         <div className={classes.progressFloaat}>
-        <p className={BuildStatusText == "Error" ? "ErrorTextBuild" : ""} style={{textAlign:"center", marginBottom: 0}}>
+          <p
+            className={BuildStatusText == "Error" ? "ErrorTextBuild" : ""}
+            style={{ textAlign: "center", marginBottom: 0 }}
+          >
             {BuildStatusText == "Error"
               ? BuildStatusText
               : BuildProgressPercentage + "%"}
@@ -288,19 +297,25 @@ const ConfigBuild = (props) => {
           <LinearWithValueLabel
             className="progressBarConfig"
             value={BuildProgressPercentage}
-          />          
-        </div>        
+          />
+        </div>
       </div>
       <div className={`${classes.texCenter} startConfig`}>
         <div>
           <button
-            disabled={disableStartButton || isActive || BuildComplete == true || startbutton}
+            disabled={
+              disableStartButton ||
+              isActive ||
+              BuildComplete == true ||
+              startbutton
+            }
             className={"startConfigButton"}
             onClick={startBuild}
             id={
               disableStartButton ||
-                isActive || startbutton ||
-                (BuildComplete == true && BuildError == false)
+              isActive ||
+              startbutton ||
+              (BuildComplete == true && BuildError == false)
                 ? "disableStart"
                 : ""
             }
@@ -319,20 +334,27 @@ const ConfigBuild = (props) => {
           </button>
         </div>
         <div>
-          <button
-            type="submit"
-            className="cancelBtn"
-            id="disableStart"          
-          >
+          <button type="submit" className="cancelBtn" id="disableStart">
             Cancel
           </button>
         </div>
       </div>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} style={{color:"white", backgroundColor:"#0068B5"}} anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}>
-        <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }} style={{color:"white", backgroundColor:"#0068B5"}}>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        style={{ color: "white", backgroundColor: "#0068B5" }}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="info"
+          sx={{ width: "100%" }}
+          style={{ color: "white", backgroundColor: "#0068B5" }}
+        >
           <h5>Connection Lost</h5>
           <p>Connection with the back-end server lost. Try again later.</p>
         </Alert>

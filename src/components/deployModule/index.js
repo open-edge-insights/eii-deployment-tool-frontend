@@ -35,12 +35,15 @@ import { CircularProgress } from "@material-ui/core";
 import cssClasses from "../configureModule/index.module.css";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
+import BuilderApi from "../api/BuilderApi";
+
 
 const Deploy = (props) => {
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
   const [stopContainersInProgress, setStopContainersInProgress] = useState(false);
   const [deployRemoteInProgress, setDeployRemoteInProgress] = useState(false);
   const [progressIndicatorLabel, setprogressIndicatorLabel] = useState("");
+  const [deployDevMode, setDeployDevMode] = useState(false);
   const [open, setOpen] = useState(false);
   
   const handleClose = (event, reason) => {
@@ -69,6 +72,7 @@ const Deploy = (props) => {
   });
   const [updationFlag, setUpdationFlag] = useState(false);
   const deployIn = (e) => {
+    setDeployDevMode(e.target.value==="Dev");
     dispatch({
       type: "DEPLOYMENT_PROGRESS",
       payload: {
@@ -77,6 +81,28 @@ const Deploy = (props) => {
       },
     });
   };
+  const instance_count = useSelector(
+    (state) => state.ConfigureBuildReducer.instance_count
+  );
+  function getServicesToDeploy() {
+    let services = [];
+    let comps = props.stateComponent.components;
+    let nodes = props.stateComponent.selectedComponents.nodes;
+    let includeWV = props.stateComponent.selectedComponents.showWebVisualizer;
+    for (let i = 0; i < nodes.length; i++) {
+      let compName = trimDigits(nodes[i].service);
+      if (isItemFound(services, compName)) continue;
+      for (let j = 0; j < comps.length; j++) {
+        if (
+          compName === comps[j].dirName &&
+          (compName !== "WebVisualizer" || includeWV)
+        ) {
+          services.push(compName);
+        }
+      }
+    }
+    return services;
+  }
   /* Setting the updated target device object parameters */
   const setTargetDeviceValue = (e, key) => {
     let modifiedValue = e.target.value;
@@ -136,7 +162,17 @@ const Deploy = (props) => {
       alert("Please enter a valid IP address");
       return;
     }
-    deployToTargetDeviceFunc();
+    /* set dev/prod mode and then deploy in remote machine*/
+    BuilderApi.builder(
+      getServicesToDeploy(),
+      instance_count,
+      false,
+      deployDevMode,
+      (configresponse, statusresponse) => {
+        if (statusresponse?.data?.status_info.status) {
+          deployToTargetDeviceFunc();
+        }
+      });
   }
   /* Write the deploy to target device funcitonality inside this fun */
   const deployToTargetDeviceFunc = () => {
@@ -231,7 +267,7 @@ const Deploy = (props) => {
   return (
     <div className={cssClasses.root}>
       <div class="row createProjectWrapper">
-        <div className="tabpan">
+        <div className="tabpan" style={{height: "500px"}}>
           <p className="textAlignCenter TestTabSubTitle">
             Data Streams & Components
           </p>
@@ -253,9 +289,9 @@ const Deploy = (props) => {
           <p className="deploymentProgressBarText">{DeployInLocalMachineProgress?"Deploying to localhost" : progressIndicatorLabel}</p>
         </div>
       ) : (
-        <div class="row">
+        <div class="row" style={{paddingTop: "10px"}}>
           <div class="col-sm-12 deploymentscreenOptions" style={{ padding: 0 }}>
-            <div style={{ marginBottom: 10 }} className="col-sm-5">
+            <div style={{ marginBottom: "0px" }} className="col-sm-5">
               <FormControl component="fieldset">
                 <RadioGroup aria-label="quiz" name="quiz" onChange={deployIn}>
                   <div className="TestTabSubTitle bottomPaddingCustom">
@@ -278,13 +314,15 @@ const Deploy = (props) => {
               </FormControl>
             </div>
             <div className=" col-sm-6">
-              <div className="TestTabSubTitle">Deploy in target device</div>
+              <div className="TestTabSubTitle">Deploy in remote machine</div>
+              <div style={{width:"100%", margin:"auto", paddingTop:"15px"}}>
               {Object.keys(targetDeviceObject).map((targetItemKey) => {
                 return (
                   <div className="deployToTargetDevice">
-                    <span className="targetDeviceDeploytextFieldLabel col-sm-3">
-                      {targetDeviceObject[targetItemKey].title}
-                    </span>
+                    <label 
+                      style={{width:"90px"}}>
+                      {targetDeviceObject[targetItemKey].title} 
+                    </label>
                     <TextField
                       type={targetItemKey == "password" ? "password" : "text"}
                       variant="outlined"
@@ -295,6 +333,7 @@ const Deploy = (props) => {
                   </div>
                 );
               })}
+              </div>
               <button
                 className={(targetDeviceObject.ipaddress.value.trim() == "" ||
                 targetDeviceObject.username.value.trim() == "" ||

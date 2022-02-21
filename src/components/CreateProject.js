@@ -22,16 +22,12 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
-import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
-import { Link } from "@material-ui/core";
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepLabel from "@material-ui/core/StepLabel";
 import Configure from "./configureModule";
 import Test from "../components/testModule";
 import Deploy from "../components/deployModule";
@@ -44,7 +40,7 @@ import "./CreateProject.css";
 import ConfirmDialog from "./ConfirmDialog";
 import BuilderApi from "./api/BuilderApi";
 import { StartContainers } from "./api/StartContainers";
-
+import Modal from "./common/modal";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -94,15 +90,14 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 14,
     display: "flex",
     paddingRight: 60,
-    justifyContent: "space-between"
-
+    justifyContent: "space-between",
   },
   paddleft35: {
     paddingLeft: 35,
     paddingTop: 10,
     fontSize: "16px",
     lineHeight: "20px",
-    fontWeight: "normal"
+    fontWeight: "normal",
   },
 }));
 
@@ -110,12 +105,20 @@ const CreateProject = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [deployProgressbar, setShowDeploymentProgress] = useState(false);
   const [deploymentStatusText, setDeploymentStatusText] = useState("");
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
+  const [openAlreadyExistDialog, setOpenAlreadyExistDialog] = useState(false);
+  const [flag, setflag] = useState(false);
+  const [modalContent, setModalContent] = useState(
+    "Are you sure you want to sign out ?"
+  );
+  const [modalTitle, setModalTitle] = useState("Sign out");
+  const [button1Text, setButton1Text] = useState("Cancel");
+  const [button2Text, setButton2Text] = useState("Signout");
+
   const dispatch = useDispatch();
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -153,7 +156,6 @@ const CreateProject = (props) => {
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
     }
-
   };
 
   useEffect(() => {
@@ -173,18 +175,22 @@ const CreateProject = (props) => {
     });
   }, []);
   const logoutFunc = () => {
+    setOpenAlreadyExistDialog(false);
     LogoutFunc.logout(
       (e) => {
         window.location.href = "/";
       },
-      (response) => { }
+      (response) => {}
     );
   };
   const openConfirmDialogFunc = () => {
-    setOpenConfirmDialog(true);
+    setOpenAlreadyExistDialog(true);
+    setflag(!openConfirmDialogFunc);
   };
+
   const closeConfirmDialog = () => {
-    setOpenConfirmDialog(false);
+    setOpenAlreadyExistDialog(false);
+    setflag(!openConfirmDialogFunc);
   };
 
   function isItemFound(arr, item) {
@@ -209,10 +215,12 @@ const CreateProject = (props) => {
     let includeWV = props.stateComponent.selectedComponents.showWebVisualizer;
     for (let i = 0; i < nodes.length; i++) {
       let compName = trimDigits(nodes[i].service);
-      if (isItemFound(services, compName))
-        continue;
+      if (isItemFound(services, compName)) continue;
       for (let j = 0; j < comps.length; j++) {
-        if (compName === comps[j].dirName && (compName !== "WebVisualizer" || includeWV)) {
+        if (
+          compName === comps[j].dirName &&
+          (compName !== "WebVisualizer" || includeWV)
+        ) {
           services.push(compName);
         }
       }
@@ -223,14 +231,13 @@ const CreateProject = (props) => {
   function getStepContent(step) {
     switch (step) {
       case 0:
-        return <Configure />
+        return <Configure />;
       case 1:
-        return <Test />
+        return <Test />;
       case 2:
-        return <Deploy />
+        return <Deploy />;
     }
   }
-
 
   /* Builder and container restart called in sequence */
   const deployLocal = () => {
@@ -250,49 +257,45 @@ const CreateProject = (props) => {
         DeployEnv == "Dev" ? true : false,
         (configresponse, statusresponse) => {
           if (statusresponse?.data?.status_info.status) {
-            StartContainers("restart").then((containerStart) => {
-              let response = containerStart?.status_info?.status;
-              if (response) {
-                dispatch({
-                  type: "DEPLOY_IN_LOCAL_MACHINE_PROGRESS_SUCCESSFUL",
-                  payload: {
-                    DeployInLocalMachineProgress: false,
-                  },
-                });
-                dispatch({
-                  type: "DEPLOYMENT_SUCCESSFUL",
-                  payload: {
-                    DeploymentComplete: true,
-                  },
-                });
-                setDeploymentStatusText(
-                  "Deployment Successful"
-                );
-                setShowDeploymentProgress(false);
-                alert("Deployment to local machine successfull!");
-              } else {
-                dispatch({
-                  type: "DEPLOYMENT_FAILED",
-                  payload: {
-                    DeploymentError: true,
-                    DeploymentErrorMessage:
-                      "Error in deploying",
-                  },
-                });
-                dispatch({
-                  type: "DEPLOY_IN_LOCAL_MACHINE_PROGRESS_FAILED",
-                  payload: {
-                    DeployInLocalMachineProgress: false,
-                  },
-                });
-                setDeploymentStatusText(
-                  "Deployment failed"
-                );
-                setShowDeploymentProgress(false);
-              }
-            })
+            StartContainers("restart")
+              .then((containerStart) => {
+                let response = containerStart?.status_info?.status;
+                if (response) {
+                  dispatch({
+                    type: "DEPLOY_IN_LOCAL_MACHINE_PROGRESS_SUCCESSFUL",
+                    payload: {
+                      DeployInLocalMachineProgress: false,
+                    },
+                  });
+                  dispatch({
+                    type: "DEPLOYMENT_SUCCESSFUL",
+                    payload: {
+                      DeploymentComplete: true,
+                    },
+                  });
+                  setDeploymentStatusText("Deployment Successful");
+                  setShowDeploymentProgress(false);
+                  alert("Deployment to local machine successfull!");
+                } else {
+                  dispatch({
+                    type: "DEPLOYMENT_FAILED",
+                    payload: {
+                      DeploymentError: true,
+                      DeploymentErrorMessage: "Error in deploying",
+                    },
+                  });
+                  dispatch({
+                    type: "DEPLOY_IN_LOCAL_MACHINE_PROGRESS_FAILED",
+                    payload: {
+                      DeployInLocalMachineProgress: false,
+                    },
+                  });
+                  setDeploymentStatusText("Deployment failed");
+                  setShowDeploymentProgress(false);
+                }
+              })
               .catch((error) => {
-                console.log(error)
+                console.log(error);
               });
             //            clearInterval(interval);
           } else {
@@ -305,18 +308,17 @@ const CreateProject = (props) => {
                 DeploymentError: true,
                 DeploymentErrorMessage: "Error in deploying",
               },
-            })
-              .catch((error) => {
-                setDeploymentStatusText("Deployment failed");
-                setShowDeploymentProgress(false);
-                dispatch({
-                  type: "DEPLOYMENT_FAILED",
-                  payload: {
-                    DeploymentError: true,
-                    DeploymentErrorMessage: "Error in deploying",
-                  },
-                });
+            }).catch((error) => {
+              setDeploymentStatusText("Deployment failed");
+              setShowDeploymentProgress(false);
+              dispatch({
+                type: "DEPLOYMENT_FAILED",
+                payload: {
+                  DeploymentError: true,
+                  DeploymentErrorMessage: "Error in deploying",
+                },
               });
+            });
           }
         },
         (response) => {
@@ -335,6 +337,17 @@ const CreateProject = (props) => {
       alert("Please select an environment to deploy");
     }
   };
+  const openCancelProjectModal = () => {
+    setOpenAlreadyExistDialog(true);
+    setModalContent("Are you sure you want to cancel the project?");
+    setModalTitle("Cancel the project");
+    setButton1Text("No");
+    setButton2Text("Yes");
+  };
+  const cancelProjectFunc = () => {
+    window.location.href = "/CreateProject";
+  };
+
   const steps = ["Configure & Build", "Test", "Deploy"];
   return (
     <div className={classes.root}>
@@ -343,6 +356,22 @@ const CreateProject = (props) => {
         <AppBar position="static" color="default">
           <Typography className={classes.header}>
             <div style={{ display: "flex" }}>
+            <div className="confirmationDialogBody" style={{visibility: 'none'}}>
+                <Modal
+                  open={openAlreadyExistDialog}
+                  onClose={closeConfirmDialog}
+                  title={modalTitle}
+                  modalContent={modalContent}
+                  button1Text={button1Text}
+                  button2Text={button2Text}
+                  button2Fn={
+                    modalTitle.includes("Sign out")
+                      ? logoutFunc
+                      : cancelProjectFunc
+                  }
+                  button1Fn={closeConfirmDialog}
+                />
+              </div>
               <div style={{ width: 80, height: 48 }}>
                 <img src={companyLogo} width="75" alt="Intel logo" />
               </div>
@@ -350,7 +379,11 @@ const CreateProject = (props) => {
                 <div className={classes.paddleft35}>EII Deployment Tool</div>
               </div>
             </div>
-            <div className={classes.paddleft35} style={{ cursor: "pointer" }} onClick={openConfirmDialogFunc}>
+            <div
+              className={classes.paddleft35}
+              style={{ cursor: "pointer" }}
+              onClick={openConfirmDialogFunc}
+            >
               Sign out
             </div>
           </Typography>
@@ -358,8 +391,33 @@ const CreateProject = (props) => {
         {props.projectSetup.projectName ? (
           <>
             <div className="projectNameHeader">
-              <div style={{ padding: "32px 0" }}>{props.projectSetup.projectName}</div>
-              <Stepper activeStep={activeStep} style={{ backgroundColor: "transparent", padding: "0px 0px 32px" }}>
+              <div style={{ padding: "32px 0" }}>
+                {props.projectSetup.projectName}
+              </div>
+              <div className="confirmationDialogBody">
+                <Modal
+                  open={openAlreadyExistDialog}
+                  onClose={closeConfirmDialog}
+                  title={modalTitle}
+                  modalContent={modalContent}
+                  button1Text={button1Text}
+                  button2Text={button2Text}
+                  button2Fn={
+                    modalTitle.includes("Sign out")
+                      ? logoutFunc
+                      : cancelProjectFunc
+                  }
+                  button1Fn={closeConfirmDialog}
+                />
+              </div>
+
+              <Stepper
+                activeStep={activeStep}
+                style={{
+                  backgroundColor: "transparent",
+                  padding: "0px 0px 32px",
+                }}
+              >
                 {steps.map((label, index) => {
                   const stepProps = {};
                   const labelProps = {};
@@ -380,16 +438,18 @@ const CreateProject = (props) => {
                 </div>
               ) : (
                 <div>
-                  <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+                  <Typography className={classes.instructions}>
+                    {getStepContent(activeStep)}
+                  </Typography>
                 </div>
               )}
             </div>
-            <div className="row" style={{ margin:0, marginTop: 20 }}>
+            <div className="row" style={{ margin: 0, marginTop: 20 }}>
               <div className="createProjectNextCancelBtnDiv">
                 {props.projectSetup.noOfStreams !== 0 && (
                   <button
                     className="cancelBtn"
-                    onClick={() => window.location.href = "/CreateProject"}
+                    onClick={openCancelProjectModal}
                   >
                     Cancel
                   </button>
@@ -407,9 +467,7 @@ const CreateProject = (props) => {
                 {value == 0 &&
                   props.projectSetup.noOfStreams !== 0 &&
                   DeploymentComplete == false && (
-                    <button
-                      className="nextButtonMainPageDisabled startConfigButton cancelBtn"
-                    >
+                    <button className="nextButtonMainPageDisabled startConfigButton cancelBtn">
                       Back
                     </button>
                   )}
@@ -427,26 +485,29 @@ const CreateProject = (props) => {
                       Next
                     </button>
                   )}
-                  {value == 2 && props.projectSetup.noOfStreams !== 0 && !DeployInLocalMachineProgress && !DeployInRemoteMachine &&(
-                    <button
-                      className={!DeployEnv ? " deployBtnProjectScreen nextButtonMainPageDisabled nextButtonMainPage" : "startConfigButton"}
-                      onClick={deployLocal}
-                      disabled={!DeployEnv }
-                    >
-                      Deploy
-                    </button>
-                  )}
+                  {value == 2 &&
+                    props.projectSetup.noOfStreams !== 0 &&
+                    !DeployInLocalMachineProgress &&
+                    !DeployInRemoteMachine && (
+                      <button
+                        className={
+                          !DeployEnv
+                            ? " deployBtnProjectScreen nextButtonMainPageDisabled nextButtonMainPage"
+                            : "startConfigButton"
+                        }
+                        onClick={deployLocal}
+                        disabled={!DeployEnv}
+                      >
+                        Deploy
+                      </button>
+                    )}
                 </div>
               </div>
             </div>
           </>
-        ) :
-          <Configure />}
-        <ConfirmDialog
-          open={openConfirmDialog}
-          handleCloseDialog={closeConfirmDialog}
-          logout={logoutFunc}
-        />
+        ) : (
+          <Configure />
+        )}
       </>
     </div>
   );

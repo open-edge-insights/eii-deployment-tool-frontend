@@ -54,12 +54,13 @@ import horizontal from "../../images/horizontal.png";
 import vertical from "../../images/vertical.png";
 import LoadCompApi from "../api/LoadCompApi";
 import { useDispatch, useSelector } from "react-redux";
+import Modal from "./../common/modal";
 import {
   getCameraStatus,
   startCamera,
   stopCamera,
 } from "../api/CameraStreamApi";
-import { PROJECT_SELECTION_ACTIVE } from "../../actionTypes/projectSelection";
+
 var timer = null;
 const initialElements = [];
 const layoutedElements = getLayoutedElements(initialElements);
@@ -99,7 +100,20 @@ const ComponentsLayout = (props) => {
   const [executeUdffunc, setexecuteUdf] = useState(false);
   const [progressIndicator, setShowProgress] = useState(false);
   const [cameraSource, setCameraSource] = useState(props.cameraSource);
-
+  const [openAlreadyExistDialog, setOpenAlreadyExistDialog] = useState(false);
+  const [dropFlag, setDropFlag] = useState(false);
+  const [modalContent, setModalContent] = useState(
+    "This component will be removed from the datastream. Do you wish to remove?"
+  );
+  const [modalTitle, setModalTitle] = useState("Remove Data Stream");
+  const [button1Text, setButton1Text] = useState("Yes");
+  const [button2Text, setButton2Text] = useState("No");
+  const [elementsToremoveState, SetElementsToRemove] = useState();
+  const [canEditSettings, setCanEditSettings] = useState(true);
+  const [proceedWithChangeAfterBuildEvent, setProceedChange] = useState();
+  const [clickedFromForm, setClickedFromForm] = useState(false);
+  const [displayBuildAlertFromConfigForm, setDisplayBuildAlertFromConfigForm] =
+    useState(true);
   let currentComponentData = { ...stateComponent };
   const dispatch = useDispatch();
   let promiseResolve;
@@ -111,14 +125,13 @@ const ComponentsLayout = (props) => {
   const BuildProgress = useSelector(
     (state) => state.BuildReducer.BuildProgress
   );
+  const BuildError = useSelector(
+    (state) => state.BuildReducer.BuildError
+  );
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
 
-  useEffect(() => {
-    let imgElem = document.getElementById("cameraPreviewTN");
-    if (imgElem) imgElem.src = cameraSource;
-  }, [cameraSource]);
   /* Modifying the configeration as soon as we get the updated config */
   useEffect(() => {
     let selectedStreamId = props.streamIds;
@@ -198,7 +211,7 @@ const ComponentsLayout = (props) => {
   useEffect(() => {
     var TB = "TB";
     onLayout(TB);
-  }, [props.stateComponent]);
+  }, [props.stateComponent, progressIndicator]);
 
   if (currentComponentData.selectedIndex >= 0)
     currentSelectedComp =
@@ -415,6 +428,16 @@ const ComponentsLayout = (props) => {
   const BuildComplete = useSelector(
     (state) => state.BuildReducer.BuildComplete
   );
+  const showBuildAlert = useSelector(
+    (state) => state.BuildReducer.showBuildAlert
+  );
+  useEffect(() => {
+    if (BuildComplete) {
+      setCanEditSettings(false);
+      setDisplayBuildAlertFromConfigForm(true);
+    }
+  }, [BuildComplete]);
+
   const onConfigOK = (event, data) => {
     if (BuildComplete) {
       dispatch({
@@ -624,12 +647,8 @@ const ComponentsLayout = (props) => {
   }
 
   const onElementsRemove = (elementsToRemove) => {
-    if (BuildProgress > 0 && BuildProgress < 100) {
+    if (BuildProgress > 0 && BuildProgress < 100 && !BuildError) {
       alert("Sorry, you can't delete component when a build is in progress.");
-      handlePaneClick();
-      return false;
-    }
-    if (!window.confirm("Are you sure you want to delete this component?")) {
       handlePaneClick();
       return false;
     }
@@ -1093,6 +1112,18 @@ const ComponentsLayout = (props) => {
   };
 
   const onDragOver = (event) => {
+    setClickedFromForm(false);
+    if (BuildComplete) {
+      setModalContent(
+        "Modifying components require rebuilding containers. Do you wish to proceed?"
+      );
+      setModalTitle("Build Containers");
+      setButton2Text("Proceed");
+      setButton1Text("Cancel");
+
+      setDropFlag(false);
+    }
+
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   };
@@ -1407,10 +1438,19 @@ const ComponentsLayout = (props) => {
     return false;
   }
 
-  const onDrop = (event) => {
-    if (BuildProgress > 0 && BuildProgress < 100) {
+  const onDrop = (event, proceedWithDrop) => {
+    setProceedChange(event);
+    if (proceedWithDrop == undefined && showBuildAlert) {
+      setOpenAlreadyExistDialog(true);
       return;
     }
+
+    setClickedFromForm(false);
+    if (BuildProgress > 0 && BuildProgress < 100 && !BuildError) {
+      alert("Sorry, you can't add a component when build is in progress!");
+      return;
+    }
+
     dispatch({
       type: "START_DISABLED",
       payload: {
@@ -1419,12 +1459,12 @@ const ComponentsLayout = (props) => {
     });
     let services = [];
     let reset = false;
-    event.preventDefault();
     let nInstances = getInstanceCount();
     if (props.name == "WebVisualizer") {
       currentComponentData.selectedComponents.showWebVisualizer = true;
     } else {
       if (
+        proceedWithDrop &&
         nInstances > 1 &&
         (props.name == "OpcuaExport" || props.name == "ImageStore")
       ) {
@@ -1487,6 +1527,73 @@ const ComponentsLayout = (props) => {
   const enableImportBtn = () => {
     props.enableImportBtn &&
       props.enableImportBtn(enableImportButton, NodeSelected, streamCount);
+  };
+  const proceedWithChangeAfterBuildFunc = () => {
+    onDrop(proceedWithChangeAfterBuildEvent, true);
+    setOpenAlreadyExistDialog(false);
+    dispatch({
+      type: "SHOW_BUILD_ALERT",
+      payload: {
+        showBuildAlert: false,
+      },
+    });
+  };
+  const openDialogModal = (elementsToRemove) => {
+    SetElementsToRemove(elementsToRemove);
+    setModalContent(
+      "This component will be removed from the datastream. Do you wish to remove?"
+    );
+    setModalTitle("Remove Data Stream");
+    setButton1Text("Yes");
+    setButton2Text("No");
+    setOpenAlreadyExistDialog(true);
+  };
+  const removeSelectedNode = () => {
+    onElementsRemove(elementsToremoveState);
+    setOpenAlreadyExistDialog(false);
+  };
+  const closeDialogModal = () => {
+    SetElementsToRemove();
+    setOpenAlreadyExistDialog(false);
+  };
+  const configSettingsEdited = (
+    configSettingsEditedFlag,
+    clickedFromConfigFormFlag
+  ) => {
+    dispatch({
+      type: "SHOW_BUILD_ALERT",
+      payload: {
+        showBuildAlert: true,
+      },
+    });
+    setCanEditSettings(configSettingsEditedFlag);
+    setClickedFromForm(clickedFromConfigFormFlag);
+
+    setModalContent(
+      "Modifying components require rebuilding containers. Do you wish to proceed?"
+    );
+    setModalTitle("Build Containers");
+    setButton2Text("Proceed");
+    setButton1Text("Cancel");
+    displayBuildAlertFromConfigForm && setOpenAlreadyExistDialog(true);
+  };
+  const AllowConfigSettingsEdit = () => {
+    setOpenAlreadyExistDialog(false);
+    setDisplayBuildAlertFromConfigForm(false);
+    setCanEditSettings(false);
+    dispatch({
+      type: "SHOW_BUILD_ALERT",
+      payload: {
+        showBuildAlert: false,
+      },
+    });
+    setCanEditSettings(true);
+  };
+  const preventConfigSettingsEdit = () => {
+    setOpenAlreadyExistDialog(false);
+    setDisplayBuildAlertFromConfigForm(true);
+    setCanEditSettings(false);
+    setClickedFromForm(true);
   };
   return (
     <>
@@ -1557,6 +1664,7 @@ const ComponentsLayout = (props) => {
               }
               id="reactflow"
               ref={reactFlowWrapper}
+              style={{ display: progressIndicator && "none" }}
               onContextMenu={(e) => e.preventDefault()}
             >
               <button
@@ -1581,7 +1689,7 @@ const ComponentsLayout = (props) => {
                 selectNodesOnDrag={false}
                 onNodeContextMenu={onContextMenu}
                 onConnect={onConnect}
-                onElementsRemove={onElementsRemove}
+                onElementsRemove={openDialogModal}
                 onLoad={onLoad}
                 onDrop={onDrop}
                 onContextMenu={onDivContextMenu}
@@ -1591,6 +1699,7 @@ const ComponentsLayout = (props) => {
                 style={{ fill: "darkblue", background: "white" }}
                 deleteKeyCode={46}
                 key="edges"
+                hidden={progressIndicator}
                 markerEndId="react-flow__arrowclosed"
                 zoomOnScroll={false}
                 zoomOnDoubleClick={false}
@@ -1598,8 +1707,32 @@ const ComponentsLayout = (props) => {
             </div>
           </ReactFlowProvider>
         </div>
+        <div className="confirmationDialogBody">
+          <Modal
+            open={openAlreadyExistDialog}
+            onClose={closeDialogModal}
+            title={modalTitle}
+            modalContent={modalContent}
+            button1Text={button1Text}
+            button2Text={button2Text}
+            button2Fn={
+              modalTitle.includes("Remove Data Stream")
+                ? closeDialogModal
+                : clickedFromForm
+                ? AllowConfigSettingsEdit
+                : proceedWithChangeAfterBuildFunc
+            }
+            button1Fn={
+              modalTitle.includes("Remove Data Stream")
+                ? removeSelectedNode
+                : clickedFromForm
+                ? preventConfigSettingsEdit
+                : closeDialogModal
+            }
+          />
+        </div>
       </div>
-      {props.displayConfigForm == true &&
+      {props.displayConfigForm &&
       currentSelectedComp &&
       currentSelectedComp.config &&
       open ? (
@@ -1612,6 +1745,8 @@ const ComponentsLayout = (props) => {
             interfaces: currentSelectedComp.interfaces,
           }}
           main_title={currentSelectedComp.data.name}
+          configSettingsEdited={configSettingsEdited}
+          canEditSettings={canEditSettings}
         />
       ) : (
         <div class="sideBare col-sm-4">

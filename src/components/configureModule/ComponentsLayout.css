@@ -111,7 +111,7 @@
 
 .dndflow .reactflow-wrapper {
   flex-grow: 1;
-  height: 89.5%;
+  height: 540px;
 }
 .reactflow-wrapperPaddingRight {
   padding-right: 360px;

@@ -15,9 +15,10 @@
     font-size: 14px;
 }
 .deployToTargetDevice {
-    padding: 10px;
+    padding: 5px;
     padding-left: 0px;
-    padding-top: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .deploymentscreenOptions {
     display: flex;
