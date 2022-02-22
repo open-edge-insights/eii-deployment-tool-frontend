@@ -183,8 +183,14 @@ const CreateProject = (props) => {
       (response) => {}
     );
   };
-  const openConfirmDialogFunc = () => {
-    setOpenAlreadyExistDialog(true);
+  const openConfirmDialogFunc = (e) => {
+    if (e.target.id == "signOut") {
+      setOpenAlreadyExistDialog(true);
+      setModalContent("Are you sure you want to sign out ?");
+      setModalTitle("Sign out");
+      setButton1Text("Cancel");
+      setButton2Text("Signout");
+    }
     setflag(!openConfirmDialogFunc);
   };
 
@@ -356,7 +362,10 @@ const CreateProject = (props) => {
         <AppBar position="static" color="default">
           <Typography className={classes.header}>
             <div style={{ display: "flex" }}>
-            <div className="confirmationDialogBody" style={{visibility: 'none'}}>
+              <div
+                className="confirmationDialogBody"
+                style={{ visibility: "none" }}
+              >
                 <Modal
                   open={openAlreadyExistDialog}
                   onClose={closeConfirmDialog}
@@ -383,6 +392,7 @@ const CreateProject = (props) => {
               className={classes.paddleft35}
               style={{ cursor: "pointer" }}
               onClick={openConfirmDialogFunc}
+              id="signOut"
             >
               Sign out
             </div>
@@ -450,6 +460,7 @@ const CreateProject = (props) => {
                   <button
                     className="cancelBtn"
                     onClick={openCancelProjectModal}
+                    id="cancelProjectDialogButton"
                   >
                     Cancel
                   </button>
