@@ -125,9 +125,7 @@ const ComponentsLayout = (props) => {
   const BuildProgress = useSelector(
     (state) => state.BuildReducer.BuildProgress
   );
-  const BuildError = useSelector(
-    (state) => state.BuildReducer.BuildError
-  );
+  const BuildError = useSelector((state) => state.BuildReducer.BuildError);
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
@@ -1440,7 +1438,7 @@ const ComponentsLayout = (props) => {
 
   const onDrop = (event, proceedWithDrop) => {
     setProceedChange(event);
-    if (proceedWithDrop == undefined && showBuildAlert) {
+    if (proceedWithDrop == undefined && showBuildAlert && BuildComplete) {
       setOpenAlreadyExistDialog(true);
       return;
     }
@@ -1539,14 +1537,20 @@ const ComponentsLayout = (props) => {
     });
   };
   const openDialogModal = (elementsToRemove) => {
-    SetElementsToRemove(elementsToRemove);
-    setModalContent(
-      "This component will be removed from the datastream. Do you wish to remove?"
-    );
-    setModalTitle("Remove Data Stream");
-    setButton1Text("Yes");
-    setButton2Text("No");
-    setOpenAlreadyExistDialog(true);
+    if (BuildProgress > 0 && BuildProgress < 100 && !BuildError) {
+      alert("Sorry, you cannot delete a component when build is in progress!");
+      return;
+    }
+    if(props.displayConfigForm==true){  
+      SetElementsToRemove(elementsToRemove);
+      setModalContent(
+        "This component will be removed from the datastream. Do you wish to remove?"
+      );
+      setModalTitle("Remove Data Stream");
+      setButton1Text("Yes");
+      setButton2Text("No");
+      setOpenAlreadyExistDialog(true);
+    }
   };
   const removeSelectedNode = () => {
     onElementsRemove(elementsToremoveState);
@@ -1575,7 +1579,9 @@ const ComponentsLayout = (props) => {
     setModalTitle("Build Containers");
     setButton2Text("Proceed");
     setButton1Text("Cancel");
-    displayBuildAlertFromConfigForm && setOpenAlreadyExistDialog(true);
+    BuildComplete &&
+      displayBuildAlertFromConfigForm &&
+      setOpenAlreadyExistDialog(true);
   };
   const AllowConfigSettingsEdit = () => {
     setOpenAlreadyExistDialog(false);

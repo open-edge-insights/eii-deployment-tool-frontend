@@ -154,3 +154,7 @@ To deploy in a remote machine, enter the details of the desired machine the fiel
 Please note that remote deployment can take considerable amount of time, depending on the size and number of the container images, and on network conditions. Also, in this version it just copies the images and *eii* build folder to the remote machine - It doesn't run the images over there.
 
 Please note that, once the deployment is triggered or done, user cannot go back to the Test screen or Configure screen. user can either sign out by clicking the *Sign out* button on the top right corner, or he/she can navigate to the *Project selection* screen by clicking the *Cancel* button.
+
+## More information
+
+More info on using EII Deployment Tool can be found at [EII Deployment Tool Wiki](https://gitlab.devtools.intel.com/Indu/edge-insights-industrial/eii-core/-/wikis/EII-WebUI-Deployment-Tool)
