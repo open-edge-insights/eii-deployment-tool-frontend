@@ -30,7 +30,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import { Path } from "history";
 import { useSelector, useDispatch } from "react-redux";
-
+import Modal from "./../common/modal";
 const ComponentList = (props) => {
   const [files, setFiles] = useState([]);
   const [directories, setDirectories] = useState([]);
@@ -41,11 +41,24 @@ const ComponentList = (props) => {
   const [openAlert, setAlertOpen] = useState(false);
   const [AlertMsg, setAlertMsg] = useState("");
   const [UDFConfig, setUDFConfig] = useState();
-
+  const [openAlreadyExistDialog, setOpenAlreadyExistDialog] = useState(false);
+  const [modalContent, setModalContent] = useState(
+    "Modifying components require rebuilding containers. Do you wish to proceed?"
+  );
+  const [modalTitle, setModalTitle] = useState("Build Containers");
+  const [button1Text, setButton1Text] = useState("Proceed");
+  const [button2Text, setButton2Text] = useState("Cancel");
+  const dispatch = useDispatch();
   const ImportButton = useSelector(
     (state) => state.BuildReducer.ImportButtonDisabled
   );
-
+  /* Getting the buildComplete state from redux store */
+  const BuildComplete = useSelector(
+    (state) => state.BuildReducer.BuildComplete
+  );
+  const showBuildAlert = useSelector(
+    (state) => state.BuildReducer.showBuildAlert
+  );
   var Path = require("path");
   useEffect(() => {}, []);
   const onDragStart = (event, dataType, appName) => {
@@ -55,6 +68,13 @@ const ComponentList = (props) => {
   };
   /* Call get files api to display list fo files and directories */
   const importCode = (dirsName) => {
+    setOpenAlreadyExistDialog(false);
+    dispatch({
+      type: "SHOW_BUILD_ALERT",
+      payload: {
+        showBuildAlert: false,
+      },
+    });
     let PathToApi = configPath ? configPath : basePath;
     if (dirsName && typeof dirsName == "string") {
       if (PathToApi[PathToApi.length - 1] == "/")
@@ -65,6 +85,15 @@ const ComponentList = (props) => {
     if (PathToApi.length <= basePath.length) PathToApi = basePath;
     setConfigPath(PathToApi);
     listFilesFunc(PathToApi);
+  };
+  // open build alert dialog
+  const openBuildDialog = () => {
+    if (BuildComplete && showBuildAlert) {
+      setOpenAlreadyExistDialog(true);
+    }
+    else {console.log('in else')
+     importCode();
+    }
   };
   const listFilesFunc = (_path) => {
     setFileName("");
@@ -83,9 +112,6 @@ const ComponentList = (props) => {
   };
   const closeDialog = () => {
     setDialogOpen(false);
-    setFileName("");
-    setUDFConfig("");
-    setFileName("");
   };
   /* Back to the root directory */
   const backToBaseURL = () => {
@@ -126,6 +152,9 @@ const ComponentList = (props) => {
     setAlertOpen(false);
     setAlertMsg("");
   };
+  const closeDialogModal = () => {
+    setOpenAlreadyExistDialog(false);
+  };
   const isActive = props?.projectSetup?.noOfStreams === 0;
   return (
     !isActive && (
@@ -165,11 +194,22 @@ const ComponentList = (props) => {
                 ? "disableImportBtn"
                 : "importCodeBtn"
             }
-            onClick={importCode}
-            disabled={isActive || !props.isImportBtnActive|| ImportButton}
-          >
-            Import UDF
+            onClick={openBuildDialog}
+            disabled={isActive || !props.isImportBtnActive || ImportButton}
+          >            Import UDF
           </button>
+        </div>
+        <div className="confirmationDialogBody">
+          <Modal
+            open={openAlreadyExistDialog}
+            onClose={closeDialogModal}
+            title={modalTitle}
+            modalContent={modalContent}
+            button1Text={button1Text}
+            button2Text={button2Text}
+            button2Fn={closeDialogModal}
+            button1Fn={importCode}
+          />
         </div>
         <ImportCodeDialog
           files={files}
