@@ -62,7 +62,7 @@ export var ConfigForm = (props) => {
         },
       });
     }
-    if (props.canEditSettings) {
+    if (props.canEditSettings || !(BuildProgress > 0 && BuildProgress < 100 && !BuildError)) {
       setJSONdata(e);
       dispatch({
         type: "DISABLED_SAVE",
@@ -76,6 +76,7 @@ export var ConfigForm = (props) => {
   const showBuildAlert = useSelector(
     (state) => state.BuildReducer.showBuildAlert
   );
+ 
   const openAlertModal = () => {
     if (props.canEditSettings) {
       props.configSettingsEdited(false, true);

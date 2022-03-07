@@ -129,6 +129,7 @@ Here, the user selected/created use case layout is shown.
 Please note that, by default use cases are created in VI-VA pair, for each stream/instance. User can add more streams by dragging and dropping either VI or VA from the component list in the left pane, to the component layout area. Please note that, in this case as well, the new stream added as a VI-VA pair.
 The behavior is same when the user removes a VI/VA component. To remove a component, click to select it and then press the 'DEL' key on the keyboard.
 If the user only wants VI (and not VA) in the use case, user can remove all the VI/VA streams from the component layout, and then drag and drop VI component from the left pane. However, the VI only use case is not fully supported by the tool as of now.
+Also note that, in the current version, when the user deletes a stream, only the last stream gets deleted, irrespective of the stream user has selected. This is due to a limitation in the platform.
 
 User can modify the component settings in Config screen and appears in the right pane (labelled as Settings) when the user clicks to select it. After making modifications, user must click the *Save* button to save the changes.
 

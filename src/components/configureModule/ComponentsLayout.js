@@ -129,6 +129,8 @@ const ComponentsLayout = (props) => {
   const BuildError = useSelector((state) => state.BuildReducer.BuildError);
   useEffect(() => {
     setStateComponent(props.stateComponent);
+    var TB = "TB";
+    onLayout(TB);
   }, [props.stateComponent]);
 
   const MAX_ALLOWED_INSTANCES = 6;
@@ -192,11 +194,17 @@ const ComponentsLayout = (props) => {
                     (response) => {
                     }
                   );
-
+                    setCanEditSettings(true);
                   dispatch({
                     type: "IMPORT_DISABLED",
                     payload: {
                       ImportButtonDisabled: true,
+                    },
+                  });
+                  dispatch({
+                    type: "DISABLED_SAVE",
+                    payload: {
+                      Disabledsave: false,
                     },
                   });
                   duplicateUdfFlag = true;
@@ -240,14 +248,6 @@ const ComponentsLayout = (props) => {
       reactFlowInstance.fitView();
     }
   }, [reactFlowInstance, elements]);
-
-  useEffect(() => {
-    var TB = "TB";
-    let timer = setInterval(()=> {
-        clearInterval(timer);
-        onLayout(TB);
-    }, 0);
-  }, [props.stateComponent]);
 
   if (currentComponentData.selectedIndex >= 0)
     currentSelectedComp =
