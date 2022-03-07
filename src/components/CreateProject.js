@@ -402,7 +402,7 @@ const CreateProject = (props) => {
                 <img src={companyLogo} width="75" alt="Intel logo" />
               </div>
               <div style={{ width: 194 }}>
-                <div className={classes.paddleft35}>EII Deployment Tool</div>
+                <div className={classes.paddleft35}>Web Deployment Tool</div>
               </div>
             </div>
             <div

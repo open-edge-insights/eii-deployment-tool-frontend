@@ -65,24 +65,6 @@
       $ ./run.sh -d
       ```
 
-    * **To connect to the backend running on a different machine/port:**
-	
-        To run frontend and backend on different machines and/or ports, update the following env variables appropriately, in docker-compose.yml
-
-        ```
-        DEPLOYMENT_TOOL_BACKEND_PORT: 5100
-        DEPLOYMENT_TOOL_BACKEND_HOST: ${HOST_IP}
-        WEB_VISUALIZER_DEV_PORT: 5001
-        WEB_VISUALIZER_HOST: ${HOST_IP}
-        PORT: 3100
-        ```
-        Also, make sure to update the following if needed:
-        ```
-        no_proxy: ${eii_no_proxy},${HOST_IP}
-        NO_PROXY: ${eii_no_proxy},${HOST_IP}
-        ```
-        and that both machines belongs to the same domain.
-        
     * **Launching the UI:**
 
         To launch the UI, open your browser and navigate to http(s)://\<host-ip\>:\<host-port\>
@@ -156,6 +138,21 @@ Please note that remote deployment can take considerable amount of time, dependi
 
 Please note that, once the deployment is triggered or done, user cannot go back to the Test screen or Configure screen. user can either sign out by clicking the *Sign out* button on the top right corner, or he/she can navigate to the *Project selection* screen by clicking the *Cancel* button.
 
-## More information
+To bring up the containers in the remote machine, wait till the deployment is completed, login to remote machine and cd to the build directory under the directory which was specified while deploying.
 
-More info on using EII Deployment Tool can be found at [EII Deployment Tool Wiki](https://gitlab.devtools.intel.com/Indu/edge-insights-industrial/eii-core/-/wikis/EII-WebUI-Deployment-Tool)
+Then run:
+
+```shell
+./source.sh
+./eii_start.sh
+```
+
+## Notes
+
+- When built and run on a fresh machine, it could take several minutes for the front end to come up.
+- The current version of Web Deployment Tool doesn't fully support running backend and frontend containers in different machines.
+- Currently only Chrome browser is supported
+- Only python UDFs are allowed to import
+- Camera configuration is supported only for USB cameras
+- Additional configuration needed, if any for other camera devices, should be done manually
+- The tool support a max of 6 streams/instances

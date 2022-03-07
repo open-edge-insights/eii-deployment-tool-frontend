@@ -28,7 +28,7 @@ const NewLoginScreen = (props) => {
         <div className="MainLoginDiv">
           <p className="NewLoginScreenTitle">Edge Insights for Industrial</p>
           <p className="NewLoginScreenWelcomeText">
-            Welcome to the Edge Insights for Industrial (EII) Deployment tool.
+            Welcome to the Web Deployment tool.
             This tool will guide you through the process of configuring,
             testing, and deploying your solution for your project.
           </p>

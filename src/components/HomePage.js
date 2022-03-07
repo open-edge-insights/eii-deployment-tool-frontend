@@ -73,7 +73,7 @@ const HomePage = ()=>{
         <Divider />
       <Container maxWidth="md" >
         <Typography component="div" style={{textalign: 'center',marginBottom:'40px'}} >
-            Welcome to the Edge Insights for Industrial (EII) Deployment Tool. This tool will guide you through the process of configuring, provisioning, debugging and deploying your application for your project.
+            Welcome to the Web Deployment Tool. This tool will guide you through the process of configuring, provisioning, debugging and deploying your application for your project.
         </Typography>
         <Typography component="div" style={{ border: '1px solid',marginBottom:'40px'}} >
         <List component="nav" aria-label="secondary mailbox folders">

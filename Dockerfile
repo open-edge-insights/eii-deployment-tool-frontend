@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Dockerfile for EII Web UI Deplyment Tool Front-end
+# Dockerfile for Web Deployment Tool Front-end
 
 ARG EII_VERSION
 ARG EII_UID
@@ -26,7 +26,7 @@ ARG EII_USER_NAME
 ARG UBUNTU_IMAGE_VERSION
 FROM ubuntu:$UBUNTU_IMAGE_VERSION as runtime
 
-LABEL description="EII Web UI Deployment Tool Front-end Image"
+LABEL description="Web Deployment Tool Front-end Image"
 
 
 WORKDIR /app
