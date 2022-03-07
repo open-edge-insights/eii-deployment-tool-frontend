@@ -199,7 +199,7 @@ const ConfigBuild = (props) => {
               });
               if (progressPercentage == 100) {
                 if (ProcessName.includes("build") && progressString.status == "Success") {
-		  dispatch({
+                  dispatch({
                     type: "SHOW_BUILD_ALERT",
                     payload: {
                       showBuildAlert: true,
@@ -244,9 +244,24 @@ const ConfigBuild = (props) => {
                           BuildErrorMessage: "Error",
                         },
                       });
-                      setBuildProgress(0);
-                      setStartButtonEnabledOrDisabled(true);
+                      setBuildProgress(99);
+                      setBuildStatusText("Failed");
+                      dispatch({
+                        type: "IMPORT_DISABLED",
+                        payload: {
+                          ImportButtonDisabled: false,
+                        },
+                      });
+                      dispatch({
+                        type: "DISABLED_SAVE",
+                        payload: {
+                          Disabledsave: false,
+                        },
+                      });
+                      setStartButtonEnabledOrDisabled(false);
+                      clearInterval(interval);
                     }
+                  
                   });
                 }
                 clearInterval(interval);
@@ -287,10 +302,10 @@ const ConfigBuild = (props) => {
         </div>
         <div className={classes.progressFloaat}>
           <p
-            className={BuildStatusText == "Error" ? "ErrorTextBuild" : ""}
+            className={(BuildStatusText == "Error") ||(BuildStatusText == "Failed") ? "ErrorTextBuild" : ""}
             style={{ textAlign: "center", marginBottom: 0 }}
           >
-            {BuildStatusText == "Error"
+            {(BuildStatusText == "Error") ||(BuildStatusText == "Failed")
               ? BuildStatusText
               : BuildProgressPercentage + "%"}
           </p>

@@ -28,6 +28,7 @@ cp /files/package.json .
 npm config set update-notifier false
 npm install
 echo "REACT_APP_"$(env | grep 'EII_VERSION') > /app/.env
+echo "REACT_APP_"$(env | grep 'DOCKER_REGISTRY') >> /app/.env
 if [ "$dev_mode" != "true" ]; then
     CHOKIDAR_USEPOLLING=true HTTPS=true SSL_CRT_FILE=/run/secrets/cert SSL_KEY_FILE=/run/secrets/key npm start
 else

@@ -45,7 +45,13 @@ export var ConfigForm = (props) => {
     var NEW_DATA = _.cloneDeep(DB);
     setData({ ...NEW_DATA });
   }, [DB]);
-
+  const BuildComplete = useSelector(
+    (state) => state.BuildReducer.BuildComplete
+  );
+  const BuildProgress = useSelector(
+    (state) => state.BuildReducer.BuildProgress
+  );
+  const BuildError = useSelector((state) => state.BuildReducer.BuildError);
   const handleJSONChange = (e) => {
     if (BuildComplete && props.canEditSettings) {
       setJSONdata(e);
@@ -56,20 +62,28 @@ export var ConfigForm = (props) => {
         },
       });
     }
+    if (props.canEditSettings) {
+      setJSONdata(e);
+      dispatch({
+        type: "DISABLED_SAVE",
+        payload: {
+          Disabledsave: false,
+        },
+      });
+    }
   };
   const Disabledsave = useSelector((state) => state.BuildReducer.Disabledsave);
   const showBuildAlert = useSelector(
     (state) => state.BuildReducer.showBuildAlert
   );
-  const BuildComplete = true;
-  const openAlertModal = () => {console.log(showBuildAlert,"in config form")
-      if (props.canEditSettings) {
-        props.configSettingsEdited(false, true);
-      } else if (!props.canEditSettings) {
-        props.configSettingsEdited(true, true);
-      } else if (BuildComplete) {
-        props.configSettingsEdited(true, true);
-      }
+  const openAlertModal = () => {
+    if (props.canEditSettings) {
+      props.configSettingsEdited(false, true);
+    } else if (!props.canEditSettings) {
+      props.configSettingsEdited(true, true);
+    } else if (BuildComplete) {
+      props.configSettingsEdited(true, true);
+    }
   };
   return (
     <div className="sideBare col-sm-4">
@@ -85,7 +99,9 @@ export var ConfigForm = (props) => {
           <h5>{main_title} Configuration</h5>
           <Button
             disabled={
-              Object.keys(jsonEditeddata).length == 0 || Disabledsave
+              Object.keys(jsonEditeddata).length == 0 ||
+              Disabledsave ||
+              (BuildProgress > 0 && BuildProgress < 100 && !BuildError)
                 ? "disabledsavebtn"
                 : ""
             }

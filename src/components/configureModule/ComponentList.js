@@ -48,6 +48,8 @@ const ComponentList = (props) => {
   const [modalTitle, setModalTitle] = useState("Build Containers");
   const [button1Text, setButton1Text] = useState("Proceed");
   const [button2Text, setButton2Text] = useState("Cancel");
+  const[displayBuildAlertLocally, setDisplayBuildAlert] = useState(true);
+
   const dispatch = useDispatch();
   const ImportButton = useSelector(
     (state) => state.BuildReducer.ImportButtonDisabled
@@ -69,12 +71,7 @@ const ComponentList = (props) => {
   /* Call get files api to display list fo files and directories */
   const importCode = (dirsName) => {
     setOpenAlreadyExistDialog(false);
-    dispatch({
-      type: "SHOW_BUILD_ALERT",
-      payload: {
-        showBuildAlert: false,
-      },
-    });
+    setDisplayBuildAlert(false);
     let PathToApi = configPath ? configPath : basePath;
     if (dirsName && typeof dirsName == "string") {
       if (PathToApi[PathToApi.length - 1] == "/")
@@ -88,10 +85,10 @@ const ComponentList = (props) => {
   };
   // open build alert dialog
   const openBuildDialog = () => {
-    if (BuildComplete && showBuildAlert) {
+    if (BuildComplete && showBuildAlert && displayBuildAlertLocally) {
       setOpenAlreadyExistDialog(true);
     }
-    else {console.log('in else')
+    else {
      importCode();
     }
   };
@@ -112,6 +109,7 @@ const ComponentList = (props) => {
   };
   const closeDialog = () => {
     setDialogOpen(false);
+    props.udfConfig(undefined, []);
   };
   /* Back to the root directory */
   const backToBaseURL = () => {
@@ -120,6 +118,17 @@ const ComponentList = (props) => {
   };
   /* Generate UDF config for the selected file */
   const generateUDFConfigFunc = (streamIds) => {
+    if(streamIds?.length > 0) {
+    if (BuildComplete) {
+      dispatch({
+        type: "BUILD_COMPLETE",
+        payload: {
+          BuildComplete: false,
+          BuildError: false,
+          BuildErrorMessage: "",
+        },
+      });
+    }
     if (SelectedFileForConfig && props && props.NodeSelected) {
       let fileName = SelectedFileForConfig;
       setDialogOpen(false);
@@ -138,9 +147,11 @@ const ComponentList = (props) => {
         });
     } else {
       alert("Please select a file to proceed");
-      setAlertOpen(true);
-      setAlertMsg("Please select a file to proceed");
-    }
+         }
+  }
+  else {
+    alert("Please select the options to proceed")
+  }
   };
   const selectTheFileToGenerateConfig = (fileName) => {
     let SelectedFile = fileName;

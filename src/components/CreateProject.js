@@ -161,7 +161,24 @@ const CreateProject = (props) => {
   useEffect(() => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
-
+  useEffect(() => {
+    if(value!=2){
+      dispatch({
+        type: "DEPLOYMENT_PROGRESS",
+        payload: {
+          DeployInDevOrProd: false,
+        }
+      });
+      if(!DeployEnv){
+        dispatch({
+          type: "DEPLOYMENT_PROGRESS",
+          payload: {
+            DeployInDevOrProd: true,
+          }
+        });
+      }
+    }
+  },[value]);
   useEffect(() => {
     setValue(props.currentTabCount);
   }, [props.currentTabCount]);
@@ -502,7 +519,7 @@ const CreateProject = (props) => {
                     !DeployInRemoteMachine && (
                       <button
                         className={
-                          !DeployEnv
+                          !DeployEnv 
                             ? " deployBtnProjectScreen nextButtonMainPageDisabled nextButtonMainPage"
                             : "startConfigButton"
                         }

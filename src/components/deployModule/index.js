@@ -43,7 +43,7 @@ const Deploy = (props) => {
   const [stopContainersInProgress, setStopContainersInProgress] = useState(false);
   const [deployRemoteInProgress, setDeployRemoteInProgress] = useState(false);
   const [progressIndicatorLabel, setprogressIndicatorLabel] = useState("");
-  const [deployDevMode, setDeployDevMode] = useState(false);
+  const [deployDevMode, setDeployDevMode] = useState(null);
   const [open, setOpen] = useState(false);
   
   const handleClose = (event, reason) => {
@@ -137,7 +137,7 @@ const Deploy = (props) => {
       let compName = trimDigits(nodes[i].service);
       for (let j = 0; j < comps.length; j++) {
         if (compName == comps[j].dirName && (compName != "WebVisualizer" || includeWV)) {
-          let image = "openedgeinsights/" + comps[j].containerName + ":" + 
+          let image =  process.env.REACT_APP_DOCKER_REGISTRY + "openedgeinsights/" + comps[j].containerName + ":" + 
             process.env.REACT_APP_EII_VERSION;
           if(!isItemFound(images, image))
             images.push(image);
@@ -145,10 +145,8 @@ const Deploy = (props) => {
       }
     }
     // Include default images
-    images.push(
-      "openedgeinsights/ia_etcd_ui:" + process.env.REACT_APP_EII_VERSION
-    );
-    images.push("ia_configmgr_agent:" + process.env.REACT_APP_EII_VERSION);
+    images.push(process.env.REACT_APP_DOCKER_REGISTRY + "openedgeinsights/ia_etcd_ui:" + process.env.REACT_APP_EII_VERSION);
+    images.push( process.env.REACT_APP_DOCKER_REGISTRY + "ia_configmgr_agent:" + process.env.REACT_APP_EII_VERSION);
     return images;
   }
   function ValidateIPaddress(ipaddress) {
@@ -338,7 +336,8 @@ const Deploy = (props) => {
                 className={(targetDeviceObject.ipaddress.value.trim() == "" ||
                 targetDeviceObject.username.value.trim() == "" ||
                 targetDeviceObject.password.value.trim() == "" ||
-                targetDeviceObject.directory.value.trim() == "")?"nextButtonMainPageDisabled nextButtonMainPage deployToTargetDeviceBtn ":" nextButtonMainPage deployToTargetDeviceBtn"}
+                targetDeviceObject.directory.value.trim() == "" || 
+                deployDevMode == null)?"nextButtonMainPageDisabled nextButtonMainPage deployToTargetDeviceBtn ":" nextButtonMainPage deployToTargetDeviceBtn"}
                 onClick={onDeployToTargetDevice}
                 disabled={(targetDeviceObject.ipaddress.value.trim() == "" ||
                 targetDeviceObject.username.value.trim() == "" ||

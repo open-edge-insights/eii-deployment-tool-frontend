@@ -114,6 +114,7 @@ const ComponentsLayout = (props) => {
   const [clickedFromForm, setClickedFromForm] = useState(false);
   const [displayBuildAlertFromConfigForm, setDisplayBuildAlertFromConfigForm] =
     useState(true);
+    const[mpFlag, setmpFlag] = useState(false);
   let currentComponentData = { ...stateComponent };
   const dispatch = useDispatch();
   let promiseResolve;
@@ -130,6 +131,7 @@ const ComponentsLayout = (props) => {
     setStateComponent(props.stateComponent);
   }, [props.stateComponent]);
 
+  const MAX_ALLOWED_INSTANCES = 6;
   /* Modifying the configeration as soon as we get the updated config */
   useEffect(() => {
     let selectedStreamId = props.streamIds;
@@ -158,14 +160,47 @@ const ComponentsLayout = (props) => {
         (e) => {
           var previousConfig = e && e.data;
           previousConfig && Object.assign(previousConfig[selectedNodeLabel]);
-          if (props.updatedConfig) {
+          if (props.updatedConfig && duplicateUdfFlag == false) {
             for (let key in previousConfig) {
               let udfsExisting = previousConfig[key].config.udfs;
               for (let itemKey in udfsExisting) {
                 /* Check of the user is trying to import already exisiting udf */
                 if (udfsExisting[itemKey].name == selectedUdfName) {
                   alert("Duplicate udf cannot be added");
+                  LoadCompApi.get(
+                    props?.projectSetup?.projectName,
+                    (response) => {
+                      let config = response;
+                      removeAllNodes();
+                      if (DT_CONFIG_KEY in config) {
+                        currentComponentData.selectedComponents.showWebVisualizer =
+                          config[DT_CONFIG_KEY]?.show_wv == false
+                            ? false
+                            : true;
+                        delete config[DT_CONFIG_KEY];
+                      }
+                      Object.keys(config).forEach(function (key, index) {
+                        parseSelectedComponent(getComponentName(key), config);
+                      });
+                      let c = currentComponentData.selectedComponents.nodes;
+                      let services = [];
+                      for (let i = 0; i < c.length; i++) {
+                        services.push(c[i].dirName);
+                      }
+                      reloadAndRenderComponents(false, services);
+                    },
+                    (response) => {
+                    }
+                  );
+
+                  dispatch({
+                    type: "IMPORT_DISABLED",
+                    payload: {
+                      ImportButtonDisabled: true,
+                    },
+                  });
                   duplicateUdfFlag = true;
+                  setmpFlag(!mpFlag)
                   break;
                 }
               }
@@ -198,7 +233,7 @@ const ComponentsLayout = (props) => {
         },
         (response) => {}
       );
-  }, [props.streamIds]);
+  }, [props.streamIds && props.updatedConfig]);
 
   useEffect(() => {
     if (reactFlowInstance && elements.length) {
@@ -208,8 +243,11 @@ const ComponentsLayout = (props) => {
 
   useEffect(() => {
     var TB = "TB";
-    onLayout(TB);
-  }, [props.stateComponent, progressIndicator]);
+    let timer = setInterval(()=> {
+        clearInterval(timer);
+        onLayout(TB);
+    }, 0);
+  }, [props.stateComponent]);
 
   if (currentComponentData.selectedIndex >= 0)
     currentSelectedComp =
@@ -374,6 +412,12 @@ const ComponentsLayout = (props) => {
   }
 
   const handleElementClick = (event, data) => {
+    dispatch({
+      type: "IMPORT_DISABLED",
+      payload: {
+        ImportButtonDisabled: false,
+      },
+    });
     if (getComponentById(data.id) == null) {
       setNodeSelected(null);
       setImportBtnActive(false);
@@ -429,13 +473,7 @@ const ComponentsLayout = (props) => {
   const showBuildAlert = useSelector(
     (state) => state.BuildReducer.showBuildAlert
   );
-  useEffect(() => {
-    if (BuildComplete) {
-      setCanEditSettings(false);
-      setDisplayBuildAlertFromConfigForm(true);
-    }
-  }, [BuildComplete]);
-
+  
   const onConfigOK = (event, data) => {
     if (BuildComplete) {
       dispatch({
@@ -1442,7 +1480,6 @@ const ComponentsLayout = (props) => {
       setOpenAlreadyExistDialog(true);
       return;
     }
-
     setClickedFromForm(false);
     if (BuildProgress > 0 && BuildProgress < 100 && !BuildError) {
       alert("Sorry, you can't add a component when build is in progress!");
@@ -1462,8 +1499,8 @@ const ComponentsLayout = (props) => {
       currentComponentData.selectedComponents.showWebVisualizer = true;
     } else {
       if (
-        proceedWithDrop &&
         nInstances > 1 &&
+        !proceedWithDrop &&
         (props.name == "OpcuaExport" || props.name == "ImageStore")
       ) {
         alert(
@@ -1501,6 +1538,9 @@ const ComponentsLayout = (props) => {
             reset = true;
           }
         }
+      } else if (nInstances == MAX_ALLOWED_INSTANCES) {
+        alert("Sorry, a maximum of " + MAX_ALLOWED_INSTANCES + " instances are allowed!");
+        return;
       }
       services.push(props.name);
     }
@@ -1541,7 +1581,7 @@ const ComponentsLayout = (props) => {
       alert("Sorry, you cannot delete a component when build is in progress!");
       return;
     }
-    if(props.displayConfigForm==true){  
+    if (props.displayConfigForm == true) {
       SetElementsToRemove(elementsToRemove);
       setModalContent(
         "This component will be removed from the datastream. Do you wish to remove?"
@@ -1584,16 +1624,16 @@ const ComponentsLayout = (props) => {
       setOpenAlreadyExistDialog(true);
   };
   const AllowConfigSettingsEdit = () => {
+    setCanEditSettings(true);
     setOpenAlreadyExistDialog(false);
     setDisplayBuildAlertFromConfigForm(false);
-    setCanEditSettings(false);
     dispatch({
       type: "SHOW_BUILD_ALERT",
       payload: {
         showBuildAlert: false,
       },
     });
-    setCanEditSettings(true);
+    setmpFlag(!mpFlag)
   };
   const preventConfigSettingsEdit = () => {
     setOpenAlreadyExistDialog(false);
@@ -1605,7 +1645,11 @@ const ComponentsLayout = (props) => {
     <>
       {enableImportBtn()}
 
-      <div className="dndflow layoutflow col-sm-8">
+      <div
+        className={`dndflow layoutflow ${
+          props.displayConfigForm == true ? "col-sm-8" : "col-sm-12"
+        }`}
+      >
         <Snackbar
           className="width100"
           open={alertConfig}
