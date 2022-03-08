@@ -420,7 +420,7 @@ const ComponentsLayout = (props) => {
     dispatch({
       type: "IMPORT_DISABLED",
       payload: {
-        ImportButtonDisabled: false,
+        ImportButtonDisabled: (!BuildError && (BuildProgress > 0 && BuildProgress < 100)),
       },
     });
     if (getComponentById(data.id) == null) {
@@ -1535,7 +1535,7 @@ const ComponentsLayout = (props) => {
               window.confirm(
                 "Switching to multi-instance.\n" +
                   "Components will be reset and all settings applied to them " +
-                  "will be lost.\n\nAre you sure you want to contnue?"
+                  "will be lost.\n\nAre you sure you want to continue?"
               ) == false
             ) {
               return;
