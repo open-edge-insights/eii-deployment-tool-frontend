@@ -165,6 +165,9 @@ const ComponentsLayout = (props) => {
           if (props.updatedConfig && duplicateUdfFlag == false) {
             for (let key in previousConfig) {
               let udfsExisting = previousConfig[key].config.udfs;
+              if (previousConfig[key].config.udfs == undefined) {
+                udfsExisting = previousConfig[key].config["udfs"] = [];
+              }
               for (let itemKey in udfsExisting) {
                 /* Check of the user is trying to import already exisiting udf */
                 if (udfsExisting[itemKey].name == selectedUdfName) {
@@ -346,9 +349,11 @@ const ComponentsLayout = (props) => {
               saveProject();
               setAlertConfig(true);
             } else {
-              alert(
+              stat = false;
+              setAlertConfigInvalid(true);
+              console.log(
                 "Failed to update config. Reason: " +
-                  data.status_info.error_detail
+                 data.status_info.error_detail
               );
             }
             refreshComponentLabel(currentSelectedComp);
