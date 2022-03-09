@@ -1,158 +1,180 @@
-**Contents**
+# Contents
 
-# Running Deployment tool front end
+## Web Deployment Tool front end
+
+The Web Deployment Tool provides a graphical user interface to configure and deploy single and multiple video streams. The following sections provide details for the prerequisites and configuration for the Web GUI Deployment tool front end.
+
+>**Note:** In this document, you will find labels of 'Edge Insights for Industrial (EII)' for filenames, paths, code snippets, and so on. Consider the references of EII as Open Edge Insights (OEI). This is due to the product name change of EII as OEI.
+> To learn more about the back end of the Web Deployment Tool, refer to the [ReadMe](https://gitlab.devtools.intel.com/Indu/edge-insights-industrial/eii-deployment-tool-backend/-/blob/master/README.md).
+> The current version of the Web Deployment Tool doesn't fully support running back end and front end containers on different machines.
 
 ## Prerequisites
 
-> - Please ensure that all the pre-requisites needed for EII are installed. Please refer to [EII README](https://github.com/open-edge-insights/eii-core/blob/master/README.md) for more details.
-> - Please follow [pre-requisites for video accelerators](https://github.com/open-edge-insights/eii-core#using-video-accelerators-in-ingestionanalytics-containers) and [pre-requisities for cameras](https://github.com/open-edge-insights/video-ingestion#camera-configuration) before trying to change the config through the deployment tool front end
+Complete the following prerequisites before using the Web Deployment tool:
+
+- Install the prerequisites for running OEI. For more details, refer to the [OEI ReadMe](https://github.com/open-edge-insights/eii-core/blob/master/README.md).
+- [Prerequisites for video accelerators](https://github.com/open-edge-insights/eii-core#using-video-accelerators-in-ingestionanalytics-containers)
+- [Prerequisites for cameras](https://github.com/open-edge-insights/video-ingestion#camera-configuration)
 
 ## Configuration
 
-  * The frontend server will run on the port defined at the env variable PORT in docker-compose.yml.
-  * The frontend server will run in dev mode (http/insecure) or prod mode (https/secure) depending on the env variable 'dev_mode' in docker-compose.yml.
-    By default prod mode is enabled.
+The front-end server runs on the port value that you enter for the env variable `PORT` in the `docker-compose.yml` file. Based on the value for the env variable `dev_mode` in the `docker-compose.yml` file, the front-end server will run in the `DEV mode` (http/insecure) or the `PROD mode` (https/secure). By default the PROD mode is enabled. The following code snippet shows the default value for the env variable `env_mode`:
 
-    ```
-    dev_mode: "false"
-    ```
+```sh
+dev_mode: "false"
+```
 
-## Running the tool
+## Run the Web Deployment Tool front end
 
-  * **Steps to run the tool**
+This section provides details for running the Web Deployment Tool for various scenarios.
 
-    * **To simply run the container (without building)**:
+### Run the container without building
 
-      ```shell
-      $ cd [WORKDIR]/IEdgeInsights/DeploymentToolFrontend
-      $ ./run.sh
-      ```
+To run the container without building it, run the following commands:
 
-    * **To build and run**:
-      ```shell
-      $ ./run.sh --build
-      ```
-       or
-      ```shell
-      $ ./run.sh -b
-      ```
+ ```shell
+ cd [WORKDIR]/IEdgeInsights/DeploymentToolFrontend
+ ./run.sh
+ ```
 
-      To build & run with --no-cache or to provide any other build argument, just append the same after the above commands.
+### Build and run container
 
-      for e.g.
-
-      ```shell
-      $ ./run.sh --build --no-cache
-      ```
-
-    * **To restart the container:**
-
-      ```shell
-      $ ./run.sh --restart
-      ```
-       or
-      ```shell
-      $ ./run.sh -r
-      ```
-
-    * **To bring down the container:**
-
-      ```shell
-      $ ./run.sh --down
-      ```
-       or
-      ```shell
-      $ ./run.sh -d
-      ```
-
-    * **Launching the UI:**
-
-        To launch the UI, open your browser and navigate to http(s)://\<host-ip\>:\<host-port\>
-
-        For e.g.
-        ```
-        https://127.0.0.1:3100
-        ```
-        when in prod mode, or
-        ```
-        http://127.0.0.1:3100
-        ```
-        when in dev mode.
-
-        To login to the tool, use the credentials provided in the creds.json under DeploymentToolBackend repo. Please go through the README under this repo for more details.
-
-## Using the tool
-
-Once the ./run.sh is run, wait for 30 seconds or so for the frontend server to come up. If it's the first time you are running the tool, you might need to wait several minutes. To know whether the frontend has actually come up you may check the logs in *deployment_tool_frontend* container using the following command:
+To build and run the container, run any of the following commands:
 
 ```shell
-$ docker logs -f deployment_tool_frontend
+./run.sh --build
 ```
-When the log shows *"Starting the development server..."*, you may launch the browser and type in the url as mentioned in the above sections.
-Please note that currently only Chrome browser is supported. Although it would work on other browsers, you might encounter some issues.
 
-Once you type in the url in the browser, a splash screen appears followed by the login screen.
+or
 
-### Login screen
+```shell
+./run.sh -b
+```
 
-Please provide the same credentials which are configured in the backend *creds.json* file.
-Also, ensure that both frontend and backend are running in the same mode (*dev/prod*). By default, both are configured to run in *prod* mode.
-Once the user successfully login to the tool, Project screen appears.
+To build and run with `--no-cache` or to provide any other build argument, append the build arguement after the previous commands. For example:
 
-### Project screen
+```shell
+./run.sh --build --no-cache
+```
 
-User can either create a new project or choose an existing one.
-When creating a new project user should specify the number of data streams/instances he/she wants to create. 
-On clicking *Next* button, Configure screen appears.
 
-### Configure screen
 
-Here, the user selected/created use case layout is shown.
-Please note that, by default use cases are created in VI-VA pair, for each stream/instance. User can add more streams by dragging and dropping either VI or VA from the component list in the left pane, to the component layout area. Please note that, in this case as well, the new stream added as a VI-VA pair.
-The behavior is same when the user removes a VI/VA component. To remove a component, click to select it and then press the 'DEL' key on the keyboard.
-If the user only wants VI (and not VA) in the use case, user can remove all the VI/VA streams from the component layout, and then drag and drop VI component from the left pane. However, the VI only use case is not fully supported by the tool as of now.
-Also note that, in the current version, when the user deletes a stream, only the last stream gets deleted, irrespective of the stream user has selected. This is due to a limitation in the platform.
+### Restart the container
 
-User can modify the component settings in Config screen and appears in the right pane (labelled as Settings) when the user clicks to select it. After making modifications, user must click the *Save* button to save the changes.
+To restart the container, run any of the following commands:
 
-You may configure the VI to use camera as *ingestor*. Camera settings can be adjusted in the *Test* screen on the fly to optimize the output preview. Please note that as of now, camera adjustment is supported only for USB cameras. Also, in case of other cameras, any additional configuration for that device to work, need to be manually done on the platform.
+```shell
+ ./run.sh --restart
+```
 
-User can also add UDFs to the config, either by modifying the component config, or by using 'Import UDF' feature. When user clicks 'Import UDF' button, a file selection dialog appears where it lists the existing UDFs. User can browse through the files/folders to select the desired UDF and then click 'Select' button to add the UDF to the config. The list of UDFs currently added to the component appears on the component itself in the layout area.
-If the user wants to import new UDF (which doesn't exist in the common/video/udfs folder), he/she needs to manually copy it to the above folder. Please note that as of now, only Python UDFs are supported to import via Import UDF functionality.
+or
 
-Once the user has done with all configurations, he/she needs to build the containers to run and test the use case. So, user needs to click the 'Start' button in the bottom pane under *Build* section to start the build. The progress of the build is indicated by the progress bar. User can also view the build logs, by clicking *View Logs* button. Please note that currently there's no option to stop/cancel a build and hence the *Cancel* button would be always inactive.
-Onc the build reaches 100%, *Next* button would be enabled, and user can click the same to navigate to *Test* screen. If the build fails for some reason, the *Start* button would be enabled again and user can re-try the build. He/she can check the build failure reason by checking the logs.
+```shell
+ ./run.sh -r
+```
 
-### Test screen
+### Bring down the container
 
-In test screen user can preview the output from VA for each stream, by clicking on it. When clicked on VI/VA corresponding UDF settings are also shown in the bottom pane. User may update these values in this screen itself and click 'Save & Restart' button to save the setting and restart the containers to view the updated output. 
-If a USB camera is configured in VI, the camera controls are also shown, which the user can adjust on the fly to see the effect on the classified output preview. Please note that these camera control adjustments may not be fast enough, especially when you have low end machine.
-user can also choose to navigate back to Configure screen, by click the *Back* button or navigate to *Project* screen to cancel the current project and choose another one, by clicking the *Cancel* button.
-Once the user is satisfied with the classified output, he/she can navigate to deploy screen to deploy the use case locally and/or remotely, by clicking the *Next* button.
+To bring down the container, run any of the following commands:
 
-### Deploy screen
+```shell
+./run.sh --down
+```
 
-In deploy screen, user can deploy the use case locally and/or remotely. User needs to choose the desired deployment mode (dev or prod) and click *Deploy* button to deploy locally. 
-To deploy in a remote machine, enter the details of the desired machine the fields under *Remote machine details* and click *Deploy in remote machine* button.
-Please note that remote deployment can take considerable amount of time, depending on the size and number of the container images, and on network conditions. Also, in this version it just copies the images and *eii* build folder to the remote machine - It doesn't run the images over there.
+or
 
-Please note that, once the deployment is triggered or done, user cannot go back to the Test screen or Configure screen. user can either sign out by clicking the *Sign out* button on the top right corner, or he/she can navigate to the *Project selection* screen by clicking the *Cancel* button.
+```shell
+./run.sh -d
+```
 
-To bring up the containers in the remote machine, wait till the deployment is completed, login to remote machine and cd to the build directory under the directory which was specified while deploying.
+## Web Deployment Tool workflow
 
-Then run:
+This section provides details for how to use the Web Deployment Tool (WDT) to configure and deploy video streams using the front end of the WDT.
+
+### Start the front-end server
+
+After the `./run.sh` file runs, it may take 30 seconds for the front-end server to come up. You may need to wait longer if you are running the tool for the first time. You can run the following command to view the logs and check if the front-end server is up:
+
+ ```shell
+docker logs -f deployment_tool_frontend
+```
+
+#### Log in to the Web Deployment Tool
+
+After you start the front-end server and when the log shows the `"Starting the development server..."` message, complete the following steps to log in to the WDT front end:
+
+1. From a browser, go to http(s)://\<host-ip\>:\<host-port\>
+
+    For example, for the `PROD mode` go to:
+
+    ```sh
+    https://127.0.0.1:3100
+    ```
+
+    For the `DEV mode`, go to:
+
+    ```sh
+    http://127.0.0.1:3100
+    ```
+
+    >**Note:** Currently the Web Deployment Tool is supported only on the Google Chrome browser.
+
+2. On the **Sign in** page, enter your user credentials and click **Sign in**.
+    >**Note:** To log in, use the credentials mentioned in the `creds.json` file in the `DeploymentToolBackend` repo. For more details, refer to the [ReadMe](https://gitlab.devtools.intel.com/Indu/edge-insights-industrial/eii-deployment-tool-backend/-/blob/master/README.md)
+    > Ensure that the front end and the back end are running in the same mode (DEV mode or PROD mode). By default, the front end and the back end are configured to run in the `PROD` mode.
+
+### Configure and deploy video streams
+
+After you sign in to the WDT, complete the following steps to configure and deploy the video streams:
+
+1. In the **Create or select a project** section, select **Create a new project**.
+2. In the **Project name** field, enter the name of the project.
+3. From the **Number of datastreams** list, select the required number of datastreams.
+   >**Note:** Currently WDT supports maximum of 6 streams or instances.
+4. Click **Next**.
+5. On the **Configure & Build** page, in the **Data Streams**, view the layout of the use case.
+6. If required, on the left pane, from the **Components List**, drag and drop the required components to the data stream. This will add the component and video stream to the use case layout.
+    >**Note:** The new stream is added as a Video Ingestion and Video Analytics pair (VI-VA pair).
+    > In the current version of WDT, the VI only use case is not supported.
+7. If required, to remove a component, click and select the component and then press the Delete key on the keyboard.
+    >**Note:** If you delete a stream, then only the last stream that was added gets deleted, irrespective of the stream that is selected. This is due to a limitation in the platform.
+8. If required, from the **Settings** section, change the settings for the component.
+9. Click **Save**.
+10. If required, you can configure the VI to use camera as an `ingestor` (to receive camera input). If required, to optimize the output preview you can adjust the camera settings on the fly from the *Test* screen.
+    >**Note:** In the current version of WDT, the camera adjustment is supported only for the USB cameras. Also, for other camera types, if you need to do additional configuration for that device to work then you must do it manually on the platform.
+11. If required, to add an algorithm or User Defined Function (UDF) to the config, from the **Components List**, click **Import UDF**.
+12. On the **Import UDF** screen, browse and select the required UDF.
+    >**Note:** To import a new UDF that doesn't exist in the common/video/udfs folder manually copy it to the udfs folder. As of now, only the Python UDFs are supported to import via the Import UDF functionality.
+13. On the **Add to** section, select the required component.
+14. Click **Import**.
+15. On the **Configure & Build** screen, after completing the configuration, in the **Build** section, click **Start**.
+    >**Note:** The progress bar indicates the progress of the build.
+    > If the build fails, click **Start** to retry the build. You can check the build failure reason by checking the build logs.
+    >To view the build logs, click  **View Logs**. Currently there's no option to stop or cancel a build.
+16. After completing the build 100 percent, click the **Next**.
+17. On the **Test**screen, to preview the output from VA for a data stream, click and select the required Video Analytics component.
+    >**Note:** When you click a VI or VA component, the settings associated to the selected component is displayed in the **Settings* section. You can view settings such as **Camera Settings**, Pipeline Settings, and UDF settings.
+18. If required, update the settings, and click **Save & Restart**. This will save the changes to setting and restart the containers and you can view the updated output.
+19. If you have configured a USB camera in VI, then you can view and adjust the camera controls from the **Camera Settings** section. You can make the setting changes the fly and view the preview.
+    >**Note:** On low end machines the camera control adjustments may not be fast enough.
+20. If required, you can click **Back** to go to the **Configure & Build** screen. You can also go to the **Project** screen and click **Cancel** to cancel the current project and choose another project.
+21. After checking the preview, on the **Test** screen, click **Next**.
+22. On the **Deploy** screen, to deploy on a local machine, in the **Target Machine** section, select **Local Machine**.
+23. In the **Deployment Mode** section, select the required deployment mode (Dev or Prod mode) and then, click **Deploy**.
+24. To deploy on a remote machine, from the **Target Machine** section, select **Remote Machine**.
+25. From the **Deployment Mode** section, select the required deployment mode (DEV or PROD mode).
+    >**Note:** Before you start the deployment, ensure that the specified directory in the remote machine is empty, otherwise the deployment might fail.
+26. In the **Remote Machine Detail** section, enter the details of the remote machine and then, click **Deploy**.
+    >**Note:** After the deployment is triggered or done, you cannot go back to the **Test** screen or the **Configure** screen. You can either click **Sign out** to sign out or click **Cancel** to go to the *Project selection* screen.
+27. On the **Deployment Successful** dialog, click **Close**.
+
+### Bring up the containers
+
+To bring up the front-end containers in the remote machine, complete the deployment, and then, log in to the remote machine. Go to the build directory (under the directory that was specified while deploying). Update the `HOST_IP` and the `ETCD_HOST` values to the current machine IP, manually in the `build/.env` and run the following commands:
 
 ```shell
 ./source.sh
 ./eii_start.sh
 ```
 
-## Notes
-
-- When built and run on a fresh machine, it could take several minutes for the front end to come up.
-- The current version of Web Deployment Tool doesn't fully support running backend and frontend containers in different machines.
-- Currently only Chrome browser is supported
-- Only python UDFs are allowed to import
-- Camera configuration is supported only for USB cameras
-- Additional configuration needed, if any for other camera devices, should be done manually
-- The tool support a max of 6 streams/instances
+>**Note:** It may take several minutes for the front end to come up if you are building and running WDT on a fresh machine.
