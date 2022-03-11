@@ -53,7 +53,7 @@ const LoginScreen = () => {
       .then((data) => data.json())
       .then(function (data) {
         if (data?.status_info?.status) {
-          cookies.set("dt_session", JSON.parse(data.data));
+          cookies.set("dt_session", JSON.parse(data.data), {sameSite: 'strict'});
           setErrorText("");
           window.location.href = "/CreateProject";
         } else if (data?.detail?.length > 0) {
