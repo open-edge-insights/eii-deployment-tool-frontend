@@ -43,5 +43,56 @@
     text-transform: capitalize;
     padding-left: 5%;
     padding-top: 5%;
-    color: #0068b5;
+    color: #202020;
+}
+.viewLogDialogCheckbox {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: capitalize;
+  padding-left: 5%;
+  padding-top: 1%;
+  color: #202020;
+}
+.Bare {
+  border-style: solid;
+  border-color: lightgray;
+  border-width: 1px;
+  top: 0px;
+  left: 15px ;
+  background: rgb(255, 255, 255);
+  height: 100%;
+  overflow: auto;
+  border-radius: 4px;
+  font-size: 12px;
+  margin: 40px;
+  margin-top: 1px;
+  margin-bottom: -15px;
+  font-size: 14px;
+  
+}
+.viewLogDialogCheckbox {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: capitalize;
+  padding-left: 5%;
+  padding-top: 1%;
+  color: #202020;
+  font-family: "IntelOne-Display-Regular","IntelOne-Display-Medium","IntelOne-Display-Light","IntelOne-Display-Bold";
+}
+.viewLogDialog {
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: capitalize;
+  padding-left: 1%;
+  padding-top: 1%;
+  color: #202020;
+  font-family: "IntelOne-Display-Regular","IntelOne-Display-Medium","IntelOne-Display-Light","IntelOne-Display-Bold";
+}
+.Refreshtext{
+  margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  width: 9%;
+  height: 5%;
 }
