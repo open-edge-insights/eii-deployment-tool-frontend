@@ -233,10 +233,9 @@ const ComponentsLayout = (props) => {
             UpdateConfigApi.updateconfig(
               { ...previousConfig },
               (respons) => {
-                setNodeSelected("");
-                setAlertConfigUDF(true);
-                setOpen(false);
+                handlePaneClick(null);
                 saveProject();
+                setAlertConfigUDF(true);
               },
               (responsedata) => {}
             );
