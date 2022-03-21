@@ -36,7 +36,8 @@ import cssClasses from "../configureModule/index.module.css";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import BuilderApi from "../api/BuilderApi";
-
+import {CircularProgressbar} from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 const Deploy = (props) => {
   const [stateComponent, setStateComponent] = useState(props.stateComponent);
@@ -45,7 +46,8 @@ const Deploy = (props) => {
   const [progressIndicatorLabel, setprogressIndicatorLabel] = useState("");
   const [deployDevMode, setDeployDevMode] = useState(null);
   const [open, setOpen] = useState(false);
-  
+  const [DeployBuildProgressPercentage, setdeployBuildProgress] = useState(0);
+
   const handleClose = (event, reason) => {
     setOpen(false);
   };
@@ -84,6 +86,7 @@ const Deploy = (props) => {
   const instance_count = useSelector(
     (state) => state.ConfigureBuildReducer.instance_count
   );
+  
   function getServicesToDeploy() {
     let services = [];
     let comps = props.stateComponent.components;
@@ -181,7 +184,9 @@ const Deploy = (props) => {
         DeployInRemoteMachine: true,
       },
     });
-    setprogressIndicatorLabel("Deploying to " + targetDeviceObject.ipaddress.value);
+    let progressString;
+    let progressPercentage=0;
+    
     let dockerImages = getDockerImageList();
     DeployRemote(
       dockerImages,
@@ -195,10 +200,23 @@ const Deploy = (props) => {
           () =>
             GetStatusApi.getstatus(
               (response) => {
-                if (response.status == "Success") {
+                if(response){
+                  progressString = response;
+                  console.log(progressString);
+                  progressPercentage = progressString.progress;
+                  console.log(progressPercentage);
+                  if(progressPercentage > 0){
+                  setdeployBuildProgress(parseInt(progressPercentage)); 
+                  }else{
+                    setdeployBuildProgress(5); 
+                  }
+                if (progressString.task == "deploy" && progressString.status == "Success" && progressPercentage==100)  {
                   setDeployRemoteInProgress(false);
                   setprogressIndicatorLabel("");
-                  alert("Remote deployment successfully completed!");
+                  setTimeout(() => {
+                    alert("Remote deployment successfully completed!");
+                  }, 500);
+                  
                   dispatch({
                     type: "DEPLOY_IN_REMOTE_MACHINE",
                     payload: {
@@ -212,7 +230,8 @@ const Deploy = (props) => {
                     },
                   });  
                   clearInterval(statusTimer);
-                } else if (response.status == "Failed") {
+                } 
+              else if (response.status == "Failed") {
                   setDeployRemoteInProgress(false);
                   setprogressIndicatorLabel("");
                   dispatch({
@@ -230,6 +249,7 @@ const Deploy = (props) => {
                   alert("Remote deployment FAILED!");
                   clearInterval(statusTimer);
                 }
+              }
               },
               (response) => {
               if(response?.message?.includes("status code 504")){
@@ -281,10 +301,18 @@ const Deploy = (props) => {
         <hr
           className="deployScreenDivider"          
         />
-        {(DeployInLocalMachineProgress || deployRemoteInProgress || DeployInRemoteMachine) ? (
+        {(DeployInLocalMachineProgress) ? (
+          <div className="deploymentProgressBar" >
+            <CircularProgress size={100}  />
+            <p className="deploymentProgressBarText">{DeployInLocalMachineProgress?"Deploying to localhost" : progressIndicatorLabel}</p>
+          </div>
+        ) : 
+        ( deployRemoteInProgress || DeployInRemoteMachine) ? (
         <div className="deploymentProgressBar" >
-          <CircularProgress size={100} />
-          <p className="deploymentProgressBarText">{DeployInLocalMachineProgress?"Deploying to localhost" : progressIndicatorLabel}</p>
+          <div style = {{maxWidth:"100px" }}>
+          <CircularProgressbar value={DeployBuildProgressPercentage} text={`${DeployBuildProgressPercentage}%`} size={100}/>
+          </div>
+          <p className="deploymentProgressBarText">{deployRemoteInProgress?"Deploying to " + targetDeviceObject.ipaddress.value : ""}</p>
         </div>
       ) : (
         <div class="row" style={{paddingTop: "10px"}}>
@@ -342,7 +370,7 @@ const Deploy = (props) => {
                 disabled={(targetDeviceObject.ipaddress.value.trim() == "" ||
                 targetDeviceObject.username.value.trim() == "" ||
                 targetDeviceObject.password.value.trim() == "" ||
-                targetDeviceObject.directory.value.trim() == "")}
+                targetDeviceObject.directory.value.trim() == "" || deployDevMode == null)}
                 
               >
                 Deploy to target device

@@ -73,6 +73,7 @@ const ProjectSetup = (props) => {
   const [button1Text, setButton1Text] = useState("No");
   const [button2Text, setButton2Text] = useState("Yes");
   const [open, setOpen] = useState(false);
+  const [openTask,setopenTask] =useState(false);
   
   const [error, setError] = useState({
     project_name: false,
@@ -89,6 +90,9 @@ const ProjectSetup = (props) => {
   const handleClose = (event, reason) => {
     setOpen(false);
   };
+  const onclose =(event)=>{
+    setopenTask(false);
+  }
   const onChangeHandle = (e, type) => {
     let currentState = { ...state },
       value = '';
@@ -139,9 +143,7 @@ const ProjectSetup = (props) => {
               }, props.getStateVal);
             }
           } else {
-            //alert("A " + data.task + " task is already in progress.Please try again later");
-            setModalContent("A " + data.task + " task is already in progress.Please try again later");
-            openAlreadyExistDialogBox();
+            setopenTask(true);
           }
         },
         (error) => {
@@ -354,12 +356,6 @@ const ProjectSetup = (props) => {
 
           </div>
         </RadioGroup>
-        {/* <button
-          onClick={projectSetupSubmit}
-          className={classes.butOk}
-        >
-          OK
-        </button> */}
         <div className='footer'>
           <div>
             <button onClick={projectSetupSubmit} className={enableNextBtn ? "nextBtn" : "nextBtn nextButtonMainPageDisabled"}>Next</button>
@@ -373,6 +369,14 @@ const ProjectSetup = (props) => {
         <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }} style={{color:"white", backgroundColor:"#0068B5"}}>
           <h8>Connection Lost</h8>
           <p>Connection with the back-end server lost. Try again later.</p>
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openTask} autoHideDuration={6000} onClose={onclose} style={{color:"white", backgroundColor:"#0068B5"}} anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}>
+        <Alert onClose={onclose} severity="info" sx={{ width: '100%' }} style={{color:"white", backgroundColor:"#0068B5"}}>
+          <p>A task is already in progress. Please try again later</p>
         </Alert>
       </Snackbar>
       </FormControl>

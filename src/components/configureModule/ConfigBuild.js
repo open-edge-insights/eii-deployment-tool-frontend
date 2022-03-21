@@ -156,6 +156,10 @@ const ConfigBuild = (props) => {
           if (response) {
             /* Get the progress % and convert it to integer */
             progressString = JSON.parse(response.data);
+	    if(progressString.task != "build"){
+              clearInterval(interval);
+              return;
+            }
             /* if the progress percentage for eg.goes from 10% back to 0% it signifies an error, check for the same */
             if (
               parseInt(progressPercentage) > parseInt(progressString.progress)
@@ -205,7 +209,7 @@ const ConfigBuild = (props) => {
                       showBuildAlert: true,
                     },
                   });
-
+		     clearInterval(interval);
                   /* Restart containers so that changes take effect after successfull build */
                   StartContainers("restart").then((containerStart) => {
                     let response = containerStart?.status_info?.status;
