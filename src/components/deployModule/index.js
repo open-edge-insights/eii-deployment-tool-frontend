@@ -208,7 +208,7 @@ const Deploy = (props) => {
                   if(progressPercentage > 0){
                   setdeployBuildProgress(parseInt(progressPercentage)); 
                   }else{
-                    setdeployBuildProgress(5); 
+                    setdeployBuildProgress(1); 
                   }
                 if (progressString.task == "deploy" && progressString.status == "Success" && progressPercentage==100)  {
                   setDeployRemoteInProgress(false);

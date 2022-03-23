@@ -484,7 +484,7 @@ const CreateProject = (props) => {
                 )}
                 {value > 0 &&
                   props.projectSetup.noOfStreams !== 0 &&
-                  DeploymentComplete == false && (
+                  DeploymentComplete == false && !deployProgressbar && !DeployInRemoteMachine && (
                     <button
                       onClick={() => handleChangeIndex(value - 1, "Back")}
                       className="cancelBtn"
