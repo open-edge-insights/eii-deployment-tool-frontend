@@ -149,7 +149,7 @@ const Deploy = (props) => {
     }
     // Include default images
     images.push(process.env.REACT_APP_DOCKER_REGISTRY + "openedgeinsights/ia_etcd_ui:" + process.env.REACT_APP_EII_VERSION);
-    images.push( process.env.REACT_APP_DOCKER_REGISTRY + "ia_configmgr_agent:" + process.env.REACT_APP_EII_VERSION);
+    images.push( process.env.REACT_APP_DOCKER_REGISTRY + "openedgeinsights/ia_configmgr_agent:" + process.env.REACT_APP_EII_VERSION);
     return images;
   }
   function ValidateIPaddress(ipaddress) {
