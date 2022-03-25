@@ -149,8 +149,8 @@ After you sign in to the WDT, complete the following steps to configure and depl
 14. Click **Import**.
 15. On the **Configure & Build** screen, after completing the configuration, in the **Build** section, click **Start**.
     >**Note:** The progress bar indicates the progress of the build.
-    > If the build fails, click **Start** to retry the build. You can check the build failure reason by checking the build logs.
-    >To view the build logs, click  **View Logs**. Currently there's no option to stop or cancel a build.
+    > Currently there's no option to stop or cancel a build. If the build fails, click **Start** to retry the build. You can check the build failure reason by checking the build logs.
+    >To view the build logs, click  **View Logs**. User can select the 'Enable Auto Refresh' option to refresh the logs. The logs are refreshed every 5 seconds. 
 16. After completing the build 100 percent, click the **Next**.
 17. On the **Test**screen, to preview the output from VA for a data stream, click and select the required Video Analytics component.
     >**Note:** When you click a VI or VA component, the settings associated to the selected component is displayed in the **Settings* section. You can view settings such as **Camera Settings**, Pipeline Settings, and UDF settings.
